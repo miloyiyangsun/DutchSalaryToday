@@ -1,0 +1,602 @@
+[
+    {
+        "Key": "T001081",
+        "Title": "A-U All economic activities",
+        "Description": "All economic activities\r\nThis category is made up of the categories:\r\nA Agriculture, forestry and fishing\r\nB Mining and quarrying\r\nC Manufacturing\r\nD Electricity and gas supply\r\nE Water supply and waste management\r\nF Construction\r\nG Wholesale and retail trade\r\nH Transportation and storage\r\nI Accommodation and food serving\r\nJ Information and communication\r\nK Financial institutions\r\nL Renting and buying and selling of real estate\r\nM Consultancy, research and other specialised business services\r\nN Renting and leasing of tangible goods and other business support services\r\nO Public administration, public services and compulsory social security\r\nP Education\r\nQ Health and social work activities\r\nR Culture, sports and recreation\r\nS Other service activities\r\nT Activities of households as employers; undifferentiated goods- and service- producing activities of households for own use\r\nU Extraterritorial organisations",
+        "CategoryGroupID": 1
+    },
+    {
+        "Key": "301000 ",
+        "Title": "A Agriculture, forestry and fishing",
+        "Description": "Agriculture, forestry and fishing",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "301100 ",
+        "Title": "01 Agriculture",
+        "Description": "Agriculture and related service activities",
+        "CategoryGroupID": 6
+    },
+    {
+        "Key": "304300 ",
+        "Title": "02 Forestry and logging",
+        "Description": "Forestry and logging",
+        "CategoryGroupID": 6
+    },
+    {
+        "Key": "305000 ",
+        "Title": "03 Fishing and aquaculture",
+        "Description": "Fishing and aquaculture",
+        "CategoryGroupID": 6
+    },
+    {
+        "Key": "305700 ",
+        "Title": "B Mining and quarrying",
+        "Description": "Mining and quarrying",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "300002 ",
+        "Title": "B-E Industry (no construction), energy",
+        "Description": "Industry (no construction) and energy \r\nThis category is made up of the categories: \r\nB Mining and quarrying \r\nC Manufacturing \r\nD Electricity and gas supply \r\nE Water supply and waste management",
+        "CategoryGroupID": 4
+    },
+    {
+        "Key": "307500 ",
+        "Title": "C Manufacturing",
+        "Description": "Manufacturing",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "307610 ",
+        "Title": "10-12 Manufacture of food and beverages",
+        "Description": "Manufacture of food products, beverages and tobacco \r\nThis category is made up of the categories: \r\n10 Manufacture of food products \r\n11 Manufacture of beverages \r\n12 Manufacture of tobacco products",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "312505 ",
+        "Title": "13-15 Man. of textile-, leatherproducts",
+        "Description": "Manufacture of textiles and textile products and of leather and leather products \r\nThis category is made up of the categories: \r\n13 Manufacture of textiles \r\n14 Manufacture of wearing apparel \r\n15 Manufacture of leather, products of leather and footwear",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "315810 ",
+        "Title": "16-18 Man. wood en paperprod., printing",
+        "Description": "Manufacturing of wood and paper and of products of wood and paper; printing \r\nThis category is made up of the categories: \r\n16 Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials \r\n17 Manufacture of paper and paper products \r\n18 Printing and reproduction of recorded media",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "315800 ",
+        "Title": "16 Manufacture of wood products",
+        "Description": "Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "317100 ",
+        "Title": "17 Manufacture of paper",
+        "Description": "Manufacture of paper and paper products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "318600 ",
+        "Title": "18 Printing and reproduction",
+        "Description": "Printing and reproduction of recorded media",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "320000 ",
+        "Title": "19 Manufacture of coke and petroleum",
+        "Description": "Manufacture of coke and refined petroleum products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "320700 ",
+        "Title": "20 Manufacture of chemicals",
+        "Description": "Manufacture of chemicals and chemical products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "320705 ",
+        "Title": "20-21 Chemistry and pharmaceuticals",
+        "Description": "Manufacture of chemicals and pharmaceuticals \r\nThis category is made up of the categories: \r\n20 Manufacture of chemicals and chemical products \r\n21 Manufacture of basic pharmaceutical products and pharmaceutical preparations",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "323200 ",
+        "Title": "21 Manufacture of pharmaceuticals",
+        "Description": "Manufacture of basic pharmaceutical products and pharmaceutical preparations",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "323700 ",
+        "Title": "22 Manufacture rubber, plastic products",
+        "Description": "Manufacture of rubber and plastic products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "323705 ",
+        "Title": "22-23 Man. plastics and constructionprod",
+        "Description": "Manufacture of rubber and plastic products and of constructionproducts \r\nThis category is made up of the categories: \r\n22 Manufacture of rubber and plastic products \r\n23 Manufacture of other non-metallic mineral products",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "324600 ",
+        "Title": "23 Manufacture of building materials",
+        "Description": "Manufacture of other non-metallic mineral products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "328100 ",
+        "Title": "24 Manufacture of basic metals",
+        "Description": "Manufacture of basic metals",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "328105 ",
+        "Title": "24-25 Man. of basic metals and -products",
+        "Description": "Manufacture of basic metals and fabricated metal products \r\nThis category is made up of the categories: \r\n24 Manufacture of basic metals \r\n25 Manufacture of fabricated metal products, except machinery and equipment",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "330300 ",
+        "Title": "25 Manufacture of metal products",
+        "Description": "Manufacture of fabricated metal products, except machinery and equipment",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "332900 ",
+        "Title": "26 Manufacture of electronic products",
+        "Description": "Manufacture of computers, electronic and optical products",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "332910 ",
+        "Title": "26-27 Elektrical and electron. Industry",
+        "Description": "Manufacture of computers, electronic, optical and electrical products \r\nThis category is made up of the categories: \r\n26 Manufacture of computers, electronic and optical products \r\n27 Manufacture of electrical equipment",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "334800 ",
+        "Title": "27 Manufacture of electric equipment",
+        "Description": "Manufacture of electrical equipment",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "336500 ",
+        "Title": "28 Manufacture of machinery n.e.c.",
+        "Description": "Manufacture of machinery and equipment n.e.c.",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "339200 ",
+        "Title": "29 Manufacture of cars and trailers",
+        "Description": "Manufacture of motor vehicles, trailers and semi-trailers",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "339205 ",
+        "Title": "29-30 Transport equipment",
+        "Description": "Manufacture of transport equipment \r\nThis category is made up of the categories: \r\n29 Manufacture of motor vehicles, trailers and semi-trailers \r\n30 Manufacture of other transport equipment",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "340200 ",
+        "Title": "30 Manufacture of other transport",
+        "Description": "Manufacture of other transport equipment",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "300023 ",
+        "Title": "31-33 Other manufacturing and repair",
+        "Description": "Manufacture of furniture and other products; repair and installation of machinery and equipment \r\nThis category is made up of the categories: \r\n31 Manufacture of furniture \r\n32 Manufacture of other products (rest) \r\n33 Repair and installation of machinery and equipment",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "900046 ",
+        "Title": "31-32 Manufacture of furniture; other",
+        "Description": "Manufacture of furniture and other products\r\nThis category is made up of the categories:\r\n31 Manufacture of furniture\r\n32 Manufacture of other products (rest)",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "344400 ",
+        "Title": "33 Repair and installation of machinery",
+        "Description": "Repair and installation of machinery and equipment",
+        "CategoryGroupID": 7
+    },
+    {
+        "Key": "346600 ",
+        "Title": "D Energy supply",
+        "Description": "Electricity, gas, steam and air conditioning supply",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "346700 ",
+        "Title": "35 Energy supply",
+        "Description": "Electricity, gas, steam and air conditioning supply",
+        "CategoryGroupID": 8
+    },
+    {
+        "Key": "348000 ",
+        "Title": "E Water supply and waste management",
+        "Description": "Water supply; sewerage, waste management and remediation activities",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "348100 ",
+        "Title": "36 Water collection and distribution",
+        "Description": "Collection, purification and distribution of water",
+        "CategoryGroupID": 9
+    },
+    {
+        "Key": "800018 ",
+        "Title": "37-39 Sewerage and waste treatment",
+        "Description": "Sewerage, treatment of waste, remediation activities and other waste management",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "350000 ",
+        "Title": "F Construction",
+        "Description": "Construction",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "350100 ",
+        "Title": "41 Construction buildings, development",
+        "Description": "Construction of buildings and development of building projects",
+        "CategoryGroupID": 10
+    },
+    {
+        "Key": "350600 ",
+        "Title": "42 Civil engineering",
+        "Description": "Civil engineering",
+        "CategoryGroupID": 10
+    },
+    {
+        "Key": "351900 ",
+        "Title": "43 Specialised construction activities",
+        "Description": "Specialised construction activities",
+        "CategoryGroupID": 10
+    },
+    {
+        "Key": "300006 ",
+        "Title": "G-I Trade, transport, hotels, catering",
+        "Description": "Trade, transport, hotels, catering \r\nThis category is made up of the categories: \r\nG Wholesale and retail trade \r\nH Transportation and storage \r\nI Accommodation and food serving",
+        "CategoryGroupID": 4
+    },
+    {
+        "Key": "354200 ",
+        "Title": "G Wholesale and retail trade",
+        "Description": "Wholesale and retail trade; repair of motor vehicles and motorcycles",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "354300 ",
+        "Title": "45 Sale and repair of motor vehicles",
+        "Description": "Sale and repair of motor vehicles, motorcycles and trailers",
+        "CategoryGroupID": 11
+    },
+    {
+        "Key": "356900 ",
+        "Title": "46 Wholesale trade (no motor vehicles)",
+        "Description": "Wholesale trade (no motor vehicles and motorcycles)",
+        "CategoryGroupID": 11
+    },
+    {
+        "Key": "371600 ",
+        "Title": "47 Retail trade (not in motor vehicles)",
+        "Description": "Retail trade (not in motor vehicles)",
+        "CategoryGroupID": 11
+    },
+    {
+        "Key": "383100 ",
+        "Title": "H Transportation and storage",
+        "Description": "Transportation and storage",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "383200 ",
+        "Title": "49 Land transport",
+        "Description": "Land transport",
+        "CategoryGroupID": 12
+    },
+    {
+        "Key": "384900 ",
+        "Title": "50 Water transport",
+        "Description": "Water transport",
+        "CategoryGroupID": 12
+    },
+    {
+        "Key": "386300 ",
+        "Title": "51 Air transport",
+        "Description": "Air transport \r\nThis division includes: \r\n- the transport of passengers or freight by air.",
+        "CategoryGroupID": 12
+    },
+    {
+        "Key": "386800 ",
+        "Title": "52 Warehousing, services for transport",
+        "Description": "Warehousing and support activities for transportation",
+        "CategoryGroupID": 12
+    },
+    {
+        "Key": "388400 ",
+        "Title": "53 Postal and courier activities",
+        "Description": "Postal and courier activities",
+        "CategoryGroupID": 12
+    },
+    {
+        "Key": "389100 ",
+        "Title": "I Accommodation and food serving",
+        "Description": "Accommodation and food service activities",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "391600 ",
+        "Title": "J Information and communication",
+        "Description": "Information and communication",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "391700 ",
+        "Title": "58 Publishing",
+        "Description": "Publishing",
+        "CategoryGroupID": 13
+    },
+    {
+        "Key": "391705 ",
+        "Title": "58-60 Publishing, movie, radio and TV",
+        "Description": "Publishing, motion picture radio and television \r\nThis category is made up of the categories: \r\n58 Publishing \r\n59 Motion picture and television programme production and distribution; sound recording and music publishing \r\n60 Programming and broadcasting",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "800021 ",
+        "Title": "59-60 Movies, TV and radio",
+        "Description": "Movies, TV and radio \r\nThis category is made up of the categories: \r\n59 Film, TV and music production etc. \r\n60 Programming and broadcasting",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "394100 ",
+        "Title": "61 Telecommunications",
+        "Description": "Telecommunications",
+        "CategoryGroupID": 13
+    },
+    {
+        "Key": "395005 ",
+        "Title": "62-63 IT- and information services",
+        "Description": "IT- and information services \r\nThis category is made up of the categories: \r\n62 Support activities in the field of IT \r\n63 Information service activities",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "396300 ",
+        "Title": "K Financial institutions",
+        "Description": "Financial institutions",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "396400 ",
+        "Title": "64 Financial institutions, no insurance",
+        "Description": "Financial institutions, except insurance and pension funding",
+        "CategoryGroupID": 14
+    },
+    {
+        "Key": "398700 ",
+        "Title": "65 Insurance and pension funding",
+        "Description": "Insurance and pension funding (no compulsory social security)",
+        "CategoryGroupID": 14
+    },
+    {
+        "Key": "400200 ",
+        "Title": "66 Other financial services",
+        "Description": "Other financial services",
+        "CategoryGroupID": 14
+    },
+    {
+        "Key": "402000 ",
+        "Title": "L Renting, buying, selling real estate",
+        "Description": "Renting, buying and selling of real estate",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "402100 ",
+        "Title": "68 Renting, buying, selling real estate",
+        "Description": "Renting and buying and selling of real estate",
+        "CategoryGroupID": 15
+    },
+    {
+        "Key": "300010 ",
+        "Title": "M-N Business services",
+        "Description": "Business services \r\nThis category is made up of the categories: \r\nM Consultancy, research and other specialised business services \r\nN Renting and leasing of tangible goods and other business support services",
+        "CategoryGroupID": 4
+    },
+    {
+        "Key": "403300 ",
+        "Title": "M Other specialised business services",
+        "Description": "Consultancy, research and other specialised business services \r\nThis section includes: \r\n- specialised professional, scientific and technical activities. These activities require a high degree of training, and make specialised knowledge and skills available to users.",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "900009 ",
+        "Title": "69-70 Legal and management consultancy",
+        "Description": "Legal services, accounting, tax consultancy, administration and holding companies (not financial) \r\nThis category is made up of the categories: \r\n69 Legal services, accounting, taks consultancy, administration \r\n70 Holding companies (not financial)",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "403405 ",
+        "Title": "69-71 Management, technical consultancy",
+        "Description": "Legal services, management consultancy, accountancy, architectural and engineering activities \r\nThis category is made up of the categories: \r\n69 Legal services, accounting, tax consultancy, administration \r\n70 Holding companies (not financial) \r\n71 Architects, engineers and technical design and consultancy; testing and analysis",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "405900 ",
+        "Title": "71 Architects, technical services etc.",
+        "Description": "Architects, engineers and technical design and consultancy; testing and analysis",
+        "CategoryGroupID": 16
+    },
+    {
+        "Key": "406800 ",
+        "Title": "72 Research and development",
+        "Description": "Research and development",
+        "CategoryGroupID": 16
+    },
+    {
+        "Key": "408100 ",
+        "Title": "73 Advertising and market research",
+        "Description": "Advertising and market research",
+        "CategoryGroupID": 16
+    },
+    {
+        "Key": "408105 ",
+        "Title": "73-75 Advertising, design and other",
+        "Description": "Other specialised business services \r\nThis category is made up of the categories: \r\n73 Advertising and market research \r\n74 Industrial design, photography, translation and other consultancy \r\n75 Veterinary activities",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "800023 ",
+        "Title": "74-75 Other specialised services",
+        "Description": "Other specialised services \r\nThis category is made up of the categories: \r\n74 Industrial design, photography, translation and other consultancy \r\n75 Veterinary activities",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "410200 ",
+        "Title": "N Renting and other business support",
+        "Description": "Renting and leasing of tangible goods and other business support services",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "410300 ",
+        "Title": "77 Renting and leasing of tangible goods",
+        "Description": "Renting and leasing of motor vehicles, consumergoods, machines and other tangible goods",
+        "CategoryGroupID": 17
+    },
+    {
+        "Key": "412700 ",
+        "Title": "78 Employment activities",
+        "Description": "Employment placement, provision of temporary employment and payrolling",
+        "CategoryGroupID": 17
+    },
+    {
+        "Key": "413700 ",
+        "Title": "79 Travel agencies, tour operators etc",
+        "Description": "Travel agencies, tour operators, tourist information and reservation services",
+        "CategoryGroupID": 17
+    },
+    {
+        "Key": "900011 ",
+        "Title": "80-82 Security, other business services",
+        "Description": "Security, cleaning and other business services\r\nThis category is made up of the categories:\r\n80 Security and investigation \r\n81 Cleaning activities, gardening etc\r\n82 Other business services",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "300012 ",
+        "Title": "O-Q Government and care",
+        "Description": "Government and care \r\nThis category is made up of the categories: \r\nO Public administration, public services and compulsory social security \r\nP Education \r\nQ Health and social work activities",
+        "CategoryGroupID": 4
+    },
+    {
+        "Key": "417400 ",
+        "Title": "O Public administration and services",
+        "Description": "Public administration, public services and compulsory social security",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "417500 ",
+        "Title": "84 Public administration and services",
+        "Description": "Public administration, public services and compulsory social security",
+        "CategoryGroupID": 18
+    },
+    {
+        "Key": "419000 ",
+        "Title": "P Education",
+        "Description": "Education",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "419100 ",
+        "Title": "85 Education",
+        "Description": "Education",
+        "CategoryGroupID": 19
+    },
+    {
+        "Key": "422400 ",
+        "Title": "Q Health and social work activities",
+        "Description": "Human health and social work activities",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "422500 ",
+        "Title": "86 Human health activities",
+        "Description": "Human health activities",
+        "CategoryGroupID": 20
+    },
+    {
+        "Key": "425305 ",
+        "Title": "87-88 Care and social work",
+        "Description": "Care and social work \r\nThis category is made up of the categories: \r\n87 Residential care and guidance \r\n88 Social work activities without accommodation",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "300014 ",
+        "Title": "R-U Culture, recreation, other services",
+        "Description": "Culture, recreation, other services \r\nThis category is made up of the categories: \r\nR Culture, sports and recreation \r\nS Other service activities \r\nT Activities of households as employers; undifferentiated goods- and service- producing activities of households for own use \r\nU Extraterritorial organisations",
+        "CategoryGroupID": 4
+    },
+    {
+        "Key": "428100 ",
+        "Title": "R Culture, sports and recreation",
+        "Description": "Culture, sports and recreation \r\nThis section includes a wide range of activities to meet varied cultural, entertainment and recreational interests of the general public, including live performances, operation of museum sites, sports and recreation activities.",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "900048 ",
+        "Title": "90-92 Arts, culture and lotteries",
+        "Description": "Arts, culture and lotteries\r\nThis category is made up of the categories:\r\n90 Arts\r\n91 Libraries, museums, zoos etc\r\n92 Lotteries and betting",
+        "CategoryGroupID": 24
+    },
+    {
+        "Key": "431100 ",
+        "Title": "93 Sports and recreation",
+        "Description": "Sports and recreation",
+        "CategoryGroupID": 21
+    },
+    {
+        "Key": "435500 ",
+        "Title": "S Other service activities",
+        "Description": "Other service activities \r\nThis section (as a residual category) includes the activities of membership organisations, the repair of computers and personal and household goods and a variety of personal service activities not covered elsewhere in the classification.",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "435600 ",
+        "Title": "94 Membership organisations",
+        "Description": "World view and political organizations, interest and ideological organizations, hobby clubs",
+        "CategoryGroupID": 22
+    },
+    {
+        "Key": "437500 ",
+        "Title": "95 Repair computers and consumergoods",
+        "Description": "Repair of computers and consumergoods",
+        "CategoryGroupID": 22
+    },
+    {
+        "Key": "438600 ",
+        "Title": "96 Other personal services",
+        "Description": "Wellness and other services; funeral activities",
+        "CategoryGroupID": 22
+    },
+    {
+        "Key": "440000 ",
+        "Title": "T Activities of households",
+        "Description": "Activities of households as employers; undifferentiated goods- and service- producing activities of households for own use",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "440900 ",
+        "Title": "U Extraterritorial organisations",
+        "Description": "Extraterritorial organisations and bodies",
+        "CategoryGroupID": 3
+    },
+    {
+        "Key": "441000 ",
+        "Title": "99 Extraterritorial organisations",
+        "Description": "Extraterritorial organisations and bodies",
+        "CategoryGroupID": 23
+    }
+]
