@@ -1,0 +1,177 @@
+[
+    {
+        "ID": 0,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Total",
+        "Description": null,
+        "ParentID": null
+    },
+    {
+        "ID": 1,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Total",
+        "Description": null,
+        "ParentID": 0
+    },
+    {
+        "ID": 2,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Branches 1st digit",
+        "Description": "The Dutch hierarchic classification of economic activities is used by Statistics Netherlands to classify private sector entities by main activity. The SIC 2008 is the version used since 2008.\r\n\r\n\"Sector of industry\" or \"branch\" is the common term used to define businesses sharing the same main activity.",
+        "ParentID": null
+    },
+    {
+        "ID": 3,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Branches 1st digit",
+        "Description": "",
+        "ParentID": 2
+    },
+    {
+        "ID": 4,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Other activities 1st digit",
+        "Description": "",
+        "ParentID": 2
+    },
+    {
+        "ID": 5,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Branches 2nd digit by 1st digit",
+        "Description": "The Dutch hierarchic classification of economic activities is used by Statistics Netherlands to classify private sector entities by main activity. The SIC 2008 is the version used since 2008.\r\n\r\n\"Sector of industry\" or \"branch\" is the common term used to define businesses sharing the same main activity",
+        "ParentID": null
+    },
+    {
+        "ID": 6,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "A Agriculture, forestry and fishing",
+        "Description": "A Agriculture, forestry and fishing",
+        "ParentID": 5
+    },
+    {
+        "ID": 7,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "C Manufacturing",
+        "Description": "C Manufacturing",
+        "ParentID": 5
+    },
+    {
+        "ID": 8,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "D Electricity and gas supply",
+        "Description": "D Electricity, gas, steam and air conditioning supply",
+        "ParentID": 5
+    },
+    {
+        "ID": 9,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "E Water supply and waste management",
+        "Description": "E Water supply; sewerage, waste management and remediation activities",
+        "ParentID": 5
+    },
+    {
+        "ID": 10,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "F Construction",
+        "Description": "F Construction",
+        "ParentID": 5
+    },
+    {
+        "ID": 11,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "G Wholesale and retail trade",
+        "Description": "G Wholesale and retail trade; repair of motor vehicles and motorcycles",
+        "ParentID": 5
+    },
+    {
+        "ID": 12,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "H Transportation and storage",
+        "Description": "H Transportation and storage",
+        "ParentID": 5
+    },
+    {
+        "ID": 13,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "J Information and communication",
+        "Description": "J Information and communication",
+        "ParentID": 5
+    },
+    {
+        "ID": 14,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "K Financial institutions",
+        "Description": "K Financial institutions",
+        "ParentID": 5
+    },
+    {
+        "ID": 15,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "L Renting, buying, selling real estate",
+        "Description": "L Renting, buying and selling of real estate",
+        "ParentID": 5
+    },
+    {
+        "ID": 16,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "M Other specialised business services",
+        "Description": "M Consultancy, research and other specialised business services",
+        "ParentID": 5
+    },
+    {
+        "ID": 17,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "N Renting and other business support",
+        "Description": "N Renting and leasing of tangible goods and other business support services",
+        "ParentID": 5
+    },
+    {
+        "ID": 18,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "O Public administration and services",
+        "Description": "O Public administration, public services and compulsory social security",
+        "ParentID": 5
+    },
+    {
+        "ID": 19,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "P Education",
+        "Description": "P Education",
+        "ParentID": 5
+    },
+    {
+        "ID": 20,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Q Health and social work activities",
+        "Description": "Q Human health and social work activities",
+        "ParentID": 5
+    },
+    {
+        "ID": 21,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "R Culture, sports and recreation",
+        "Description": "R Culture, sports and recreation",
+        "ParentID": 5
+    },
+    {
+        "ID": 22,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "S Other service activities",
+        "Description": "S Other service activities",
+        "ParentID": 5
+    },
+    {
+        "ID": 23,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "U Extraterritorial organisations",
+        "Description": "U Extraterritorial organisations and bodies",
+        "ParentID": 5
+    },
+    {
+        "ID": 24,
+        "DimensionKey": "SectorBranchesSIC2008",
+        "Title": "Other activities 2nd digit",
+        "Description": "",
+        "ParentID": 5
+    }
+]
