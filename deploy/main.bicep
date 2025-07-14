@@ -102,11 +102,11 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'DB_URL'
               value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require'
-            },
+            }
             {
               name: 'DB_USER'
               value: postgresAdminLogin
-            },
+            }
             {
               name: 'DB_PASSWORD'
               secretRef: 'postgres-password'
