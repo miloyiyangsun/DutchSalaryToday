@@ -51,8 +51,8 @@
 
 注册成功后，您会被带到应用的概述页面。请记录以下三个 ID，它们是我们后续配置的基石。根据您之前提供的信息，这些值是：
 
-- **Application (client) ID (应用程序/客户端 ID):** `da2371b3-6fa7-49f1-8d87-d910d030df97`
-- **Object ID (对象 ID):** `cae7a710-ce1b-483a-b9ee-098538634b1e` (这个 ID 代表服务主体的唯一标识)
+- **Application (client) ID (应用程序/客户端 ID):** `b7815499-c114-41b5-a8e6-033d13db93af`
+- **Object ID (对象 ID):** `a1e363f6-346b-43cf-9b80-1c80df724468` (这个 ID 代表服务主体的唯一标识)
 - **Directory (tenant) ID (目录/租户 ID):** `a0c355d7-d058-4798-89fe-f4c9d0851ce9`
 
 ---
