@@ -1,0 +1,45 @@
+# docker-compose.yml - 07.13, 23:29
+version: "3.8"
+
+services:
+  # PostgreSQL 数据库服务
+  db:
+    image: postgres:15
+    container_name: salary-db
+    environment:
+      POSTGRES_DB: salary_data
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432" # 将容器的5432端口映射到主机的5432端口
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # 数据持久化
+
+  # 后端 Spring Boot 服务
+  backend:
+    build:
+      context: ./backend # Dockerfile 路径
+      dockerfile: Dockerfile
+    container_name: salary-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db # 声明依赖数据库服务，会后于数据库启动
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/salary_data
+      DB_USER: admin
+      DB_PASSWORD: admin123
+
+  # 前端 React 服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: salary-frontend
+    ports:
+      - "3000:80"
+    stdin_open: true # 保持标准输入打开，用于交互式会话
+    tty: true # 分配一个伪终端
+
+volumes:
+  postgres_data: # 定义一个命名的 volume 用于数据持久化
