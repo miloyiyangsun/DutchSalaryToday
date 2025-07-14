@@ -1,6 +1,4 @@
-// 基础设施即代码 (IaC) 模板，用于定义我们的云资源
-
-// --- 1. 参数定义 (Parameters) ---
+// --- 1. 参数定义 ---
 @description('The location for all resources.')
 param location string = resourceGroup().location
 
@@ -18,68 +16,52 @@ param acrName string = 'acrdutchsalary${uniqueString(resourceGroup().id)}'
 
 @description('The PostgreSQL server admin login.')
 @secure()
-param postgresAdminLogin string
+param postgresAdminLogin string = 'psqladmin'
 
 @description('The PostgreSQL server admin password.')
 @secure()
 param postgresAdminPassword string
 
-// --- 2. 核心资源定义 (Core Resources) ---
+// --- 2. 核心资源定义 ---
 
-// 2.1. Azure 容器仓库 (Azure Container Registry - ACR)
+// 2.1. Azure Container Registry
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: acrName
   location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
+  sku: { name: 'Basic' }
+  properties: { adminUserEnabled: true }
 }
 
-// 2.2. Azure Database for PostgreSQL - 灵活服务器 (Flexible Server)
+// 2.2. Azure Database for PostgreSQL – Flexible Server
 resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-preview' = {
   name: 'psql-dutch-salary'
   location: location
-  sku: {
-    name: 'Standard_B1ms'
-    tier: 'Burstable'
-  }
+  sku: { name: 'Standard_B1ms', tier: 'Burstable' }
   properties: {
     administratorLogin: postgresAdminLogin
     administratorLoginPassword: postgresAdminPassword
     version: '15'
-    storage: {
-      storageSizeGB: 32
-    }
-    backup: {
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
-    }
-    network: {
-      delegatedSubnetResourceId: null
-      privateDnsZoneArmResourceId: null
-    }
+    storage: { storageSizeGB: 32 }
+    backup: { backupRetentionDays: 7, geoRedundantBackup: 'Disabled' }
+    network: { delegatedSubnetResourceId: null, privateDnsZoneArmResourceId: null }
   }
 }
 
-// 在 PostgreSQL 服务器上创建一个数据库
 resource postgresDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-03-01-preview' = {
   parent: postgresServer
   name: 'salary_data'
 }
 
-// 2.3. Container Apps 环境 (Container Apps Environment)
+// 2.3. Container Apps Environment
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: containerAppsEnvName
   location: location
   properties: {}
 }
 
-// --- 3. 容器应用定义 (Container Apps) ---
+// --- 3. 容器应用定义 ---
 
-// 3.1. 后端容器应用 (Backend Container App)
+// 3.1. 后端
 resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: backendAppName
   location: location
@@ -90,45 +72,26 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-backend'
           image: '${acr.properties.loginServer}/${backendAppName}:latest'
-          resources: {
-            cpu: '0.25'
-            memory: '0.5Gi'
-          }
+          resources: { cpu: 0.5, memory: '0.5Gi' }
           env: [
-            {
-              name: 'DB_URL'
-              value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require'
-            }
-            {
-              name: 'DB_USER'
-              value: postgresAdminLogin
-            }
-            {
-              name: 'DB_PASSWORD'
-              secretRef: 'postgres-password'
-            }
+            { name: 'DB_URL', value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require' }
+            { name: 'DB_USER', value: postgresAdminLogin }
+            { name: 'DB_PASSWORD', secretRef: 'postgres-password' }
           ]
         }
       ]
-      scale: {
-        minReplicas: 0
-        maxReplicas: 1
-      }
-      ingress: {
-        internal: true
-        targetPort: 8080
-      }
+      scale: { minReplicas: 0, maxReplicas: 1 }
+    }
+    configuration: {
+      ingress: { internal: true, targetPort: 8080 }
       secrets: [
-        {
-          name: 'postgres-password'
-          value: postgresAdminPassword
-        }
+        { name: 'postgres-password', value: postgresAdminPassword }
       ]
     }
   }
 }
 
-// 3.2. 前端容器应用 (Frontend Container App)
+// 3.2. 前端
 resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: frontendAppName
   location: location
@@ -139,29 +102,19 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-frontend'
           image: '${acr.properties.loginServer}/${frontendAppName}:latest'
-          resources: {
-            cpu: '0.25'
-            memory: '0.5Gi'
-          }
+          resources: { cpu: 0.5, memory: '0.5Gi' }
           env: [
-            {
-              name: 'VITE_API_BASE_URL'
-              value: 'http://${backendApp.name}.${containerAppsEnv.name}.${location}.azurecontainerapps.io'
-            }
+            { name: 'VITE_API_BASE_URL', value: 'http://${backendApp.name}.${containerAppsEnv.name}.${location}.azurecontainerapps.io' }
           ]
         }
       ]
-      scale: {
-        minReplicas: 1
-        maxReplicas: 2
-      }
-      ingress: {
-        external: true
-        targetPort: 80
-      }
+      scale: { minReplicas: 1, maxReplicas: 2 }
+    }
+    configuration: {
+      ingress: { external: true, targetPort: 80 }
     }
   }
 }
 
-// --- 4. 输出 (Outputs) ---
+// --- 4. 输出 ---
 output frontendUrl string = frontendApp.properties.configuration.ingress.fqdn
