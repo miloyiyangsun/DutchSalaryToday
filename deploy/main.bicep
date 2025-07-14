@@ -72,7 +72,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-backend'
           image: '${acr.properties.loginServer}/${backendAppName}:latest'
-          resources: { cpu: 0.5, memory: '0.5Gi' },
+          resources: { cpu: 0.5, memory: '0.5Gi' }
           env: [
             {
               name: 'DB_URL'
@@ -87,20 +87,6 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
               secretRef: 'postgres-password'
             }
           ]
-        }
-      ]
-    },
-    configuration: {
-      secrets: [
-        {
-          name: 'postgres-password'
-          value: postgresAdminPassword
-        }
-      ],
-      ingress: {
-        targetPort: 8080, // Default Spring Boot port
-        internal: true
-      }
     }
   }
 }
@@ -116,9 +102,9 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-frontend'
           image: '${acr.properties.loginServer}/${frontendAppName}:latest'
-          resources: { cpu: 0.5, memory: '0.5Gi' },
+          resources: { cpu: 0.5, memory: '0.5Gi' }
           env: [
-            { name: 'VITE_API_BASE_URL', value: 'http://${backendAppName}:8080' }
+            { name: 'VITE_API_BASE_URL', value: 'http://${backendApp.name}.${containerAppsEnv.name}.${location}.azurecontainerapps.io' }
           ]
         }
       ]
