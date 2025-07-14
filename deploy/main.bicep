@@ -1,0 +1,171 @@
+// deploy/main.bicep
+// 基础设施即代码 (IaC) 模板，用于定义我们的云资源
+
+// --- 1. 参数定义 (Parameters) ---
+@description('The location for all resources.')
+param location string = resourceGroup().location
+
+@description('A unique name for the Container Apps Environment.')
+param containerAppsEnvName string = 'cae-dutch-salary'
+
+@description('The name of the frontend container app.')
+param frontendAppName string = 'frontend-app'
+
+@description('The name of the backend container app.')
+param backendAppName string = 'backend-app'
+
+@description('The name of the Azure Container Registry.')
+param acrName string = 'acrdutchsalary${uniqueString(resourceGroup().id)}' // 保证 ACR 名称全局唯一
+
+@description('The PostgreSQL server admin login.')
+@secure()
+param postgresAdminLogin string
+
+@description('The PostgreSQL server admin password.')
+@secure()
+param postgresAdminPassword string
+
+
+// --- 2. 核心资源定义 (Core Resources) ---
+
+// 2.1. Azure 容器仓库 (Azure Container Registry - ACR)
+resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
+  name: acrName
+  location: location
+  sku: {
+    name: 'Basic'
+  }
+  properties: {
+    adminUserEnabled: true
+  }
+}
+
+// 2.2. Azure Database for PostgreSQL - 灵活服务器 (Flexible Server)
+resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-preview' = {
+  name: 'psql-dutch-salary'
+  location: location
+  sku: {
+    name: 'Standard_B1ms'
+    tier: 'Burstable'
+  }
+  properties: {
+    administratorLogin: postgresAdminLogin
+    administratorLoginPassword: postgresAdminPassword
+    version: '15'
+    storage: {
+      storageSizeGB: 32
+    }
+    backup: {
+      backupRetentionDays: 7
+      geoRedundantBackup: 'Disabled'
+    }
+    network: {
+      delegatedSubnetResourceId: null
+      privateDnsZoneArmResourceId: null
+    }
+  }
+}
+
+// 在 PostgreSQL 服务器上创建一个数据库
+resource postgresDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-03-01-preview' = {
+  parent: postgresServer
+  name: 'salary_data'
+}
+
+
+// 2.3. Container Apps 环境 (Container Apps Environment)
+resource containerAppsEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
+  name: containerAppsEnvName
+  location: location
+  properties: {}
+}
+
+
+// --- 3. 容器应用定义 (Container Apps) ---
+
+// 3.1. 后端容器应用 (Backend Container App)
+resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: backendAppName
+  location: location
+  properties: {
+    managedEnvironmentId: containerAppsEnv.id
+    template: {
+      containers: [
+        {
+          name: 'salary-backend'
+          image: '${acr.properties.loginServer}/${backendAppName}:latest'
+          resources: {
+            cpu: 0.25
+            memory: '0.5Gi'
+          }
+          env: [
+            {
+              name: 'DB_URL'
+              value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require'
+            }
+            {
+              name: 'DB_USER'
+              value: postgresAdminLogin
+            }
+            {
+              name: 'DB_PASSWORD'
+              secretRef: 'postgres-password'
+            }
+          ]
+        }
+      ]
+      scale: {
+        minReplicas: 0
+        maxReplicas: 1
+      }
+      ingress: {
+        internal: true
+        targetPort: 8080
+      }
+      secrets: [
+        {
+          name: 'postgres-password'
+          value: postgresAdminPassword
+        }
+      ]
+    }
+  }
+}
+
+// 3.2. 前端容器应用 (Frontend Container App)
+resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: frontendAppName
+  location: location
+  properties: {
+    managedEnvironmentId: containerAppsEnv.id
+    template: {
+      containers: [
+        {
+          name: 'salary-frontend'
+          image: '${acr.properties.loginServer}/${frontendAppName}:latest'
+          resources: {
+            cpu: 0.25
+            memory: '0.5Gi'
+          }
+          env: [
+            {
+              name: 'VITE_API_BASE_URL'
+              value: 'http://${backendAppName}.${containerAppsEnvName}.${location}.azurecontainerapps.io'
+            }
+          ]
+        }
+      ]
+      scale: {
+        minReplicas: 1
+        maxReplicas: 2
+      }
+      ingress: {
+        external: true
+        targetPort: 80
+      }
+    }
+  }
+}
+
+// --- 4. 输出 (Outputs) ---
+output frontendUrl string = frontendApp.properties.configuration.ingress.fqdn

@@ -104,442 +104,82 @@
 
 ## Sprint 0: 奠定基石 (Laying the Foundation)
 
-**状态：待开始 (To-Do)**
+**状态：已完成 (Completed)**
 
-以下是 Sprint 0 的详细可执行计划，完全遵循您的项目结构要求，细化为可立即执行的具体步骤：
+Sprint 0 的核心目标是搭建一个健壮、自动化、可重复的开发与部署环境。我们成功地完成了所有预定任务，为后续的快速功能迭代奠定了坚实的基础。所有配置均遵循了“基础设施即代码” (Infrastructure as Code, IaC) 的原则。
 
 ### 1. 版本控制：GitHub 仓库设置
 
-**详细步骤：**
+**状态：已完成**
 
-**A. 创建仓库 (Create Repository)：**
-
-1.  登录 GitHub → "New repository" → 名称 `DutchSalaryToday`
-2.  描述 (Description)：“荷兰薪酬数据可视化项目”
-3.  选择 `Public`
-4.  勾选 "Add a README file"
-
-**B. 初始化本地仓库并完成首次同步 (Initialize Local Repository & First Sync)：**
-
-为了将本地的项目文件同步到 GitHub，我们采用标准的“功能分支”工作流，即创建一个新分支 `initial-sync`，然后通过拉取请求 (Pull Request) 将其合并到 `main` 分支。
-
-```bash
-# 1. 克隆 (clone) 仓库到本地
-git clone https://github.com/miloyiyangsun/DutchSalaryToday.git
-cd DutchSalaryToday
-
-# 2. 创建项目目录结构和核心文件
-# Create project directory structure and core files
-mkdir -p .github/workflows frontend backend data_acquisition/raw_data
-touch docker-compose.yml .gitignore
-
-# 3. 创建一个新分支用于首次代码同步
-# Create a new branch for the initial code sync
-git checkout -b initial-sync
-
-# 4. 添加所有文件到暂存区并提交
-# Add all files to staging and commit
-git add .
-git commit -m "Initial commit: Add project structure"
-
-# 5. 推送新分支到 GitHub
-# Push the new branch to GitHub
-git push -u origin initial-sync
-```
-
-**C. 合并到主分支 (Merge to Main):**
-
-1.  **创建拉取请求 (Create Pull Request)**: 在 GitHub 网站上，为 `initial-sync` 分支创建一个指向 `main` 分支的拉取请求。
-2.  **合并 (Merge)**: 由于此时尚未设置分支保护规则，可以直接合并该拉取请求。
-
-**D. 配置分支保护 (Branch Protection) - 后续步骤:**
-
-在完成初始项目结构同步后，为了保证 `main` 分支的稳定性，**再进行**分支保护规则的配置。我们将遵循 2025 年 GitHub 分支保护的最新最佳实践，并结合 OpenID Connect (OIDC) 进一步增强安全性。
-
-**核心分支保护规则 (Core Branch Protection Rules):**
-
-在仓库设置中 (`Settings` > `Branches` > `Branch protection rules`):
-
-- **保护分支 (Branch to protect)**：`main`
-- **关于拉取请求审查 (About Pull Request Reviews):**
-  - **对于单人项目 (For Single-Developer Projects)**：GitHub 默认不允许拉取请求的作者批准自己的拉取请求。因此，对于单人项目，我们建议：
-    - **强调自我审查 (Emphasize Self-Review)**：开发者在提交拉取请求后，应像独立的审查者一样，仔细检查自己的代码更改。这是确保代码质量的关键实践。
-    - **暂时不强制要求人工批准 (Temporarily Do Not Enforce Human Approval)**：在分支保护规则中，可以暂时不勾选“`Require pull request reviews before merging`”，或者将所需批准数量设置为 0，以避免流程阻塞。自动化检查将作为主要的质量保障。
-    - **未来团队协作 (Future Team Collaboration)**：如果未来有协作者加入，再启用并配置“`Require pull request reviews before merging`”，以适应团队协作的需求。
-- **勾选：`Require status checks to pass before merging` (合并前需要状态检查通过)**：
-  - **目的 (Purpose)**：在合并代码之前，强制要求所有配置的自动化检查（如单元测试、集成测试、代码风格检查、安全扫描等）必须通过。
-  - **配置 (Configuration)**：确保 CI/CD 流水线中的所有关键检查都作为状态检查集成到 GitHub 中。对于本项目，我们将添加状态检查：`build-frontend`, `build-backend` (在 CI/CD 建立后添加)。
-  - **注意 (Note)**：目前这些状态检查可能不会在 GitHub 设置中显示，这是正常的。它们只有在 CI/CD 工作流实际运行并向 GitHub 报告了这些状态之后，才会出现在列表中。我们将在 Sprint 1 中实现 CI/CD 工作流。
-- **推荐额外配置 (Recommended Additional Configurations)**：
-  - **强制签署提交 (Require Signed Commits)**：通过要求提交者使用 GPG 密钥签署其提交，验证提交的真实性和完整性。
-  - **强制线性历史 (Require Linear History)**：防止合并提交，保持一个干净、线性的提交历史记录。
-  - **禁止强制推送 (Do Not Allow Force Pushes)**：防止开发者通过强制推送覆盖分支历史。
-  - **禁止删除分支 (Do Not Allow Deletions)**：保护重要分支不被意外删除。
-  - **包含管理员 (Include Administrators)**：即使是仓库管理员也应受到分支保护规则的约束，降低内部风险。
-
-**OpenID Connect (OIDC) 与分支保护的结合 (OIDC Integration with Branch Protection):**
-
-OIDC 是 GitHub Actions 安全最佳实践中的一个关键组成部分，它与分支保护规则协同工作，显著提升了 CI/CD 流水线的安全性。通过 OIDC，我们可以实现：
-
-- **无云秘密 (No Cloud Secrets)**：无需在 GitHub 中存储敏感的长期凭证，大大降低了凭证泄露的风险。
-- **凭证自动轮换 (Automated Credential Rotation)**：每次工作流运行时都会生成新的短期令牌。
-- **细粒度授权 (Granular Authorization)**：云提供商可以根据 OIDC 令牌中的声明（如仓库、分支、环境）来精确控制哪些工作流可以访问哪些资源，实现最小权限原则。
-
-在未来的 CI/CD 工作流中，我们将利用 OIDC 的细粒度授权能力，确保只有来自 `main` 分支的成功构建才能触发部署到生产环境。
-
-**目录结构初始化后应如下：**
-
-```text
-DutchSalaryToday/
-├── .github/workflows/    # CI/CD 工作流 (CI/CD Workflows)
-├── data_acquisition/
-│   ├── .venv/            # Python 虚拟环境 (Python Virtual Environment)
-│   ├── raw_data/         # CBS 原始数据 (CBS Raw Data)
-│   ├── fetch_all_cbs_data.py
-│   └── requirements.txt
-├── frontend/             # React 项目 (React Project)
-├── backend/              # Spring Boot 项目 (Spring Boot Project)
-└── Project_Plan.md
-```
-
----
+- **成果**: 成功初始化 `DutchSalaryToday` 公开仓库，并建立了包含 `.github/workflows`, `frontend`, `backend`, `data_acquisition` 的标准项目结构。
 
 ### 2. 云资源：Azure 配置
 
-**详细步骤：**
+**状态：已完成 (理论验证)**
 
-**A. 基础设施即代码 (Infrastructure as Code - IaC) - Bicep:**
-
-我们将使用 Bicep 来声明式地定义和部署 Azure 资源。这确保了基础设施的可重复性、可版本控制和自动化。
-
-**B. OpenID Connect (OIDC) 配置 - GitHub Actions 与 Azure 安全认证:**
-
-这是 GitHub Actions 与 Azure 之间进行安全认证的最新、最安全的方式。它通过在 GitHub 和 Azure 之间建立“信任关系”，允许 GitHub Actions 在每次运行时向 Azure 申请一个**短期的、临时的访问令牌 (Token)**，任务结束即作废，从而**无需存储任何长期密码**。
-
-**具体步骤 (使用 Azure Portal):**
-
-1.  **创建 Microsoft Entra ID 应用程序注册 (Create a Microsoft Entra ID Application Registration)**
-
-    - 登录 [Azure Portal](https://portal.azure.com/)。
-    - 在搜索栏中输入 "Microsoft Entra ID" 并选择它。
-    - 在左侧菜单中，选择 "App registrations" (应用程序注册)。
-    - 点击 "New registration" (新注册)。
-    - **Name (名称)**：为您的应用程序输入一个有意义的名称，例如 `github-actions-oidc-app`。
-    - **Supported account types (支持的帐户类型)**：选择适合您组织需求的选项（通常是 "Accounts in this organizational directory only"）。
-    - **Redirect URI (重定向 URI)**：此场景不需要，可以留空。
-    - 点击 "Register" (注册)。
-    - 注册完成后，您将看到应用程序的概述页面。记下以下值，您稍后会在 GitHub Actions 中用到它们：
-      - **Application (client) ID (应用程序（客户端）ID)**
-      - **Directory (tenant) ID (目录（租户）ID)**
-
-2.  **配置 API 权限 (Configure API Permissions) (可选，根据您的需求)**
-
-    - 在应用程序注册的左侧菜单中，选择 "API permissions" (API 权限)。
-    - 如果您需要此应用程序访问特定的 Azure 服务（例如 Microsoft Graph），请点击 "Add a permission" (添加权限)。
-    - 选择所需的 API 和权限类型（例如 "Microsoft Graph" -> "Application permissions"）。
-    - 选择具体的权限（例如 `User.Read.All` 如果需要读取所有用户）。
-    - 点击 "Add permissions" (添加权限)。
-    - **重要**：对于应用程序权限，您通常需要点击 "Grant admin consent for <Your Tenant Name>" (为 <您的租户名称> 授予管理员同意) 来批准这些权限。
-
-3.  **添加联合凭据 (Add Federated Credentials)**
-
-    - 在应用程序注册的左侧菜单中，选择 "Certificates & secrets" (证书和秘密)。
-    - 选择 "Federated credentials" (联合凭据) 选项卡。
-    - 点击 "Add credential" (添加凭据)。
-    - **Federated credential scenario (联合凭据场景)**：选择 "GitHub Actions deploying Azure resources" (GitHub Actions 部署 Azure 资源)。
-    - **Organization (组织)**：输入您的 GitHub 组织名称或个人用户名。
-    - **Repository (存储库)**：输入您的 GitHub 仓库名称。
-    - **Entity type (实体类型)**：选择您希望触发 OIDC 认证的实体类型。常见的选项有：
-      - `Branch` (分支)：例如 `main` 或 `refs/heads/main`。
-      - `Environment` (环境)：如果您在 GitHub 中使用了部署环境 (deployment environments)。
-      - `Pull request` (拉取请求)：用于拉取请求触发的工作流。
-    - **GitHub name (GitHub 名称)**：根据您选择的实体类型填写。例如，如果选择 `Branch`，则填写分支名称（如 `main`）。
-    - **Name (名称)**：为这个联合凭据提供一个描述性名称，例如 `my-repo-main-branch-oidc`。
-    - 点击 "Add" (添加)。
-    - 这将建立 Azure AD 和 GitHub 之间的信任关系。
-
-4.  **分配服务主体角色 (Assign Service Principal Roles)**
-    - 您的应用程序注册会自动创建一个对应的服务主体 (Service Principal)。您需要为这个服务主体分配适当的 Azure 角色，以便它能够访问您希望部署到的资源。
-    - 导航到您希望部署到的 Azure 订阅 (Subscription)、资源组 (Resource Group) 或特定资源。
-    - 选择 "Access control (IAM)" (访问控制 (IAM))。
-    - 点击 "Add" (添加) -> "Add role assignment" (添加角色分配)。
-    - **Role (角色)**：选择所需的权限角色，例如 `Contributor` (参与者) 或更具体的角色（遵循最小权限原则 (principle of least privilege)）。
-    - **Members (成员)**：选择 "Service principal" (服务主体)。
-    - **Select members (选择成员)**：搜索您之前创建的应用程序注册的名称（例如 `github-actions-oidc-app`）。
-    - 点击 "Review + assign" (审阅 + 分配)。
-
-**C. 配置 GitHub Secrets:**
-
-虽然 OIDC 减少了对长期凭证的需求，但一些配置值（如订阅 ID、租户 ID、客户端 ID）仍可能需要。
-
-在 GitHub 仓库的 `Settings` > `Secrets and variables` > `Actions` 中添加以下 `secrets`:
-
-- `AZURE_CLIENT_ID`: Microsoft Entra ID 应用程序的客户端 ID。
-- `AZURE_TENANT_ID`: Azure 订阅的租户 ID。
-- `AZURE_SUBSCRIPTION_ID`: Azure 订阅 ID。
-
----
+- **成果**: 详细规划了基于 **Bicep** 的基础设施即代码 (IaC) 方案，并设计了使用 **OpenID Connect (OIDC)** 连接 GitHub Actions 与 Azure 的安全认证流程，为未来的云部署做好了充分的理论和方案准备。
 
 ### 3. 本地环境：docker-compose 配置
 
-**文件位置**: `docker-compose.yml`
+**状态：已完成**
 
-```yaml
-# docker-compose.yml - 07.13, 23:29
-version: "3.8"
-
-services:
-  # PostgreSQL 数据库服务
-  db:
-    image: postgres:15
-    container_name: salary-db
-    environment:
-      POSTGRES_DB: salary_data
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5432:5432" # 将容器的5432端口映射到主机的5432端口
-    volumes:
-      - postgres_data:/var/lib/postgresql/data # 数据持久化
-
-  # 后端 Spring Boot 服务
-  backend:
-    build:
-      context: ./backend # Dockerfile 路径
-      dockerfile: Dockerfile
-    container_name: salary-backend
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db # 声明依赖数据库服务，会后于数据库启动
-    environment:
-      DB_URL: jdbc:postgresql://db:5432/salary_data
-      DB_USER: admin
-      DB_PASSWORD: admin123
-
-  # 前端 React 服务
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: salary-frontend
-    ports:
-      - "3000:3000"
-    stdin_open: true # 保持标准输入打开，用于交互式会话
-    tty: true # 分配一个伪终端
-
-volumes:
-  postgres_data: # 定义一个命名的 volume 用于数据持久化
-```
-
----
+- **成果**: 最终的 `docker-compose.yml` 文件成功编排了三个核心服务 (`db`, `backend`, `frontend`)，实现了一键式本地开发环境。
+- **关键技术**:
+  - **数据库 (`db`)**: 使用 `postgres:15` 镜像，并通过 Docker 卷 (volume) `postgres_data` 实现了数据持久化。
+  - **后端 (`backend`)**: 依赖 `db` 服务，并通过环境变量 (`DB_URL`, `DB_USER`, `DB_PASSWORD`) 注入数据库连接信息。
+  - **前端 (`frontend`)**: 将主机的 `3000` 端口映射到 Nginx 容器的 `80` 端口。
 
 ### 4. 项目脚手架 (Project Scaffolding)
 
-**前端初始化 (React + TypeScript):**
+**状态：已完成**
 
-```bash
-# 进入前端目录
-cd frontend
-
-# 使用 Vite 创建 React + TypeScript 项目
-npm create vite@latest . -- --template react-ts
-
-# 安装项目依赖：axios 用于API请求, recharts 用于图表
-npm install axios recharts @types/recharts
-
-# 创建 Dockerfile
-touch Dockerfile
-```
-
-**前端 Dockerfile:**
-
-```dockerfile
-# frontend/Dockerfile - 07.13, 23:29
-
-# --- 构建阶段 (Build Stage) ---
-FROM node:18-alpine as build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# --- 生产阶段 (Production Stage) ---
-FROM nginx:stable-alpine
-# 从构建阶段复制构建好的静态文件到 Nginx 服务器
-COPY --from=build /app/dist /usr/share/nginx/html
-# 暴露 80 端口
-EXPOSE 80
-```
-
-**后端初始化 (Spring Boot):**
-
-1.  访问 **Spring Initializr** (`start.spring.io`)
-2.  配置项目:
-    - Project: `Maven`
-    - Language: `Java 17`
-    - Dependencies (依赖): `Spring Web`, `Spring Data JPA`, `PostgreSQL Driver`
-3.  下载 ZIP 文件并将其内容解压到 `backend` 目录。
-
-**后端 Dockerfile:**
-
-```dockerfile
-# backend/Dockerfile - 07.13, 23:29
-
-# --- 构建阶段 (Build Stage) ---
-# 使用 Maven 官方镜像构建项目
-FROM maven:3.8.6-openjdk-17 AS build
-WORKDIR /app
-COPY . .
-# 打包项目，跳过测试 (-DskipTests)
-RUN mvn clean package -DskipTests
-
-# --- 生产阶段 (Production Stage) ---
-# 使用轻量级的 OpenJDK 镜像运行应用
-FROM openjdk:17-jdk-slim
-WORKDIR /app
-# 从构建阶段复制 JAR 文件
-COPY --from=build /app/target/*.jar app.jar
-# 暴露 8080 端口
-EXPOSE 8080
-# 启动应用的入口点 (Entrypoint)
-ENTRYPOINT ["java","-jar","app.jar"]
-```
-
-**数据采集 (Python):**
-
-```bash
-# 进入数据采集目录
-cd data_acquisition
-
-# 创建并激活虚拟环境
-python -m venv .venv
-source .venv/bin/activate  # 在 Windows 上使用 `.venv\Scripts\activate`
-
-# 安装依赖
-pip install pandas requests python-dotenv
-```
-
----
+- **成果**: 前后端项目均已成功初始化并完成容器化。
+- **前端**:
+  - **技术栈**: React + TypeScript，使用 Vite 作为构建工具。
+  - **Dockerfile**: 采用多阶段构建，构建环境为 `node:20-alpine`，生产环境为 `nginx:stable-alpine`。解决了 Vite 7 与 Node.js 18 的兼容性问题。
+- **后端**:
+  - **技术栈**: Spring Boot 3.5.3, Java 17, Maven。
+  - **依赖**: 集成了 `Spring Data JPA` 用于数据持久化和 `PostgreSQL Driver`。
+  - **Dockerfile**: 采用多阶段构建，构建环境为 `maven:3.9.10-eclipse-temurin-17`，生产环境为 `openjdk:17-jdk-slim`。解决了 `spring-boot:repackage` 的构建生命周期问题。
 
 ### 5. 容器化验证 (Containerization Verification)
 
-**测试命令:**
+**状态：已完成**
 
-```bash
-# 在项目根目录启动所有服务并构建镜像
-docker-compose up --build
-
-# 在另一个终端中验证服务是否正常运行
-# 检查后端健康状况 (Health Check)
-curl http://localhost:8080/actuator/health
-
-# 在浏览器中打开前端页面
-open http://localhost:3000
-```
-
----
+- **成果**: 通过 `docker-compose up --build` 命令，所有服务均能成功构建并启动。
+- **验证**:
+  - 后端应用成功连接到 `db` 服务，并通过 `spring.jpa.hibernate.ddl-auto=update` 自动管理数据库。
+  - 前端应用在 `http://localhost:3000` 正常访问。
+  - 后端健康检查端点 `http://localhost:8080/actuator/health` 正常响应。
 
 ### 6. CI/CD 基础管道 (Basic CI/CD Pipeline)
 
-**文件位置**: `.github/workflows/build.yml`
+**状态：已完成**
 
-```yaml
-# .github/workflows/build.yml - 07.13, 23:29
-name: Build and Test
-
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    services:
-      # 在工作流中启动一个 PostgreSQL 服务用于测试
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: testdb
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-        ports:
-          - 5432:5432
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # --- 后端构建 ---
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: Build backend with Maven
-        working-directory: ./backend
-        run: mvn -B package --file pom.xml -DskipTests
-
-      # --- 前端构建 ---
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm install
-
-      - name: Build frontend
-        working-directory: ./frontend
-        run: npm run build
-```
-
----
+- **成果**: 在 `.github/workflows/build.yml` 中建立了一个有效的持续集成管道。
+- **关键配置**:
+  - **后端**: 使用 **Java 17 (Temurin)** 环境，通过 `mvn -B compile` 验证代码可编译性。
+  - **前端**: 使用 **Node.js 20** 环境，通过 `npm install && npm run build` 验证项目可构建性。
 
 ### 7. 最终验证清单 (Final Verification Checklist)
 
-**仓库结构检查:**
+**状态：已完成**
 
-```bash
-# 使用 tree 命令查看项目结构 (如果未安装，macOS 可使用 brew install tree)
-tree -L 3
-```
-
-**本地环境测试:**
-
-1.  运行 `docker-compose up --build`
-2.  访问 `http://localhost:3000` (前端) 和 `http://localhost:8080/actuator/health` (后端)
-
-**CI/CD 测试:**
-
-1.  将代码推送到 GitHub 远程仓库
-2.  在仓库的 `Actions` 标签页验证工作流是否成功执行
-
-**Azure 连接测试:**
-
-```bash
-# 登录 Azure
-az login
-
-# 验证资源组是否存在
-az group list --output table | grep DutchSalaryToday-RG
-```
+- **仓库结构**: 项目结构清晰，符合规划。
+- **本地环境**: `docker-compose` 环境稳定可靠。
+- **CI/CD**: GitHub Actions 工作流按预期成功执行。
 
 ### 时间估算表 (Time Estimation)
 
-| 任务 (Task)           | 估算时间 (Estimated Time) |
-| :-------------------- | :------------------------ |
-| GitHub 设置           | 15 分钟                   |
-| Azure 配置            | 20 分钟                   |
-| `docker-compose` 配置 | 30 分钟                   |
-| 项目脚手架            | 45 分钟                   |
-| CI/CD 配置            | 30 分钟                   |
-| **总计 (Total)**      | **~2.5 小时**             |
+| 任务 (Task)           | 估算时间 (Estimated Time)    |
+| :-------------------- | :--------------------------- |
+| GitHub 设置           | 30 分钟                      |
+| Azure 配置            | 180 分钟                     |
+| `docker-compose` 配置 | 60 分钟                      |
+| 项目脚手架            | 60 分钟                      |
+| CI/CD 配置            | 60 分钟                      |
+| **总计 (Total)**      | **~ 6.5 小时** （已完成 ✅） |
 
 这个 Sprint 0 计划完全遵循**基础设施即代码 (Infrastructure as Code, IaC)** 原则，所有配置都是声明式的，确保环境一致性。完成后，您将拥有一个完全容器化的开发环境和自动化构建管道，为 Sprint 1 的快速迭代奠定坚实基础。
 
