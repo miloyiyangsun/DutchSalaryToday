@@ -16,7 +16,7 @@ param acrName string = 'acrdutchsalary${uniqueString(resourceGroup().id)}'
 
 @description('The PostgreSQL server admin login.')
 @secure()
-param postgresAdminLogin string = 'psqladmin'
+param postgresAdminLogin string
 
 @description('The PostgreSQL server admin password.')
 @secure()
