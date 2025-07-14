@@ -72,21 +72,35 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-backend'
           image: '${acr.properties.loginServer}/${backendAppName}:latest'
-          resources: { cpu: 0.5, memory: '0.5Gi' }
+          resources: { cpu: 0.5, memory: '0.5Gi' },
           env: [
-            { name: 'DB_URL', value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require' }
-            { name: 'DB_USER', value: postgresAdminLogin }
-            { name: 'DB_PASSWORD', secretRef: 'postgres-password' }
+            {
+              name: 'DB_URL'
+              value: 'jdbc:postgresql://${postgresServer.name}.postgres.database.azure.com:5432/${postgresDatabase.name}?sslmode=require'
+            },
+            {
+              name: 'DB_USER'
+              value: postgresAdminLogin
+            },
+            {
+              name: 'DB_PASSWORD'
+              secretRef: 'postgres-password'
+            }
           ]
         }
       ]
-      scale: { minReplicas: 0, maxReplicas: 1 }
-    }
+    },
     configuration: {
-      ingress: { internal: true, targetPort: 8080 }
       secrets: [
-        { name: 'postgres-password', value: postgresAdminPassword }
-      ]
+        {
+          name: 'postgres-password'
+          value: postgresAdminPassword
+        }
+      ],
+      ingress: {
+        targetPort: 8080, // Default Spring Boot port
+        internal: true
+      }
     }
   }
 }
@@ -102,9 +116,9 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'salary-frontend'
           image: '${acr.properties.loginServer}/${frontendAppName}:latest'
-          resources: { cpu: 0.5, memory: '0.5Gi' }
+          resources: { cpu: 0.5, memory: '0.5Gi' },
           env: [
-            { name: 'VITE_API_BASE_URL', value: 'http://${backendApp.name}.${containerAppsEnv.name}.${location}.azurecontainerapps.io' }
+            { name: 'VITE_API_BASE_URL', value: 'http://${backendAppName}:8080' }
           ]
         }
       ]
