@@ -1,33 +1,32 @@
-// deploy/main.bicep
-// 完整无错的 Azure Container Apps & PostgreSQL Bicep 模板
+// 基础设施即代码 (IaC) 模板，用于定义我们的云资源
 
-// --- 1. 参数区 ---
+// --- 1. 参数定义 (Parameters) ---
 @description('The location for all resources.')
 param location string = resourceGroup().location
 
-@description('Container Apps 环境名称，唯一即可。')
+@description('A unique name for the Container Apps Environment.')
 param containerAppsEnvName string = 'cae-dutch-salary'
 
-@description('前端 Container App 名称。')
+@description('The name of the frontend container app.')
 param frontendAppName string = 'frontend-app'
 
-@description('后端 Container App 名称。')
+@description('The name of the backend container app.')
 param backendAppName string = 'backend-app'
 
-@description('ACR 名称，必须全小写。')
-param acrName string = toLower('acrdutchsalary${uniqueString(resourceGroup().id)}')
+@description('The name of the Azure Container Registry.')
+param acrName string = 'acrdutchsalary${uniqueString(resourceGroup().id)}'
 
-@description('PostgreSQL 管理员用户名。')
+@description('The PostgreSQL server admin login.')
 @secure()
 param postgresAdminLogin string
 
-@description('PostgreSQL 管理员密码。')
+@description('The PostgreSQL server admin password.')
 @secure()
 param postgresAdminPassword string
 
-// --- 2. 资源区 ---
+// --- 2. 核心资源定义 (Core Resources) ---
 
-// 2.1 Azure Container Registry
+// 2.1. Azure 容器仓库 (Azure Container Registry - ACR)
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: acrName
   location: location
@@ -39,10 +38,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   }
 }
 
-// 获取 ACR Admin 凭据
-var acrCreds = listCredentials(acr.id, '2023-07-01')
-
-// 2.2 PostgreSQL 灵活服务器
+// 2.2. Azure Database for PostgreSQL - 灵活服务器 (Flexible Server)
 resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-preview' = {
   name: 'psql-dutch-salary'
   location: location
@@ -61,55 +57,34 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-pr
       backupRetentionDays: 7
       geoRedundantBackup: 'Disabled'
     }
-    // 删除 network 配置，使用默认公有端点
+    network: {
+      delegatedSubnetResourceId: null
+      privateDnsZoneArmResourceId: null
+    }
   }
 }
 
-// 在服务器上创建数据库
+// 在 PostgreSQL 服务器上创建一个数据库
 resource postgresDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-03-01-preview' = {
   parent: postgresServer
   name: 'salary_data'
 }
 
-// 2.3 Container Apps 环境
+// 2.3. Container Apps 环境 (Container Apps Environment)
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: containerAppsEnvName
   location: location
   properties: {}
 }
 
-// --- 3. 后端 Container App ---
+// --- 3. 容器应用定义 (Container Apps) ---
+
+// 3.1. 后端容器应用 (Backend Container App)
 resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: backendAppName
   location: location
   properties: {
     managedEnvironmentId: containerAppsEnv.id
-
-    // 把凭据和机密放在 configuration 下
-    configuration: {
-      ingress: {
-        internal: true
-        targetPort: 8080
-      }
-      registries: [
-        {
-          server: acr.properties.loginServer
-          username: acrCreds.username
-          passwordSecretRef: 'acr-password'
-        }
-      ]
-      secrets: [
-        {
-          name: 'postgres-password'
-          value: postgresAdminPassword
-        }
-        {
-          name: 'acr-password'
-          value: acrCreds.passwords[0].value
-        }
-      ]
-    }
-
     template: {
       containers: [
         {
@@ -139,37 +114,26 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         minReplicas: 0
         maxReplicas: 1
       }
+      ingress: {
+        internal: true
+        targetPort: 8080
+      }
+      secrets: [
+        {
+          name: 'postgres-password'
+          value: postgresAdminPassword
+        }
+      ]
     }
   }
 }
 
-// --- 4. 前端 Container App ---
+// 3.2. 前端容器应用 (Frontend Container App)
 resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: frontendAppName
   location: location
   properties: {
     managedEnvironmentId: containerAppsEnv.id
-
-    configuration: {
-      ingress: {
-        external: true
-        targetPort: 80
-      }
-      registries: [
-        {
-          server: acr.properties.loginServer
-          username: acrCreds.username
-          passwordSecretRef: 'acr-password'
-        }
-      ]
-      secrets: [
-        {
-          name: 'acr-password'
-          value: acrCreds.passwords[0].value
-        }
-      ]
-    }
-
     template: {
       containers: [
         {
@@ -182,7 +146,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             {
               name: 'VITE_API_BASE_URL'
-              value: 'http://${backendAppName}.${containerAppsEnvName}.${location}.azurecontainerapps.io'
+              value: 'http://${backendApp.name}.${containerAppsEnv.name}.${location}.azurecontainerapps.io'
             }
           ]
         }
@@ -191,9 +155,13 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
         minReplicas: 1
         maxReplicas: 2
       }
+      ingress: {
+        external: true
+        targetPort: 80
+      }
     }
   }
 }
 
-// --- 5. 输出 ---
+// --- 4. 输出 (Outputs) ---
 output frontendUrl string = frontendApp.properties.configuration.ingress.fqdn
