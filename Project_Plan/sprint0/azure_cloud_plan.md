@@ -606,7 +606,7 @@ axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 ### 步骤 2: 触发并监控 CI/CD 工作流
 
-将代码推送到 `main` 分支后，我们的自动化部署流程将自动启动。
+将代码推送到 `main` 分支后，我们的自动化部署流程将自动启动的。
 
 1.  **打开 GitHub Actions 页面:**
     - 在您的 GitHub 仓库页面，点击顶部的 **“Actions”** 标签页。
