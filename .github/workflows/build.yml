@@ -1,5 +1,5 @@
 # .github/workflows/build.yml
-name: Build, Push, and Deploy to ACA
+name: Build, Push, and Deploy to App Service
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: ["main"]
 
-# 授权工作流申请 OIDC 令牌
 permissions:
   id-token: write
   contents: read
@@ -15,7 +14,6 @@ permissions:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    # 只在 push 到 main 时执行
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     outputs:
@@ -32,40 +30,30 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # 1️⃣ 获取/生成 ACR 登录服务器
-      - name: Get or Create ACR and get Login Server
+      - name: Get ACR Login Server
         id: acr_login
         run: |
-          ACR_NAME=$(az acr list \
-                     --resource-group DutchSalaryToday-RG \
-                     --query "[0].name" -o tsv)
+          ACR_NAME=$(az acr list --resource-group DutchSalaryToday-RG --query "[0].name" -o tsv)
           if [ -z "$ACR_NAME" ]; then
-            # Bicep 会负责创建 ACR，先占位
             echo "acr_login_server=placeholder.azurecr.io" >> $GITHUB_OUTPUT
           else
-            LOGIN_SERVER=$(az acr show \
-                           --name "$ACR_NAME" \
-                           --query loginServer -o tsv)
+            LOGIN_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)
             echo "acr_login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
           fi
 
-      # 2️⃣ 登录 ACR（仅当 ACR 已存在时）
       - name: Login to ACR
         if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io'
         run: |
-          ACR_NAME=$(az acr list \
-                     --resource-group DutchSalaryToday-RG \
-                     --query "[0].name" -o tsv)
+          ACR_NAME=$(az acr list --resource-group DutchSalaryToday-RG --query "[0].name" -o tsv)
           az acr login --name "$ACR_NAME"
 
-      # 3️⃣ 构建并推送镜像
       - name: Build and Push Backend Image
         if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io'
         uses: docker/build-push-action@v5
         with:
           context: ./backend
           push: true
-          tags: ${{ steps.acr_login.outputs.acr_login_server }}/backend-app:latest
+          tags: ${{ steps.acr_login.outputs.acr_login_server }}/backend-webapp:latest
 
       - name: Build and Push Frontend Image
         if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io'
@@ -73,11 +61,9 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ steps.acr_login.outputs.acr_login_server }}/frontend-app:latest
+          tags: ${{ steps.acr_login.outputs.acr_login_server }}/frontend-webapp:latest
 
-  # ------------------------------------------------------------------
-  # 部署阶段
-  deploy_to_aca:
+  deploy_to_appservice:
     runs-on: ubuntu-latest
     needs: build_and_push
     environment: production
@@ -106,7 +92,6 @@ jobs:
 
           failOnStdErr: false
 
-      # 4️⃣ 打印前端 URL
       - name: Echo frontend URL
         run: |
-          echo "Frontend URL: ${{ steps.deploy.outputs.frontendUrl }}"
+          echo "Frontend URL: https://${{ secrets.FRONTEND_APP_NAME }}.azurewebsites.net"

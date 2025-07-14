@@ -29,7 +29,7 @@ WORKDIR /app
 
 # 从构建阶段，将分层的应用内容复制到生产镜像中
 # 这种方式比直接复制一个 fat JAR 更好，因为它能更好地利用 Docker 的层缓存机制
-COPY --from=build /app/target/dutch-salary-today-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # 暴露应用运行的端口
 EXPOSE 8080
