@@ -135,7 +135,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
     configuration: {
       // 设置为内部访问，只允许环境内的其他应用访问 (Set to internal ingress, only accessible by other apps within the environment)
       ingress: {
-        internal: true
+        external: false
         targetPort: 8080
       }
       // 定义应用可以使用的机密信息 (Define secrets available to the application)
