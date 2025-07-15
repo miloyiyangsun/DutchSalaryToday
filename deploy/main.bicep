@@ -6,7 +6,7 @@
 
 // --- 1. 参数定义 ---
 @description('资源部署地理位置')
-param location string = 'northeurope'
+param location string = resourceGroup().location
 
 @description('前端 Web App 名称')
 param frontendAppName string = 'frontend-webapp'
@@ -46,7 +46,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
 // --- 3. Azure PostgreSQL 数据库 ---
 resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-preview' = {
   name: 'psql-dutch-salary'
-  location: location
+  location: 'northeurope'
   sku: {
     name: 'Standard_B1ms'
     tier: 'Burstable'
