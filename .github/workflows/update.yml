@@ -31,11 +31,10 @@ jobs:
       - name: Get ACR Login Server # 步骤3: 获取 ACR 登录服务器
         id: acr_login
         run: |
-          # 获取资源组名称，这里假设资源组名是固定的或者通过 secret 传入
           RESOURCE_GROUP_NAME="${{ secrets.AZURE_RESOURCE_GROUP_NAME }}"
           ACR_NAME=$(az acr list --resource-group $RESOURCE_GROUP_NAME --query "[0].name" -o tsv)
           if [ -z "$ACR_NAME" ]; then
-            echo "acr_login_server=placeholder.azurecr.io" >> $GITHUB_OUTPUT # 如果找不到 ACR，使用占位符
+            echo "acr_login_server=placeholder.azurecr.io" >> $GITHUB_OUTPUT 
           else
             LOGIN_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)
             echo "acr_login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
@@ -89,8 +88,8 @@ jobs:
             location=${{ secrets.AZURE_LOCATION }}
             frontendAppName=${{ secrets.FRONTEND_APP_NAME }}
             backendAppName=${{ secrets.BACKEND_APP_NAME }}
-            imageTag=${{ github.sha }} # 使用 commit SHA 作为镜像标签
-            acrLoginServer=${{ needs.build-and-push.outputs.acr_login_server }} # 从上一个 job 获取 ACR 登录服务器
+            imageTag=${{ github.sha }} 
+            acrLoginServer=${{ needs.build-and-push.outputs.acr_login_server }} 
             postgresAdminLogin=${{ secrets.POSTGRES_ADMIN_LOGIN }}
             postgresAdminPassword=${{ secrets.POSTGRES_ADMIN_PASSWORD }}
             postgresFullyQualifiedDomainName=${{ secrets.POSTGRES_FQDN }}
