@@ -4,9 +4,6 @@
 // =================================================================
 
 // --- 1. 参数定义 ---
-@description('资源部署地理位置')
-param location string = resourceGroup().location
-
 @description('前端 Web App 名称')
 param frontendAppName string = 'frontend-webapp'
 
@@ -47,12 +44,14 @@ resource frontendWebApp 'Microsoft.Web/sites@2023-01-01' existing = {
 resource backendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   name: 'web'
   parent: backendWebApp
-  location:location
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${backendAppName}:${imageTag}'
     appSettings: [
       { name: 'WEBSITES_PORT', value: '8080' }
-      { name: 'DB_URL', value: 'jdbc:postgresql://${postgresFullyQualifiedDomainName}:5432/${postgresDatabaseName}?sslmode=require' }
+      {
+        name: 'DB_URL'
+        value: 'jdbc:postgresql://${postgresFullyQualifiedDomainName}:5432/${postgresDatabaseName}?sslmode=require'
+      }
       { name: 'DB_USER', value: postgresAdminLogin }
       { name: 'DB_PASSWORD', value: postgresAdminPassword }
     ]
@@ -63,7 +62,6 @@ resource backendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
 resource frontendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   name: 'web'
   parent: frontendWebApp
-  location:location
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${frontendAppName}:${imageTag}'
     appSettings: [
@@ -75,4 +73,4 @@ resource frontendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
 
 // --- 5. 输出 ---
 output frontendUrl string = 'https://${frontendWebApp.name}.azurewebsites.net'
-output backendUrl string = 'https://${backendWebApp.name}.azurewebsites.net' 
+output backendUrl string = 'https://${backendWebApp.name}.azurewebsites.net'
