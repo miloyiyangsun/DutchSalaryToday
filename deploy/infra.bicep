@@ -84,29 +84,57 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   }
 }
 
-// --- 5. 后端 Web App - 仅创建，不配置容器和应用设置 ---
+// --- 5. 后端 Web App - 添加系统分配的托管身份 ---
 resource backendWebApp 'Microsoft.Web/sites@2023-01-01' = {
   name: backendAppName
   location: location
   kind: 'app,linux,container'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     // siteConfig 相关配置（如镜像和应用设置）将在 app-update.bicep 中处理
   }
 }
 
-// --- 6. 前端 Web App - 仅创建，不配置容器和应用设置 ---
+// --- 6. 前端 Web App - 添加系统分配的托管身份 ---
 resource frontendWebApp 'Microsoft.Web/sites@2023-01-01' = {
   name: frontendAppName
   location: location
   kind: 'app,linux,container'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     // siteConfig 相关配置（如镜像和应用设置）将在 app-update.bicep 中处理
   }
 }
 
-// --- 7. 输出，供 app-update.bicep 和 CI/CD 使用 ---
+// --- 7. 为后端Web App的托管身份分配AcrPull角色 ---
+resource backendAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(acr.id, backendWebApp.id, 'AcrPull')
+  scope: acr
+  properties: {
+    principalId: backendWebApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull角色ID
+  }
+}
+
+// --- 8. 为前端Web App的托管身份分配AcrPull角色 ---
+resource frontendAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(acr.id, frontendWebApp.id, 'AcrPull')
+  scope: acr
+  properties: {
+    principalId: frontendWebApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull角色ID
+  }
+}
+
+// --- 9. 输出，供 app-update.bicep 和 CI/CD 使用 ---
 output acrLoginServer string = acr.properties.loginServer
 output backendWebAppName string = backendWebApp.name
 output frontendWebAppName string = frontendWebApp.name

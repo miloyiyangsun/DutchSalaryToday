@@ -46,6 +46,7 @@ resource backendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   parent: backendWebApp
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${backendAppName}:${imageTag}'
+    acrUseManagedIdentityCreds: true // 启用托管身份拉取镜像
     appSettings: [
       { name: 'WEBSITES_PORT', value: '8080' }
       {
@@ -64,6 +65,7 @@ resource frontendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   parent: frontendWebApp
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${frontendAppName}:${imageTag}'
+    acrUseManagedIdentityCreds: true // 启用托管身份拉取镜像
     appSettings: [
       { name: 'WEBSITES_PORT', value: '80' }
       { name: 'VITE_API_BASE_URL', value: 'https://${backendWebApp.name}.azurewebsites.net' } // 使用后端 Web App 的名称构建 URL
