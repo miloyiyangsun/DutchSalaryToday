@@ -30,6 +30,10 @@ on:
         description: "PostgreSQL 管理员密码"
         required: true
 
+permissions:
+  id-token: write # 用于 OIDC 认证
+  contents: read # 用于 checkout 代码
+
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
