@@ -6,7 +6,7 @@ on:
       location:
         description: "Azure 资源部署位置"
         required: true
-        default: "westeurope"
+        default: "northeurope"
       frontendAppName:
         description: "前端 Web App 名称"
         required: true
