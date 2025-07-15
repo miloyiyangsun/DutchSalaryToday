@@ -52,6 +52,12 @@ jobs:
           # 不再使用 creds 方式，而是使用 OIDC
           # creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Create Resource Group if not exists # 步骤2.5: 创建资源组 (如果不存在)
+        run: |
+          echo "Checking if resource group ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} exists..."
+          az group create --name ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --location ${{ github.event.inputs.location }} --output none
+          echo "Resource group ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} ensured."
+
       - name: Deploy Infrastructure # 步骤3: 部署基础设施
         uses: azure/arm-deploy@v2
         with:
