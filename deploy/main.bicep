@@ -6,7 +6,7 @@
 
 // --- 1. 参数定义 ---
 @description('资源部署地理位置')
-param location string = resourceGroup().location
+param location string = 'northeurope'
 
 @description('前端 Web App 名称')
 param frontendAppName string = 'frontend-webapp'
