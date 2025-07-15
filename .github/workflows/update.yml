@@ -85,7 +85,6 @@ jobs:
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           template: ./deploy/app-update.bicep
           parameters: >
-            location=${{ secrets.AZURE_LOCATION }}
             frontendAppName=${{ secrets.FRONTEND_APP_NAME }}
             backendAppName=${{ secrets.BACKEND_APP_NAME }}
             imageTag=${{ github.sha }} 
