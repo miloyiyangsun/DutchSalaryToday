@@ -69,7 +69,7 @@ jobs:
             frontendAppName=${{ github.event.inputs.frontendAppName }}
             backendAppName=${{ github.event.inputs.backendAppName }}
             appServicePlanName=${{ github.event.inputs.appServicePlanName }}
-            acrName=${{ github.event.inputs.acrName }}${{ github.run_id }} # ACR 名称需要唯一，这里使用 run_id 辅助生成
+            acrName=${{ github.event.inputs.acrName }}${{ github.run_id }}
             postgresAdminLogin=${{ github.event.inputs.postgresAdminLogin }}
             postgresAdminPassword=${{ github.event.inputs.postgresAdminPassword }}
 
