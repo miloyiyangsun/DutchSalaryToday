@@ -61,6 +61,7 @@ jobs:
       - name: Deploy Infrastructure # 步骤3: 部署基础设施
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: deploy-infra-${{ github.run_id }}
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           template: ./deploy/infra.bicep
