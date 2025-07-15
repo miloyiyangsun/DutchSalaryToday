@@ -47,6 +47,7 @@ resource frontendWebApp 'Microsoft.Web/sites@2023-01-01' existing = {
 resource backendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   name: 'web'
   parent: backendWebApp
+  location:location
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${backendAppName}:${imageTag}'
     appSettings: [
@@ -62,6 +63,7 @@ resource backendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
 resource frontendWebAppConfig 'Microsoft.Web/sites/config@2023-01-01' = {
   name: 'web'
   parent: frontendWebApp
+  location:location
   properties: {
     linuxFxVersion: 'DOCKER|${acrLoginServer}/${frontendAppName}:${imageTag}'
     appSettings: [
