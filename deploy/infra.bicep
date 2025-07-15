@@ -1,7 +1,6 @@
 // =================================================================
-// Azure Bicep 部署脚本：DutchSalaryToday - App Service 版
-// 描述: 用于部署 DutchSalaryToday 应用的基础设施，包括后端 Web App、前端 Web App 和 PostgreSQL 数据库。
-// 更新时间: 07.15, 19:00
+// Azure Bicep 部署脚本：DutchSalaryToday - 基础设施部署
+// 描述: 用于部署 DutchSalaryToday 应用的基础设施，包括 Azure Container Registry (ACR), PostgreSQL 数据库和 App Service Plan。
 // =================================================================
 
 // --- 1. 参数定义 ---
@@ -19,9 +18,6 @@ param appServicePlanName string = 'asp-dutch-salary'
 
 @description('ACR 注册表名称')
 param acrName string = 'acrdutchsalary${uniqueString(resourceGroup().id)}'
-
-@description('Docker 镜像标签')
-param imageTag string = 'latest'
 
 @description('PostgreSQL 登录名')
 @secure()
@@ -46,7 +42,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
 // --- 3. Azure PostgreSQL 数据库 ---
 resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-03-01-preview' = {
   name: 'psql-dutch-salary'
-  location: 'northeurope'
+  location: 'northeurope' // PostgreSQL 通常建议指定一个区域以优化性能和合规性
   sku: {
     name: 'Standard_B1ms'
     tier: 'Burstable'
@@ -88,42 +84,33 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   }
 }
 
-// --- 5. 后端 Web App ---
+// --- 5. 后端 Web App - 仅创建，不配置容器和应用设置 ---
 resource backendWebApp 'Microsoft.Web/sites@2023-01-01' = {
   name: backendAppName
   location: location
   kind: 'app,linux,container'
   properties: {
     serverFarmId: appServicePlan.id
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${acr.properties.loginServer}/${backendAppName}:${imageTag}'
-      appSettings: [
-        { name: 'WEBSITES_PORT', value: '8080' }
-        { name: 'DB_URL', value: 'jdbc:postgresql://${postgresServer.properties.fullyQualifiedDomainName}:5432/${postgresDatabase.name}?sslmode=require' }
-        { name: 'DB_USER', value: postgresAdminLogin }
-        { name: 'DB_PASSWORD', value: postgresAdminPassword }
-      ]
-    }
+    // siteConfig 相关配置（如镜像和应用设置）将在 app-update.bicep 中处理
   }
 }
 
-// --- 6. 前端 Web App ---
+// --- 6. 前端 Web App - 仅创建，不配置容器和应用设置 ---
 resource frontendWebApp 'Microsoft.Web/sites@2023-01-01' = {
   name: frontendAppName
   location: location
   kind: 'app,linux,container'
   properties: {
     serverFarmId: appServicePlan.id
-    siteConfig: {
-      linuxFxVersion: 'DOCKER|${acr.properties.loginServer}/${frontendAppName}:${imageTag}'
-      appSettings: [
-        { name: 'WEBSITES_PORT', value: '80' }
-        { name: 'VITE_API_BASE_URL', value: 'https://${backendWebApp.name}.azurewebsites.net' }
-      ]
-    }
+    // siteConfig 相关配置（如镜像和应用设置）将在 app-update.bicep 中处理
   }
 }
 
-// --- 7. 输出 ---
-output frontendUrl string = 'https://${frontendWebApp.name}.azurewebsites.net'
-output backendUrl string = 'https://${backendWebApp.name}.azurewebsites.net'
+// --- 7. 输出，供 app-update.bicep 和 CI/CD 使用 ---
+output acrLoginServer string = acr.properties.loginServer
+output backendWebAppName string = backendWebApp.name
+output frontendWebAppName string = frontendWebApp.name
+output backendWebAppUrl string = 'https://${backendWebApp.name}.azurewebsites.net' // 前端需要用到的后端 URL
+output frontendUrl string = 'https://${frontendWebApp.name}.azurewebsites.net' // 最终前端 URL
+output postgresFullyQualifiedDomainName string = postgresServer.properties.fullyQualifiedDomainName
+output postgresDatabaseName string = postgresDatabase.name 

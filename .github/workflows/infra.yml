@@ -1,0 +1,95 @@
+name: Deploy Infrastructure (Manual Trigger)
+
+on:
+  workflow_dispatch: # 手动触发此工作流
+    inputs:
+      location:
+        description: "Azure 资源部署位置"
+        required: true
+        default: "westeurope"
+      frontendAppName:
+        description: "前端 Web App 名称"
+        required: true
+        default: "frontend-webapp"
+      backendAppName:
+        description: "后端 Web App 名称"
+        required: true
+        default: "backend-webapp"
+      appServicePlanName:
+        description: "App Service 计划名称"
+        required: true
+        default: "asp-dutch-salary"
+      acrName:
+        description: "ACR 注册表名称 (唯一字符串会自动添加)"
+        required: true
+        default: "acrdutchsalary"
+      postgresAdminLogin:
+        description: "PostgreSQL 管理员登录名"
+        required: true
+      postgresAdminPassword:
+        description: "PostgreSQL 管理员密码"
+        required: true
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    environment: production # 假设您有一个名为 production 的 GitHub 环境，用于存储 Azure 凭据
+
+    steps:
+      - name: Checkout code # 步骤1: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Azure Login # 步骤2: 登录 Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # 不再使用 creds 方式，而是使用 OIDC
+          # creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Infrastructure # 步骤3: 部署基础设施
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          template: ./deploy/infra.bicep
+          parameters: >
+            location=${{ github.event.inputs.location }}
+            frontendAppName=${{ github.event.inputs.frontendAppName }}
+            backendAppName=${{ github.event.inputs.backendAppName }}
+            appServicePlanName=${{ github.event.inputs.appServicePlanName }}
+            acrName=${{ github.event.inputs.acrName }}${{ github.run_id }} # ACR 名称需要唯一，这里使用 run_id 辅助生成
+            postgresAdminLogin=${{ github.event.inputs.postgresAdminLogin }}
+            postgresAdminPassword=${{ github.event.inputs.postgresAdminPassword }}
+
+      - name: Get Infrastructure Outputs # 步骤4: 获取基础设施输出，供后续步骤或工作流使用
+        id: get_outputs
+        run: |
+          AZURE_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          RESOURCE_GROUP_NAME="${{ secrets.AZURE_RESOURCE_GROUP_NAME }}"
+          DEPLOYMENT_NAME="deploy-infra-${{ github.run_id }}" # 部署名称，与上面保持一致
+
+          # 获取部署的输出
+          outputs=$(az deployment group show \
+            --name $DEPLOYMENT_NAME \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --query properties.outputs \
+            --output json)
+
+          echo "acrLoginServer=$(echo $outputs | jq -r .acrLoginServer.value)" >> $GITHUB_OUTPUT
+          echo "backendWebAppName=$(echo $outputs | jq -r .backendWebAppName.value)" >> $GITHUB_OUTPUT
+          echo "frontendWebAppName=$(echo $outputs | jq -r .frontendWebAppName.value)" >> $GITHUB_OUTPUT
+          echo "backendWebAppUrl=$(echo $outputs | jq -r .backendWebAppUrl.value)" >> $GITHUB_OUTPUT
+          echo "frontendUrl=$(echo $outputs | jq -r .frontendUrl.value)" >> $GITHUB_OUTPUT
+          echo "postgresFullyQualifiedDomainName=$(echo $outputs | jq -r .postgresFullyQualifiedDomainName.value)" >> $GITHUB_OUTPUT
+          echo "postgresDatabaseName=$(echo $outputs | jq -r .postgresDatabaseName.value)" >> $GITHUB_OUTPUT
+
+      - name: Save Infrastructure Outputs # 步骤5: 将输出保存为 GitHub Secrets (可选，建议只保存敏感信息)
+        run: |
+          # 以下命令需要 GitHub Personal Access Token (PAT) 具有 repo 和 administration 权限，不推荐在实际 CI/CD 中直接使用
+          # 更好的做法是，将这些输出作为 GitHub Actions workflow outputs，供后续链式工作流使用，或者通过 Azure Key Vault 管理。
+          # echo "Saving outputs as GitHub secrets... (THIS IS FOR DEMO/LEARNING ONLY!)"
+          # echo "acrLoginServer: ${{ steps.get_outputs.outputs.acrLoginServer }}"
+          # echo "backendWebAppName: ${{ steps.get_outputs.outputs.backendWebAppName }}"
+          # # ...其他输出

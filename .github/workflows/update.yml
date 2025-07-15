@@ -1,0 +1,102 @@
+name: Deploy Application Updates (CI/CD)
+
+on:
+  push:
+    branches:
+      - main # 每次推送到 main 分支时触发
+  workflow_dispatch: # 允许手动触发，用于测试或紧急部署
+
+permissions:
+  id-token: write # 用于 OIDC 认证
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    outputs:
+      acr_login_server: ${{ steps.acr_login.outputs.acr_login_server }}
+
+    steps:
+      - name: Checkout code # 步骤1: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC # 步骤2: 通过 OIDC 登录 Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get ACR Login Server # 步骤3: 获取 ACR 登录服务器
+        id: acr_login
+        run: |
+          # 获取资源组名称，这里假设资源组名是固定的或者通过 secret 传入
+          RESOURCE_GROUP_NAME="${{ secrets.AZURE_RESOURCE_GROUP_NAME }}"
+          ACR_NAME=$(az acr list --resource-group $RESOURCE_GROUP_NAME --query "[0].name" -o tsv)
+          if [ -z "$ACR_NAME" ]; then
+            echo "acr_login_server=placeholder.azurecr.io" >> $GITHUB_OUTPUT # 如果找不到 ACR，使用占位符
+          else
+            LOGIN_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)
+            echo "acr_login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to ACR # 步骤4: 登录 ACR
+        if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io' # 只有在获取到实际的 ACR 登录服务器时才执行
+        run: |
+          ACR_NAME=$(az acr list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --query "[0].name" -o tsv)
+          az acr login --name "$ACR_NAME"
+
+      - name: Build and Push Backend Image # 步骤5: 构建并推送后端镜像
+        if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend # 后端项目的 Dockerfile 路径
+          push: true
+          tags: ${{ steps.acr_login.outputs.acr_login_server }}/${{ secrets.BACKEND_APP_NAME }}:${{ github.sha }} # 使用 commit SHA 作为标签
+
+      - name: Build and Push Frontend Image # 步骤6: 构建并推送前端镜像
+        if: steps.acr_login.outputs.acr_login_server != 'placeholder.azurecr.io'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend # 前端项目的 Dockerfile 路径
+          push: true
+          tags: ${{ steps.acr_login.outputs.acr_login_server }}/${{ secrets.FRONTEND_APP_NAME }}:${{ github.sha }} # 使用 commit SHA 作为标签
+
+  deploy-application:
+    runs-on: ubuntu-latest
+    needs: build-and-push # 确保在构建和推送镜像之后再部署应用
+    environment: production # 假设您有一个名为 production 的 GitHub 环境，用于存储 Azure 凭据
+
+    steps:
+      - name: Checkout code # 步骤1: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC # 步骤2: 通过 OIDC 登录 Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Application Updates # 步骤3: 部署应用更新
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          template: ./deploy/app-update.bicep
+          parameters: >
+            location=${{ secrets.AZURE_LOCATION }}
+            frontendAppName=${{ secrets.FRONTEND_APP_NAME }}
+            backendAppName=${{ secrets.BACKEND_APP_NAME }}
+            imageTag=${{ github.sha }} # 使用 commit SHA 作为镜像标签
+            acrLoginServer=${{ needs.build-and-push.outputs.acr_login_server }} # 从上一个 job 获取 ACR 登录服务器
+            postgresAdminLogin=${{ secrets.POSTGRES_ADMIN_LOGIN }}
+            postgresAdminPassword=${{ secrets.POSTGRES_ADMIN_PASSWORD }}
+            postgresFullyQualifiedDomainName=${{ secrets.POSTGRES_FQDN }}
+            postgresDatabaseName=${{ secrets.POSTGRES_DB_NAME }}
+
+      - name: Output Application URLs # 步骤4: 输出应用 URL
+        run: |
+          echo "Frontend URL: https://${{ secrets.FRONTEND_APP_NAME }}.azurewebsites.net"
+          echo "Backend URL: https://${{ secrets.BACKEND_APP_NAME }}.azurewebsites.net"
