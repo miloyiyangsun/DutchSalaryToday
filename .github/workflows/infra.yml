@@ -66,8 +66,8 @@ jobs:
           template: ./deploy/infra.bicep
           parameters: >
             location=${{ github.event.inputs.location }}
-            frontendAppName=${{ github.event.inputs.frontendAppName }}
-            backendAppName=${{ github.event.inputs.backendAppName }}
+            frontendAppName=${{ github.event.inputs.frontendAppName }}-${{ github.run_id }}
+            backendAppName=${{ github.event.inputs.backendAppName }}-${{ github.run_id }}
             appServicePlanName=${{ github.event.inputs.appServicePlanName }}
             acrName=${{ github.event.inputs.acrName }}${{ github.run_id }}
             postgresAdminLogin=${{ github.event.inputs.postgresAdminLogin }}
