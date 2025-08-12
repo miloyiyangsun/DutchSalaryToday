@@ -1,42 +1,128 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* 荷兰薪酬洞察 - 样式表 */
+/* Dutch Salary Insights - Stylesheet */
+
+/* 布局容器系统 */
+/* Layout Container System */
+
+@reference "tailwindcss";
+
+.container {
+  /* 主容器：最大宽度7xl，水平居中，内边距 */
+  @apply max-w-7xl mx-auto px-4 py-8;
+}
+header {
+  /* 头部：居中对齐，底部间距 */
+  @apply text-center mb-8;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.insights-grid {
+  /* 洞察网格：移动端单列，桌面端三列，间距6 */
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mb-8;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+footer {
+  /* 页脚：居中，灰色文字，顶部边框 */
+  @apply text-center text-gray-500 text-sm border-t pt-6;
+}
+
+/* 卡片系统 */
+/* Card System */
+
+.insight-card {
+  /* 基础卡片：白色背景，圆角，阴影，内边距，左边框，悬停效果 */
+  @apply bg-white rounded-xl shadow-lg p-6 border-l-4 transition-transform hover:scale-105;
+}
+
+.insight-card.champion {
+  /* 增长冠军卡片：绿色左边框 */
+  @apply border-l-green-500;
+}
+
+.insight-card.slowest {
+  /* 增长最慢卡片：黄色左边框 */
+  @apply border-l-yellow-500;
+}
+
+.insight-card.gap {
+  /* 薪酬差距卡片：红色左边框 */
+  @apply border-l-red-500;
+}
+
+/* 数据展示系统 */
+/* Data Display System */
+
+.rate {
+  /* 基础比率样式：大号字体，粗体，居中，内边距，圆角 */
+  @apply text-3xl font-bold text-center py-3 px-4 rounded-lg mb-3;
+}
+
+.rate.success {
+  /* 成功状态：绿色文字，浅绿背景 */
+  @apply text-green-700 bg-green-50;
+}
+
+.rate.warning {
+  /* 警告状态：黄色文字，浅黄背景 */
+  @apply text-yellow-700 bg-yellow-50;
+}
+
+/* 差距对比组件 */
+/* Gap Comparison Component */
+
+.gap-comparison {
+  /* 差距对比容器：弹性布局，居中对齐，间距均分 */
+  @apply flex items-center justify-between text-lg mb-3;
+}
+
+.gap-value {
+  /* 差距数值：半粗体，内边距，圆角，浅灰背景 */
+  @apply font-semibold px-3 py-1 rounded bg-gray-100;
+}
+
+.gap-value.danger {
+  /* 危险状态：红色文字，浅红背景 */
+  @apply text-red-700 bg-red-50;
+}
+
+.arrow {
+  /* 箭头：大号，灰色，水平间距 */
+  @apply text-2xl text-gray-400 mx-4;
+}
+
+/* 排版系统 */
+/* Typography System */
+
+h1 {
+  /* 主标题：4xl大小，粗体，深灰色，底部间距 */
+  @apply text-4xl font-bold text-gray-900 mb-2;
+}
+
+h2 {
+  /* 二级标题：xl大小，半粗体，深灰色，底部间距 */
+  @apply text-xl font-semibold text-gray-800 mb-3;
+}
+
+h3 {
+  /* 三级标题：lg大小，中灰色，底部间距，紧凑行高 */
+  @apply text-lg text-gray-700 mb-3 leading-tight;
+}
+
+p {
+  /* 段落：小号字体，中灰色 */
+  @apply text-gray-600 text-sm;
+}
+
+/* 响应式优化 */
+/* Responsive Optimization */
+
+@media (max-width: 768px) {
+  .gap-comparison {
+    /* 移动端：垂直排列，间距2 */
+    @apply flex-col gap-2;
   }
-  to {
-    transform: rotate(360deg);
+
+  .arrow {
+    /* 移动端箭头：旋转90度，垂直间距 */
+    @apply rotate-90 mx-0 my-2;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
