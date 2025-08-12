@@ -1,0 +1,20 @@
+{
+  "name": "dutch-salary-mock-api",
+  "version": "1.0.0",
+  "description": "Mock API server for DutchSalaryToday",
+  "main": "mock-server.js",
+  "scripts": {
+    "start": "node mock-server.js",
+    "dev": "nodemon mock-server.js",
+    "validate": "node validate-contract.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

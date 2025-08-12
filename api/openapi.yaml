@@ -1,0 +1,63 @@
+# 荷兰薪酬洞察API规范文档
+openapi: 3.1.0
+info:
+  title: Dutch Salary Insights API
+  description: Industry Saga Sprint 1 API
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+# 服务器配置
+servers:
+  - url: http://localhost:3001
+    description: Local Mock Server
+
+# 安全配置 - 声明为公开API
+security: []
+
+# API路径定义
+paths:
+  /api/v1/core-insights:
+    get:
+      operationId: getCoreInsights
+      summary: Get core insights data
+      description: Returns three key numbers for Sprint 1
+      responses:
+        "200":
+          description: Successfully retrieved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # 增长冠军数据
+                  growthChampion:
+                    type: object
+                    properties:
+                      industry:
+                        type: string
+                      rate:
+                        type: string
+                  # 增长最慢数据
+                  growthSlowest:
+                    type: object
+                    properties:
+                      industry:
+                        type: string
+                      rate:
+                        type: string
+                  # 薪酬差距数据
+                  salaryGap:
+                    type: object
+                    properties:
+                      from:
+                        type: string
+                      to:
+                        type: string
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        "404":
+          description: Not Found
