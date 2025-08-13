@@ -10,6 +10,7 @@
   /* 主容器：最大宽度7xl，水平居中，内边距 */
   @apply max-w-7xl mx-auto px-4 py-8;
 }
+
 header {
   /* 头部：居中对齐，底部间距 */
   @apply text-center mb-8;
