@@ -1,9 +1,9 @@
 // useStoryData.ts - 核心洞察数据Hook
 // Core insights data custom hook
 
-import { useState, useEffect, useCallback } from 'react';
-import type { CoreInsights } from '../types/salary';
-import { fetchCoreInsights } from '../services/api';
+import { useState, useEffect, useCallback } from "react";
+import type { CoreInsights } from "../types/salary";
+import { fetchCoreInsights } from "../services/api";
 
 export interface StoryDataHookResult {
   data: CoreInsights | null;
@@ -21,9 +21,9 @@ export function useStoryData(): StoryDataHookResult {
     try {
       setLoading(true);
       setError(null);
-      
+
       const result = await fetchCoreInsights();
-      
+
       if (result.error) {
         setError(result.error);
         setData(null);
@@ -31,11 +31,11 @@ export function useStoryData(): StoryDataHookResult {
         setData(result.data);
         setError(null);
       } else {
-        setError('No data received from API');
+        setError("No data received from API");
         setData(null);
       }
     } catch (err) {
-      setError('Unexpected error occurred while fetching story data');
+      setError("Unexpected error occurred while fetching story data");
       setData(null);
     } finally {
       setLoading(false);
@@ -54,6 +54,6 @@ export function useStoryData(): StoryDataHookResult {
     data,
     loading,
     error,
-    refetch
+    refetch,
   };
 }

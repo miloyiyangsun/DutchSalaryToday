@@ -1,41 +1,60 @@
 // IceAndFirePage.tsx - Sprint1: Industry Ice and Fire 完整故事页面
 import { Link } from "react-router-dom";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { useStoryData, useGapTrends, useGrowthRankings } from "../../hooks";
+import InsightCard from "../../components/InsightCard";
 import "../../App.css";
 
-// 行业配置：名称、颜色、显示名称
-const INDUSTRIES = [
-  { key: 'Information and communication', name: 'IT & Communication', color: '#8884d8' },
-  { key: 'Finance', name: 'Finance', color: '#8dd1e1' },
-  { key: 'Manufacturing', name: 'Manufacturing', color: '#82ca9d' },
-  { key: 'Construction', name: 'Construction', color: '#ff7300' },
-  { key: 'Agriculture', name: 'Agriculture', color: '#ffc658' }
+// 基于排名的配色规则 - 前端职责，按rank 1-5分配颜色
+const RANK_COLORS = [
+  "#8884d8", // rank 1
+  "#8dd1e1", // rank 2
+  "#82ca9d", // rank 3
+  "#ff7300", // rank 4
+  "#ffc658", // rank 5
 ];
 
 function IceAndFirePage() {
   // ✅ 使用Custom Hooks管理数据和状态
   const { data, loading: coreLoading, error } = useStoryData();
-  const { 
-    gapTrends, 
-    hoveredYearStats, 
+  const {
+    gapTrends,
+    hoveredYearStats,
     loading: trendsLoading,
-    onChartHover, 
-    onChartMouseLeave 
+    onChartHover,
+    onChartMouseLeave,
   } = useGapTrends();
-  const { 
-    growthRankings, 
-    selectedIndustries, 
+  const {
+    growthRankings,
+    selectedIndustries,
     setSelectedIndustries,
-    loading: rankingsLoading 
+    loading: rankingsLoading,
   } = useGrowthRankings();
+
+  // 基于API数据获取行业颜色的函数 - 完全数据驱动
+  const getIndustryColor = (industryName: string): string => {
+    const ranking = growthRankings?.rankings?.find(
+      (r) => r.industry === industryName,
+    );
+    return ranking ? RANK_COLORS[ranking.rank - 1] : "#cccccc"; // 默认颜色作为fallback
+  };
 
   // 切换行业选择状态
   const toggleIndustry = (industryKey: string) => {
-    setSelectedIndustries(prev => 
-      prev.includes(industryKey)
-        ? prev.filter(key => key !== industryKey)  // 取消选择
-        : [...prev, industryKey]                   // 添加选择
+    setSelectedIndustries(
+      (prev) =>
+        prev.includes(industryKey)
+          ? prev.filter((key) => key !== industryKey) // 取消选择
+          : [...prev, industryKey], // 添加选择
     );
   };
 
@@ -90,42 +109,29 @@ function IceAndFirePage() {
 
       <main className="insights-grid">
         {/* 增长冠军 Growth Champion */}
-        <div className="insight-card champion">
-          <h2>🚀 Growth Champion</h2>
-          <h3>{data.growthChampion.industry}</h3>
-          <div className="rate success">{data.growthChampion.rate}</div>
-          <p>2010-2024 Salary Growth Leader</p>
-        </div>
+        <InsightCard
+          type="champion"
+          championData={data.growthChampion}
+          variant="detail"
+        />
 
         {/* 增长最慢 Slowest Growth */}
-        <div className="insight-card slowest">
-          <h2>🐌 Slowest Growth</h2>
-          <h3>{data.growthSlowest.industry}</h3>
-          <div className="rate warning">{data.growthSlowest.rate}</div>
-          <p>2010-2024 Growth Laggard</p>
-        </div>
+        <InsightCard
+          type="slowest"
+          slowestData={data.growthSlowest}
+          variant="detail"
+        />
 
         {/* 薪酬差距 Salary Gap */}
-        <div className="insight-card gap">
-          <h2>📊 Salary Gap Evolution</h2>
-          <div className="gap-comparison">
-            <div>
-              2010: <span className="gap-value">{data.salaryGap.from}</span>
-            </div>
-            <div className="arrow">→</div>
-            <div>
-              2024:{" "}
-              <span className="gap-value danger">{data.salaryGap.to}</span>
-            </div>
-          </div>
-          <p>Industry Salary Gap Expansion</p>
-        </div>
+        <InsightCard type="gap" gapData={data.salaryGap} variant="detail" />
       </main>
 
       {/* 工资增长趋势表 */}
       <section className="mb-8">
         <div className="insight-card">
-          <h2 className="text-xl font-bold mb-4">🚀 Industry Growth Trends & Rankings</h2>
+          <h2 className="text-xl font-bold mb-4">
+            🚀 Industry Growth Trends & Rankings
+          </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* 左侧：动态折线图 */}
             <div className="lg:col-span-2">
@@ -137,15 +143,14 @@ function IceAndFirePage() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    {selectedIndustries.map(industryKey => {
-                      const industry = INDUSTRIES.find(i => i.key === industryKey);
+                    {selectedIndustries.map((industryKey) => {
                       return (
                         <Line
                           key={industryKey}
                           type="monotone"
                           dataKey={industryKey}
-                          stroke={industry?.color}
-                          name={industry?.name}
+                          stroke={getIndustryColor(industryKey)}
+                          name={industryKey} // 直接使用完整的行业名称
                           strokeWidth={2}
                         />
                       );
@@ -158,29 +163,37 @@ function IceAndFirePage() {
                 </div>
               )}
             </div>
-            
+
             {/* 右侧：可点击的增长冠军排名选择器 */}
             <div className="lg:col-span-1">
-              <h3 className="font-semibold mb-3">🏆 Growth Champions (Click to Select)</h3>
+              <h3 className="font-semibold mb-3">
+                🏆 Growth Champions (Click to Select)
+              </h3>
               {growthRankings?.rankings ? (
                 <div className="space-y-3">
                   {growthRankings.rankings.map((item) => (
-                    <div 
+                    <div
                       key={item.rank}
                       onClick={() => toggleIndustry(item.industry)}
                       className={`p-3 rounded cursor-pointer transition-colors border-2 ${
                         selectedIndustries.includes(item.industry)
-                          ? 'bg-blue-100 border-blue-300 text-blue-900'  // 选中状态：蓝色
-                          : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'  // 未选中：灰色 + hover
+                          ? "bg-blue-100 border-blue-300 text-blue-900" // 选中状态：蓝色
+                          : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100" // 未选中：灰色 + hover
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-lg">#{item.rank}</span>
-                        <span className="text-green-600 font-semibold">{item.growthRate}</span>
+                        <span className="text-green-600 font-semibold">
+                          {item.growthRate}
+                        </span>
                       </div>
-                      <h4 className="font-medium text-sm mb-2 leading-tight">{item.industry}</h4>
+                      <h4 className="font-medium text-sm mb-2 leading-tight">
+                        {item.industry}
+                      </h4>
                       <div className="text-xs opacity-75">
-                        <div>{item.startSalary} → {item.endSalary} {item.unit}</div>
+                        <div>
+                          {item.startSalary} → {item.endSalary} {item.unit}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -196,13 +209,15 @@ function IceAndFirePage() {
       {/* 薪资差距趋势表 */}
       <section className="mb-8">
         <div className="insight-card">
-          <h2 className="text-xl font-bold mb-4">📈 Salary Gap Evolution Over Time</h2>
+          <h2 className="text-xl font-bold mb-4">
+            📈 Salary Gap Evolution Over Time
+          </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* 左侧：折线图 */}
             <div className="lg:col-span-2">
               {gapTrends ? (
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart 
+                  <LineChart
                     data={gapTrends.data}
                     onMouseMove={onChartHover}
                     onMouseLeave={onChartMouseLeave}
@@ -212,7 +227,13 @@ function IceAndFirePage() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="gapRatio" stroke="#8884d8" strokeWidth={2} name="Gap Ratio" />
+                    <Line
+                      type="monotone"
+                      dataKey="gapRatio"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                      name="Gap Ratio"
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
@@ -221,7 +242,7 @@ function IceAndFirePage() {
                 </div>
               )}
             </div>
-            
+
             {/* 右侧：年份统计显示 */}
             <div className="lg:col-span-1">
               <h3 className="font-semibold mb-3">📊 Year Statistics</h3>
@@ -229,32 +250,51 @@ function IceAndFirePage() {
                 <div className="space-y-4">
                   {/* 年份标题 */}
                   <div className="text-center">
-                    <h4 className="text-lg font-bold text-blue-600">{hoveredYearStats.year}</h4>
+                    <h4 className="text-lg font-bold text-blue-600">
+                      {hoveredYearStats.year}
+                    </h4>
                     <p className="text-sm text-gray-600">Salary Analysis</p>
                   </div>
-                  
+
                   {/* 最高薪资行业 */}
                   <div className="bg-green-50 p-3 rounded-lg border-l-4 border-green-500">
                     <div className="flex items-center mb-2">
-                      <span className="text-green-600 font-semibold text-sm">🏆 HIGHEST</span>
+                      <span className="text-green-600 font-semibold text-sm">
+                        🏆 HIGHEST
+                      </span>
                     </div>
-                    <h5 className="font-medium text-sm mb-1 leading-tight">{hoveredYearStats.highest.name}</h5>
-                    <p className="text-green-700 font-bold">€{hoveredYearStats.highest.salary.toLocaleString()}</p>
+                    <h5 className="font-medium text-sm mb-1 leading-tight">
+                      {hoveredYearStats.highest.name}
+                    </h5>
+                    <p className="text-green-700 font-bold">
+                      €{hoveredYearStats.highest.salary.toLocaleString()}
+                    </p>
                   </div>
-                  
+
                   {/* 最低薪资行业 */}
                   <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
                     <div className="flex items-center mb-2">
-                      <span className="text-orange-600 font-semibold text-sm">📉 LOWEST</span>
+                      <span className="text-orange-600 font-semibold text-sm">
+                        📉 LOWEST
+                      </span>
                     </div>
-                    <h5 className="font-medium text-sm mb-1 leading-tight">{hoveredYearStats.lowest.name}</h5>
-                    <p className="text-orange-700 font-bold">€{hoveredYearStats.lowest.salary.toLocaleString()}</p>
+                    <h5 className="font-medium text-sm mb-1 leading-tight">
+                      {hoveredYearStats.lowest.name}
+                    </h5>
+                    <p className="text-orange-700 font-bold">
+                      €{hoveredYearStats.lowest.salary.toLocaleString()}
+                    </p>
                   </div>
-                  
+
                   {/* 差距信息 */}
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <p className="text-xs text-gray-600 text-center">
-                      Gap: {((hoveredYearStats.highest.salary / hoveredYearStats.lowest.salary)).toFixed(2)}x
+                      Gap:{" "}
+                      {(
+                        hoveredYearStats.highest.salary /
+                        hoveredYearStats.lowest.salary
+                      ).toFixed(2)}
+                      x
                     </p>
                   </div>
                 </div>
@@ -262,7 +302,8 @@ function IceAndFirePage() {
                 <div className="text-center py-8">
                   <div className="text-gray-400 text-4xl mb-2">📈</div>
                   <p className="text-gray-500 text-sm">
-                    Hover over the chart to see<br />
+                    Hover over the chart to see
+                    <br />
                     year-specific statistics
                   </p>
                 </div>

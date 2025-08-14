@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import IceAndFirePage from './pages/stories/IceAndFirePage';
+import { ROUTES } from './types/routes';
 import './App.css';
 
 function App() {
@@ -9,9 +10,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* 首页路由 */}
-        <Route path="/" element={<HomePage />} />
+        <Route path={ROUTES.HOME} element={<HomePage />} />
         {/* Sprint1故事页面路由 - Industry Ice and Fire */}
-        <Route path="/ice-and-fire" element={<IceAndFirePage />} />
+        <Route path={ROUTES.ICE_AND_FIRE} element={<IceAndFirePage />} />
         {/* 404页面 */}
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>

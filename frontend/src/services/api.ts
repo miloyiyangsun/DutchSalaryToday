@@ -3,6 +3,13 @@
 
 import type { CoreInsights, SalaryGapTrends, GrowthRankings } from "../types/salary";
 
+// 统一API URL构建函数 - 支持环境变量配置
+// Unified API URL builder - supports environment variable configuration
+function getApiUrl(endpoint: string): string {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+  return `${baseUrl}/api/v1/${endpoint}`;
+}
+
 // 获取核心洞察数据 - 最简单的实现
 // Fetch core insights data - Simplest implementation
 export async function fetchCoreInsights(): Promise<{
@@ -10,9 +17,9 @@ export async function fetchCoreInsights(): Promise<{
   error?: string;
 }> {
   try {
-    // 直接调用Mock API
-    // Direct call to Mock API
-    const response = await fetch("http://localhost:3001/api/v1/core-insights");
+    // 使用环境变量配置的API URL
+    // Use environment variable configured API URL
+    const response = await fetch(getApiUrl("core-insights"));
 
     // 检查响应是否成功
     // Check if response is successful
@@ -38,7 +45,7 @@ export async function fetchSalaryGapTrends(): Promise<{
   error?: string;
 }> {
   try {
-    const response = await fetch("http://localhost:3001/api/v1/salary-gap-trends");
+    const response = await fetch(getApiUrl("salary-gap-trends"));
     
     if (!response.ok) {
       return { error: `Loading Failed: ${response.status}` };
@@ -58,7 +65,7 @@ export async function fetchGrowthRankings(): Promise<{
   error?: string;
 }> {
   try {
-    const response = await fetch("http://localhost:3001/api/v1/growth-rankings");
+    const response = await fetch(getApiUrl("growth-rankings"));
     
     if (!response.ok) {
       return { error: `Loading Failed: ${response.status}` };

@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useStoryData } from "../hooks";
+import InsightCard from "../components/InsightCard";
+import { ROUTES } from "../types/routes";
 import "../App.css";
 
 function HomePage() {
@@ -39,36 +41,28 @@ function HomePage() {
 
       <main className="insights-grid">
         {/* 增长冠军 Growth Champion */}
-        <div className="insight-card champion" onClick={() => navigate('/ice-and-fire')}>
-          <h2>🚀 Growth Champion</h2>
-          <h3>{data.growthChampion.industry}</h3>
-          <div className="rate success">{data.growthChampion.rate}</div>
-          <p>2010-2024 Salary Growth</p>
-        </div>
+        <InsightCard
+          type="champion"
+          championData={data.growthChampion}
+          onClick={() => navigate(ROUTES.ICE_AND_FIRE)}
+          clickable={true}
+        />
 
         {/* 增长最慢 Slowest Growth */}
-        <div className="insight-card slowest" onClick={() => navigate('/ice-and-fire')}>
-          <h2>🐌 Slowest Growth</h2>
-          <h3>{data.growthSlowest.industry}</h3>
-          <div className="rate warning">{data.growthSlowest.rate}</div>
-          <p>2010-2024 Salary Growth</p>
-        </div>
+        <InsightCard
+          type="slowest"
+          slowestData={data.growthSlowest}
+          onClick={() => navigate(ROUTES.ICE_AND_FIRE)}
+          clickable={true}
+        />
 
         {/* 薪酬差距 Salary Gap */}
-        <div className="insight-card gap" onClick={() => navigate('/ice-and-fire')}>
-          <h2>📊 Salary Gap</h2>
-          <div className="gap-comparison">
-            <div>
-              2010: <span className="gap-value">{data.salaryGap.from}</span>
-            </div>
-            <div className="arrow">→</div>
-            <div>
-              2024:{" "}
-              <span className="gap-value danger">{data.salaryGap.to}</span>
-            </div>
-          </div>
-          <p>Inter-industry Gap Change</p>
-        </div>
+        <InsightCard
+          type="gap"
+          gapData={data.salaryGap}
+          onClick={() => navigate(ROUTES.ICE_AND_FIRE)}
+          clickable={true}
+        />
       </main>
 
       <footer>
