@@ -127,3 +127,21 @@ p {
     @apply rotate-90 mx-0 my-2;
   }
 }
+
+/* 路由相关样式 */
+/* Route-related styles */
+
+.insight-card {
+  /* 添加点击样式 */
+  @apply cursor-pointer transition-transform hover:scale-105;
+}
+
+.breadcrumb {
+  /* 面包屑导航样式 */
+  @apply text-sm text-gray-600;
+}
+
+.breadcrumb a {
+  /* 面包屑链接样式 */
+  @apply text-blue-600 hover:underline;
+}
