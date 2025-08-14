@@ -1,32 +1,15 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import type { CoreInsights } from "../types/salary";
-import { fetchCoreInsights } from "../services/api";
+import { useStoryData } from "../hooks";
 import "../App.css";
 
 function HomePage() {
   // 导航功能
   const navigate = useNavigate();
   
-  // 简单的状态管理：数据 + 错误信息
-  // Simple state management: data + error message
-  const [data, setData] = useState<CoreInsights | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // ✅ 使用统一的custom hook管理数据
+  const { data, loading, error } = useStoryData();
 
-  // 组件加载时获取数据
-  // Fetch data when component loads
-  useEffect(() => {
-    fetchCoreInsights().then((result) => {
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setData(result.data!);
-      }
-    });
-  }, []);
-
-  // 如果有错误，显示错误信息
-  // If error, show error message
+  // ✅ 统一的错误和加载状态处理
   if (error) {
     return (
       <div className="container">
@@ -36,9 +19,7 @@ function HomePage() {
     );
   }
 
-  // 如果数据还没加载，显示加载中
-  // If data not loaded yet, show loading
-  if (!data) {
+  if (loading || !data) {
     return (
       <div className="container">
         <h1>🇳🇱 Dutch Salary Insights</h1>

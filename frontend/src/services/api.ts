@@ -1,7 +1,7 @@
 // 薪酬洞察数据 API 服务层 - 简化版
 // Salary Insights Data API Service Layer - Simplified Version
 
-import type { CoreInsights } from "../types/salary";
+import type { CoreInsights, SalaryGapTrends, GrowthRankings } from "../types/salary";
 
 // 获取核心洞察数据 - 最简单的实现
 // Fetch core insights data - Simplest implementation
@@ -27,6 +27,46 @@ export async function fetchCoreInsights(): Promise<{
   } catch (error) {
     // 简单的错误处理
     // Simple error handling
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取薪资差距趋势数据
+// Fetch salary gap trends data
+export async function fetchSalaryGapTrends(): Promise<{
+  data?: SalaryGapTrends;
+  error?: string;
+}> {
+  try {
+    const response = await fetch("http://localhost:3001/api/v1/salary-gap-trends");
+    
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+    
+    const data = await response.json();
+    return { data };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取工资增长排名数据
+// Fetch growth rankings data
+export async function fetchGrowthRankings(): Promise<{
+  data?: GrowthRankings;
+  error?: string;
+}> {
+  try {
+    const response = await fetch("http://localhost:3001/api/v1/growth-rankings");
+    
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+    
+    const data = await response.json();
+    return { data };
+  } catch (error) {
     return { error: "Network Failed, please retry." };
   }
 }

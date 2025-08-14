@@ -1,7 +1,80 @@
 // IceAndFirePage.tsx - Sprint1: Industry Ice and Fire 完整故事页面
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useStoryData, useGapTrends, useGrowthRankings } from "../../hooks";
+import "../../App.css";
+
+// 行业配置：名称、颜色、显示名称
+const INDUSTRIES = [
+  { key: 'Information and communication', name: 'IT & Communication', color: '#8884d8' },
+  { key: 'Finance', name: 'Finance', color: '#8dd1e1' },
+  { key: 'Manufacturing', name: 'Manufacturing', color: '#82ca9d' },
+  { key: 'Construction', name: 'Construction', color: '#ff7300' },
+  { key: 'Agriculture', name: 'Agriculture', color: '#ffc658' }
+];
 
 function IceAndFirePage() {
+  // ✅ 使用Custom Hooks管理数据和状态
+  const { data, loading: coreLoading, error } = useStoryData();
+  const { 
+    gapTrends, 
+    hoveredYearStats, 
+    loading: trendsLoading,
+    onChartHover, 
+    onChartMouseLeave 
+  } = useGapTrends();
+  const { 
+    growthRankings, 
+    selectedIndustries, 
+    setSelectedIndustries,
+    loading: rankingsLoading 
+  } = useGrowthRankings();
+
+  // 切换行业选择状态
+  const toggleIndustry = (industryKey: string) => {
+    setSelectedIndustries(prev => 
+      prev.includes(industryKey)
+        ? prev.filter(key => key !== industryKey)  // 取消选择
+        : [...prev, industryKey]                   // 添加选择
+    );
+  };
+
+  // ✅ 统一loading状态
+  const isLoading = coreLoading || trendsLoading || rankingsLoading;
+
+  // ✅ 数据获取和业务逻辑现在都封装在custom hooks中
+
+  // ✅ 简化的错误和加载状态处理
+  if (error) {
+    return (
+      <div className="container">
+        <nav className="breadcrumb mb-4">
+          <Link to="/" className="text-blue-600 hover:underline">
+            ← Back to Home
+          </Link>
+        </nav>
+        <h1>🔥❄️ Industry Ice and Fire</h1>
+        <p>❌ {error}</p>
+      </div>
+    );
+  }
+
+  if (isLoading || !data) {
+    return (
+      <div className="container">
+        <nav className="breadcrumb mb-4">
+          <Link to="/" className="text-blue-600 hover:underline">
+            ← Back to Home
+          </Link>
+        </nav>
+        <h1>🔥❄️ Industry Ice and Fire</h1>
+        <p>⏳ Loading story data...</p>
+      </div>
+    );
+  }
+
+  // 显示正常数据 - 现在TypeScript知道data不为null
+  // Show normal data - now TypeScript knows data is not null
   return (
     <div className="container">
       <nav className="breadcrumb mb-4">
@@ -15,30 +88,193 @@ function IceAndFirePage() {
         <p>The Great Salary Divide: How Industries Drifted Apart (2010-2024)</p>
       </header>
 
-      <main>
-        {/* Hero区域 - 3个核心数字重展示 */}
-        <section className="story-hero mb-8">
-          <div className="insight-card">
-            <h2>🚧 Story Under Development...</h2>
-            <p>This will show the complete Sprint 1 data story with:</p>
-            <ul className="list-disc list-inside mt-4 space-y-2">
-              <li>Core insights summary (3 key numbers)</li>
-              <li>Growth trends visualization</li>
-              <li>Salary gap analysis charts</li>
-              <li>Detailed data tables</li>
-              <li>Story conclusions and insights</li>
-            </ul>
-          </div>
-        </section>
+      <main className="insights-grid">
+        {/* 增长冠军 Growth Champion */}
+        <div className="insight-card champion">
+          <h2>🚀 Growth Champion</h2>
+          <h3>{data.growthChampion.industry}</h3>
+          <div className="rate success">{data.growthChampion.rate}</div>
+          <p>2010-2024 Salary Growth Leader</p>
+        </div>
 
-        {/* 未来将添加图表区域 */}
-        <section className="charts-section">
-          <div className="insight-card">
-            <h3>📊 Charts Coming Soon...</h3>
-            <p>Growth trends and gap analysis visualizations will be implemented here.</p>
+        {/* 增长最慢 Slowest Growth */}
+        <div className="insight-card slowest">
+          <h2>🐌 Slowest Growth</h2>
+          <h3>{data.growthSlowest.industry}</h3>
+          <div className="rate warning">{data.growthSlowest.rate}</div>
+          <p>2010-2024 Growth Laggard</p>
+        </div>
+
+        {/* 薪酬差距 Salary Gap */}
+        <div className="insight-card gap">
+          <h2>📊 Salary Gap Evolution</h2>
+          <div className="gap-comparison">
+            <div>
+              2010: <span className="gap-value">{data.salaryGap.from}</span>
+            </div>
+            <div className="arrow">→</div>
+            <div>
+              2024:{" "}
+              <span className="gap-value danger">{data.salaryGap.to}</span>
+            </div>
           </div>
-        </section>
+          <p>Industry Salary Gap Expansion</p>
+        </div>
       </main>
+
+      {/* 工资增长趋势表 */}
+      <section className="mb-8">
+        <div className="insight-card">
+          <h2 className="text-xl font-bold mb-4">🚀 Industry Growth Trends & Rankings</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* 左侧：动态折线图 */}
+            <div className="lg:col-span-2">
+              {growthRankings?.trendData ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={growthRankings.trendData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    {selectedIndustries.map(industryKey => {
+                      const industry = INDUSTRIES.find(i => i.key === industryKey);
+                      return (
+                        <Line
+                          key={industryKey}
+                          type="monotone"
+                          dataKey={industryKey}
+                          stroke={industry?.color}
+                          name={industry?.name}
+                          strokeWidth={2}
+                        />
+                      );
+                    })}
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-gray-500">
+                  Loading chart data...
+                </div>
+              )}
+            </div>
+            
+            {/* 右侧：可点击的增长冠军排名选择器 */}
+            <div className="lg:col-span-1">
+              <h3 className="font-semibold mb-3">🏆 Growth Champions (Click to Select)</h3>
+              {growthRankings?.rankings ? (
+                <div className="space-y-3">
+                  {growthRankings.rankings.map((item) => (
+                    <div 
+                      key={item.rank}
+                      onClick={() => toggleIndustry(item.industry)}
+                      className={`p-3 rounded cursor-pointer transition-colors border-2 ${
+                        selectedIndustries.includes(item.industry)
+                          ? 'bg-blue-100 border-blue-300 text-blue-900'  // 选中状态：蓝色
+                          : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'  // 未选中：灰色 + hover
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-lg">#{item.rank}</span>
+                        <span className="text-green-600 font-semibold">{item.growthRate}</span>
+                      </div>
+                      <h4 className="font-medium text-sm mb-2 leading-tight">{item.industry}</h4>
+                      <div className="text-xs opacity-75">
+                        <div>{item.startSalary} → {item.endSalary} {item.unit}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-500">Loading rankings...</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 薪资差距趋势表 */}
+      <section className="mb-8">
+        <div className="insight-card">
+          <h2 className="text-xl font-bold mb-4">📈 Salary Gap Evolution Over Time</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* 左侧：折线图 */}
+            <div className="lg:col-span-2">
+              {gapTrends ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart 
+                    data={gapTrends.data}
+                    onMouseMove={onChartHover}
+                    onMouseLeave={onChartMouseLeave}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="gapRatio" stroke="#8884d8" strokeWidth={2} name="Gap Ratio" />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-gray-500">
+                  Loading chart data...
+                </div>
+              )}
+            </div>
+            
+            {/* 右侧：年份统计显示 */}
+            <div className="lg:col-span-1">
+              <h3 className="font-semibold mb-3">📊 Year Statistics</h3>
+              {hoveredYearStats ? (
+                <div className="space-y-4">
+                  {/* 年份标题 */}
+                  <div className="text-center">
+                    <h4 className="text-lg font-bold text-blue-600">{hoveredYearStats.year}</h4>
+                    <p className="text-sm text-gray-600">Salary Analysis</p>
+                  </div>
+                  
+                  {/* 最高薪资行业 */}
+                  <div className="bg-green-50 p-3 rounded-lg border-l-4 border-green-500">
+                    <div className="flex items-center mb-2">
+                      <span className="text-green-600 font-semibold text-sm">🏆 HIGHEST</span>
+                    </div>
+                    <h5 className="font-medium text-sm mb-1 leading-tight">{hoveredYearStats.highest.name}</h5>
+                    <p className="text-green-700 font-bold">€{hoveredYearStats.highest.salary.toLocaleString()}</p>
+                  </div>
+                  
+                  {/* 最低薪资行业 */}
+                  <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
+                    <div className="flex items-center mb-2">
+                      <span className="text-orange-600 font-semibold text-sm">📉 LOWEST</span>
+                    </div>
+                    <h5 className="font-medium text-sm mb-1 leading-tight">{hoveredYearStats.lowest.name}</h5>
+                    <p className="text-orange-700 font-bold">€{hoveredYearStats.lowest.salary.toLocaleString()}</p>
+                  </div>
+                  
+                  {/* 差距信息 */}
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-600 text-center">
+                      Gap: {((hoveredYearStats.highest.salary / hoveredYearStats.lowest.salary)).toFixed(2)}x
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 text-4xl mb-2">📈</div>
+                  <p className="text-gray-500 text-sm">
+                    Hover over the chart to see<br />
+                    year-specific statistics
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <p>The Ice and Fire Story | Based on CBS Data 2010-2024</p>
+      </footer>
     </div>
   );
 }
