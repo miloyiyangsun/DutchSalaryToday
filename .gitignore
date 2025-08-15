@@ -19,6 +19,12 @@ target/
 *.swo
 *.tmp
 
+# 环境变量配置文件
+.env
+.env.local
+.env.production
+.env.staging
+
 # macOS系统文件
 .DS_Store
 .DS_Store?

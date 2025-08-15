@@ -220,7 +220,7 @@ app.get("/api/v1/growth-rankings", (req, res) => {
         growthRate: "+53.4%",
         startSalary: "58k",
         endSalary: "89k",
-        unit: "欧元"
+        unit: "euros"
       },
       {
         rank: 2, 
@@ -228,7 +228,7 @@ app.get("/api/v1/growth-rankings", (req, res) => {
         growthRate: "+36.9%",
         startSalary: "65k",
         endSalary: "89k",
-        unit: "欧元"
+        unit: "euros"
       },
       {
         rank: 3,
@@ -236,7 +236,7 @@ app.get("/api/v1/growth-rankings", (req, res) => {
         growthRate: "+59.5%",
         startSalary: "42k", 
         endSalary: "67k",
-        unit: "欧元"
+        unit: "euros"
       },
       {
         rank: 4,
@@ -244,7 +244,7 @@ app.get("/api/v1/growth-rankings", (req, res) => {
         growthRate: "+51.4%",
         startSalary: "35k",
         endSalary: "53k", 
-        unit: "欧元"
+        unit: "euros"
       },
       {
         rank: 5,
@@ -252,7 +252,7 @@ app.get("/api/v1/growth-rankings", (req, res) => {
         growthRate: "+22.2%",
         startSalary: "27k",
         endSalary: "33k",
-        unit: "欧元"
+        unit: "euros"
       }
     ],
     trendData: [
