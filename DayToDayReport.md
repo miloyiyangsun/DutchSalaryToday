@@ -325,3 +325,78 @@ pages/stories/IceAndFirePage.tsx (主题特定)
 - **Docker容器化部署**确保了开发到生产环境的一致性
 
 **数据架构成熟度**: 从无结构化CSV数据成功演进为企业级关系数据库架构，建立了支持复杂查询和分析的数据基础设施，为前端数据可视化提供了可靠的后端数据服务能力。
+
+---
+
+## 2025年8月15日晚 - Spring Boot应用业务层架构设计与实现
+
+### 📅 真实开发时间线 (第二阶段)
+
+**8月15日 22:34** | 业务逻辑架构深度优化
+- `22:34` backEndPlan.md - 核心技术决策确认：`wages_per_fte_9` vs `compensation_per_fte_8`
+- 深度分析`interactive_crosstab_app.py`业务逻辑，建立完整参考文档映射
+- 时间范围修正：2010-2024年(15年)，不是1995-2024年
+
+**8月15日 23:06** | JPA实体层标准化实现  
+- `23:06` entity/SalaryRecord.java - ORM映射层创建，连接PostgreSQL与Java对象
+- 核心字段映射：`@Column(name = "wages_per_fte_9") private BigDecimal wagesPerFte`
+- 标准Spring Boot项目结构：entity包分离，遵循企业级代码组织
+
+**8月15日 23:10** | 数据访问层接口设计
+- `23:10` repository/SalaryRecordRepository.java - 8个核心查询方法实现
+- Spring Data JPA动态代理机制：零实现代码，方法名约定自动生成SQL
+- 业务查询支持：年份区间、行业筛选、NULL值过滤，完全对应Python分析逻辑
+
+### 🎯 核心解决问题
+
+**字段选择决策危机**：`compensation`包含雇主社保缴费，`wages`是用户实际收入
+**解决方案**：深度对比Mock API数据，确认使用`wages_per_fte_9`字段，确保前后端数据一致性
+
+**架构设计哲学冲突**：面向对象 vs 简单工具类，企业级 vs YAGNI原则  
+**解决方案**：采用轻量级OOP架构，6个组件(Entity+Repository+Service+Controller)，避免过度工程化
+
+**业务逻辑实现依据缺失**：Python分析代码分散，缺乏系统性参考
+**解决方案**：建立完整业务逻辑参考文档，`interactive_crosstab_app.py`为主要参考，包含具体函数行号映射
+
+### 🛠 深度技术应用
+
+- **Spring Data JPA动态代理**: 接口方法自动生成SQL，`findByYearPeriodBetween` → 复杂WHERE子句
+- **JPA实体映射**: `@Column`注解精确映射43字段表结构，类型安全保障
+- **标准项目架构**: entity/repository包分离，遵循Spring Boot最佳实践
+- **业务查询抽象**: 8个Repository方法完全对应Python数据筛选逻辑
+
+### 💡 关键技术洞察
+
+1. **ORM"魔法"机制理解**: Repository接口无实现代码，Spring运行时动态生成代理对象
+2. **数据一致性保证**: 前端Mock API与后端数据库字段精确对齐验证
+3. **业务逻辑移植策略**: Python pandas操作与JPA查询方法一一对应映射
+4. **架构决策平衡**: 在企业级规范与MVP快速交付间找到最佳平衡点
+
+### 📊 技术架构进化
+
+**Phase 3.1-3.2完成**:
+- JPA实体层：Java对象↔PostgreSQL表映射 ✅
+- Repository层：8个核心查询方法支持业务计算 ✅
+- 项目结构：标准Spring Boot分层架构 ✅
+
+**Phase 3.3待实现**:
+- Service业务逻辑层：`getCoreInsights()`, `getGrowthRankings()`, `getSalaryGapTrends()`
+- Controller API层：3个REST端点实现
+
+### 🚀 当前状态
+
+- **数据基础**: PostgreSQL 3000条记录 + Flyway版本控制 ✅
+- **ORM映射**: JPA实体层完整实现 ✅  
+- **数据访问**: Repository接口支持所有业务查询 ✅
+- **业务参考**: Python逻辑完整文档化 ✅
+- **整体进度**: Phase 0-3.2完成，约70%进度
+
+### 💡 技术哲学验证
+
+今晚的实现验证了现代Spring Boot开发的核心理念：
+- **约定优于配置**：Repository接口零实现，框架自动处理
+- **关注点分离**：Entity专注映射，Repository专注查询，各司其职  
+- **业务驱动设计**：所有技术决策围绕实际业务需求，避免为技术而技术
+- **渐进式架构**：从简单开始，按需复杂化，YAGNI原则的实践体现
+
+**架构成熟度跨越**: 从数据库+文件的基础设施，成功演进为类型安全、业务驱动的面向对象应用架构，为复杂的薪资分析计算提供了坚实的技术基础。

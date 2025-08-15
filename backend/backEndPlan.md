@@ -167,11 +167,23 @@ Docker Compose启动 → PostgreSQL容器(db:5432) → Spring Boot通过环境�
 
 ### Phase 3: 应用业务层 (25 分钟)
 
+> **⚠️ 重要技术指引**:
+> 1. **薪资字段选择**: 必须使用 `wages_per_fte_9` 字段，不是 `compensation_per_fte_8`
+>    - `wages_per_fte_9` = 工资和薪金，用户实际拿到的薪资，单位: 千欧元
+>    - `compensation_per_fte_8` = 员工总薪酬，包含雇主社保缴费等额外成本
+>    - Mock API对照: "58k" ≈ wages 55.6k ✅, compensation 68.4k ❌
+> 
+> 2. **业务逻辑参考**: 参考 `/data_analysis/interactive_crosstab_app.py` 中的完整实现
+>    - Growth Champion: `growth_rate = (end_salary - start_salary) / start_salary * 100`
+>    - Salary Gap Ratio: `gap_ratio = max_avg_salary / min_avg_salary` (2010-2024年平均)
+>    - 时间范围: 2010年-2024年 (15年)，有效行业需两年都有数据
+
 **3.1 JPA 实体层 (5 分钟)**
 
 - 创建 SalaryRecord 实体类
 - 添加 JPA 注解映射数据库表
-- 定义主键、行业名称、年份、薪资字段
+- **核心字段映射**: `@Column(name = "wages_per_fte_9") private BigDecimal wagesPerFte;`
+- 定义主键、行业名称(title)、年份(year_period)、薪资字段
 - 实现 getter/setter 方法
 
 **3.2 数据访问层 (5 分钟)**
@@ -182,13 +194,56 @@ Docker Compose启动 → PostgreSQL容器(db:5432) → Spring Boot通过环境�
 - 添加按行业名称查询方法
 - 添加按年份区间查询方法
 
-**3.3 业务逻辑层 (10 分钟)**
+**3.3 业务逻辑层 (10 分钟)** 
 
 - 创建 SalaryService 服务类
 - 注入 SalaryRecordRepository 依赖
-- 实现 getCoreInsights 方法(计算增长冠军、最慢、差距)
-- 实现 getGrowthRankings 方法(行业排名和趋势计算)
-- 实现 getSalaryGapTrends 方法(薪资差距趋势分析)
+- **核心方法实现**:
+  
+  **getCoreInsights() 方法**:
+  ```
+  核心参考: /data_analysis/interactive_crosstab_app.py
+  
+  数据筛选:
+  - 时间范围: 2010-2024年 (不是1995-2024年) 
+  - 薪资字段: WagesPerFte_9 (每FTE工资，千欧元)
+  - 有效行业: 只计算2010和2024年都有完整数据的行业
+  
+  三个核心计算:
+  1. Growth Champion (增长冠军):
+     growth_rate = (end_salary - start_salary) / start_salary * 100
+     按growth_rate降序排列，取第一名
+  
+  2. Growth Slowest (增长最慢):  
+     同样计算公式，按growth_rate升序排列，取第一名
+  
+  3. Salary Gap Ratio (薪资差距倍数):
+     计算2010-2024年各行业平均薪资
+     gap_ratio = max_avg_salary / min_avg_salary
+  ```
+  
+  **getGrowthRankings() 方法**:
+  ```
+  参考: get_growth_champion_data() 函数 (Line 114-157)
+  
+  返回完整的行业增长排名列表:
+  - 创建数据透视表: pivot_table(values="WagesPerFte_9", index="Title", columns="Year")
+  - 筛选有效行业: dropna(subset=[2010, 2024])
+  - 为每个行业计算: start_salary, end_salary, growth_rate
+  - 支持排序模式: is_growth_mode=true(降序) / false(升序)
+  - 返回格式: [{industry, growth_rate, start_salary, end_salary}, ...]
+  ```
+  
+  **getSalaryGapTrends() 方法**:
+  ```
+  参考: calculate_yearly_gap_ratios() 函数 (Line 347-376)
+  
+  计算2010-2024年每年的薪资差距变化:
+  - 按年份循环: for year in 2010-2024
+  - 每年计算: max_salary = max(WagesPerFte_9), min_salary = min(WagesPerFte_9)  
+  - 年度差距: gap_ratio = max_salary / min_salary
+  - 返回格式: [{year, gap_ratio, max_salary, min_salary}, ...]
+  ```
 
 **3.4 API 控制层 (5 分钟)**
 
@@ -268,6 +323,43 @@ Docker Compose启动 → PostgreSQL容器(db:5432) → Spring Boot通过环境�
 - **Phase 4**: 集成验证 (10 分钟) ⏳ **待执行**
 
 **当前进度**: 50 分钟已完成 / 85 分钟总计 = **59%完成度** 🚀
+
+## 📊 **业务逻辑参考文档**
+
+### 数据分析基础
+- **🎯 主要参考**: `/data_analysis/interactive_crosstab_app.py` - **完整的业务计算逻辑实现**
+  - `get_growth_champion_data()` (Line 114-157): 增长冠军/最慢行业计算
+  - `calculate_salary_gap_ratio_average()` (Line 160-184): 薪资差距倍数计算  
+  - `display_core_insights()` (Line 187-245): 三个核心数字展示逻辑
+  - `calculate_yearly_gap_ratios()` (Line 347-376): 年度薪资差距趋势
+- **辅助参考**: `/data_analysis/Sprint1_Data_Cleaning.ipynb` - 数据探索和验证过程
+- **数据处理**: `/data_analysis/data_integration_phase1.py` - 数据合并和清洗流程
+- **字段映射**: `/data_analysis/raw_data/DataProperties.json` - CBS数据字典和字段说明
+
+### 核心字段使用
+- **薪资字段**: `wages_per_fte_9` (工资和薪金每FTE，单位：千欧元) ✅
+- **行业字段**: `title` (行业名称，如"J Information and communication")  
+- **年份字段**: `year_period` (年份，如2010, 2024)
+- **时间范围**: 2010-2024年 (15年数据，不是1995-2024年)
+- **有效行业**: 必须在2010和2024年都有完整数据的行业
+
+### 业务计算公式 (基于interactive_crosstab_app.py)
+```python
+# 1. Growth Champion/Slowest 计算 (百分比增长率)
+growth_rate = (end_salary - start_salary) / start_salary * 100
+# 增长冠军: max(growth_rate), 增长最慢: min(growth_rate)
+
+# 2. Salary Gap Ratio 计算 (平均薪资倍数)
+avg_salaries = df.groupby("Title")["WagesPerFte_9"].mean()  # 2010-2024年平均
+gap_ratio = max(avg_salaries) / min(avg_salaries)
+
+# 3. 年度差距趋势 (每年最高/最低倍数)
+yearly_gap = max_salary_in_year / min_salary_in_year  # 按年计算
+
+# 数据筛选条件
+df_filtered = df[(df['Year'] >= 2010) & (df['Year'] <= 2024)]
+valid_industries = df_filtered.dropna(subset=[2010, 2024])  # 两年都有数据
+```
 
 ## 💡 **MVP 级架构优势**
 
