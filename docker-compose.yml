@@ -20,24 +20,51 @@ services:
     build:
       context: ./backend # Dockerfile 路径
       dockerfile: Dockerfile
+      target: dev # 开发模式：使用dev阶段，生产模式改为prod
     container_name: salary-backend
     ports:
       - "8080:8080"
+      - "35729:35729" # Spring Boot DevTools LiveReload端口
     depends_on:
       - db # 声明依赖数据库服务，会后于数据库启动
     environment:
       DB_URL: jdbc:postgresql://db:5432/salary_data
       DB_USER: admin
       DB_PASSWORD: admin123
+      # DevTools必要配置 - 强制启用热重载
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true" 
+      SPRING_DEVTOOLS_RESTART_POLL_INTERVAL: "2s"
+      SPRING_DEVTOOLS_RESTART_QUIET_PERIOD: "1s"
+      # JVM参数 - 确保DevTools在Docker中工作
+      JAVA_OPTS: "-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true"
+    # 挂载源代码和编译输出目录实现真正的热重载
+    volumes:
+      - ./backend/src:/app/src                    # 源代码挂载
+      - ./backend/target:/app/target              # 编译输出挂载 (关键！)
+      - ./backend/pom.xml:/app/pom.xml           # Maven配置
+      - ~/.m2:/root/.m2                          # Maven本地仓库缓存
 
   # 前端 React 服务
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: dev # 开发模式：使用dev阶段，生产模式改为prod
     container_name: salary-frontend
     ports:
-      - "3000:80"
+      - "3000:3000" # 开发模式：Vite端口，生产模式改为3000:80
+      - "24678:24678" # Vite HMR热重载端口
+    # 挂载源代码实现热重载
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+    environment:
+      - CHOKIDAR_USEPOLLING=true # 解决Docker文件监听问题
     stdin_open: true # 保持标准输入打开，用于交互式会话
     tty: true # 分配一个伪终端
 

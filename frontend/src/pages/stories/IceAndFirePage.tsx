@@ -171,7 +171,7 @@ function IceAndFirePage() {
               </h3>
               {growthRankings?.rankings ? (
                 <div className="space-y-3">
-                  {growthRankings.rankings.map((item) => (
+                  {growthRankings.rankings.slice(0, 5).map((item) => (
                     <div
                       key={item.rank}
                       onClick={() => toggleIndustry(item.industry)}

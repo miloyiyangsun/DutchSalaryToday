@@ -22,9 +22,24 @@ COPY . .
 # 执行构建命令，生成生产环境的静态文件
 RUN npm run build
 
+# --- 开发阶段 (Development Stage) ---
+# 基于构建阶段，添加Vite开发服务器和热重载支持
+FROM build AS dev
+
+# 暴露Vite开发服务器端口和HMR端口
+EXPOSE 3000
+EXPOSE 24678
+
+# 设置环境变量支持Docker中的热重载
+ENV CHOKIDAR_USEPOLLING=true
+ENV VITE_HMR_PORT=24678
+
+# 开发模式启动命令：使用Vite开发服务器，支持热重载
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+
 # --- 生产阶段 (Production Stage) ---
 # 使用一个极其轻量的 Nginx Alpine 镜像作为最终的服务器
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine AS prod
 
 # 从构建阶段，将构建好的静态文件复制到 Nginx 的网站根目录
 COPY --from=build /app/dist /usr/share/nginx/html

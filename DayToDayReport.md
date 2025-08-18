@@ -522,3 +522,94 @@ PostgreSQL(3000条数据) → JPA Entity → Repository查询 → Service计算 
 - **业务逻辑移植**必须确保算法等价性，不能因技术栈差异影响结果准确性
 
 **全栈架构成熟度**: 从前端原型成功演进为生产级全栈应用，建立了从数据库到用户界面的完整数据处理流水线，实现了真正的前后端分离架构，为后续功能扩展奠定了坚实的技术基础。
+
+---
+
+## 2025年8月18日 - Growth Rankings图表功能修复与Docker热重载优化
+
+### 📅 真实开发时间线
+
+**8月18日 18:50** | Growth Rankings前端数据显示问题诊断
+- `18:50` useGrowthRankings.ts - 发现图表数据源不匹配问题
+- `18:50` IceAndFirePage.tsx - 确认图表显示98个行业而非期望的5个
+
+**8月18日 19:38-19:42** | 后端API数据结构重构
+- `19:38` SalaryService.java - 新增generateTrendData()方法生成前端图表数据
+- `19:40` SalaryController.java - 修改/growth-rankings响应添加trendData字段
+- 核心修复：限制排名为前5名(`.limit(5)`)，添加rank字段支持
+
+**8月18日 19:42** | 前端API数据处理逻辑优化
+- `19:42` api.ts - 简化数据处理，直接使用后端排名和trendData
+- 移除前端排序逻辑，依赖后端精确数据结构
+
+**8月18日 19:23-19:47** | Docker开发环境热重载配置优化
+- `19:23` vite.config.ts - 添加Docker环境下的HMR配置
+- `19:24` docker-compose.prod.yml - 创建生产环境Docker配置
+- `19:47` docker-compose.yml - Spring Boot DevTools完整配置
+- 关键修复：添加target目录挂载和DevTools环境变量
+
+### 🎯 核心解决问题
+
+**Growth Rankings图表显示错误**：显示全部98个行业而非预期的前5名
+**解决方案**：修改后端getGrowthRankings()添加`.limit(5)`限制，前端移除自主排序
+
+**图表数据源缺失**：前端期望trendData但后端未提供
+**解决方案**：新增generateTrendData()方法，为前5行业生成15年薪资趋势数据
+
+**Docker热重载不工作**：代码修改需要手动重启容器
+**解决方案**：配置Spring Boot DevTools环境变量和target目录挂载
+
+**前后端数据契约不匹配**：前端自主处理排名vs后端提供精确数据
+**解决方案**：统一使用后端rank字段，前端专注UI渲染
+
+### 🛠 技术栈深度应用
+
+- **Spring Boot DevTools**: Docker环境下热重载配置，环境变量SPRING_DEVTOOLS_*
+- **Volume Mounting**: 源码目录+target编译输出双重挂载策略  
+- **JPA Stream API**: `.limit(5).collect(Collectors.toList())`数量限制
+- **React Recharts**: LineChart动态dataKey映射，支持多行业趋势显示
+- **Docker Multi-stage**: dev/prod target分离，优化开发体验
+
+### 💡 关键技术决策
+
+1. **后端数据权威原则**: 前端不再自主排序，完全依赖后端精确排名
+2. **Docker热重载优化**: 牺牲镜像大小换取开发效率提升
+3. **API响应扩展**: trendData与rankings并存，支持复杂前端需求
+4. **环境配置分离**: docker-compose.yml(开发) vs docker-compose.prod.yml(生产)
+
+### 📊 功能验证结果
+
+**API响应验证** (`/api/v1/growth-rankings`):
+- `totalIndustries: 5` ✅ (之前98个)  
+- `rankings[]`: 包含rank, industry, growthRate等完整字段 ✅
+- `trendData[]`: 15年×5行业完整趋势数据 ✅
+- 增长冠军: "79 Travel agencies" 164.5%增长 ✅
+
+**Docker热重载验证**:
+- 前端Vite HMR: 代码修改秒级响应 ✅
+- 后端Spring DevTools: Java代码修改自动重启 ✅
+- 数据库持久化: 容器重启数据保持 ✅
+
+### 🔧 技术债务处理
+
+- 移除前端冗余的数据处理逻辑，简化API调用链
+- 统一Docker开发环境配置，消除手动重启依赖
+- 建立生产/开发环境Docker配置分离
+- 优化Spring Boot Maven构建缓存机制
+
+### 🚀 最终状态
+
+- **Growth Rankings功能**: 前5行业排名+趋势图完整实现 ✅
+- **Docker热重载**: 前后端代码修改实时生效 ✅  
+- **数据一致性**: 后端API与前端显示完全匹配 ✅
+- **开发效率**: Docker环境下接近本地开发体验 ✅
+
+### 💡 技术洞察
+
+通过今日的功能修复与环境优化，验证了现代容器化开发的关键要素：
+- **API契约设计**需要前后端紧密协作，避免各自假设导致的不匹配  
+- **Docker热重载配置**比想象中复杂，需要深入理解框架特性和容器挂载机制
+- **数据权威性原则**：复杂计算逻辑应在后端实现，前端专注展示和交互
+- **环境一致性**：开发环境越接近生产环境，部署问题越少
+
+**开发体验突破**: 从需要频繁手动重启的低效开发模式，成功升级为代码修改即时生效的现代化容器开发环境，显著提升了迭代速度和调试效率，为Sprint后续开发建立了高效的技术基础。

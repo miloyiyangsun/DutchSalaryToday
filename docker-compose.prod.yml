@@ -1,0 +1,42 @@
+# docker-compose.prod.yml - Production Mode (可选)
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: salary-db-prod
+    environment:
+      POSTGRES_DB: salary_data
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: prod # 生产模式：使用prod阶段
+    container_name: salary-backend-prod
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/salary_data
+      DB_USER: admin
+      DB_PASSWORD: admin123
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: prod # 生产模式：使用prod阶段
+    container_name: salary-frontend-prod
+    ports:
+      - "3000:80" # 生产模式：Nginx端口
+    
+volumes:
+  postgres_data:

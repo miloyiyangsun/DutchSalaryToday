@@ -147,7 +147,7 @@ export async function fetchGrowthRankings(): Promise<{
 
     const apiResponse = await response.json();
 
-    // 后端返回格式: {success: true, data: {rankings: [...], mode: "growth", totalIndustries: N}}
+    // 后端返回格式: {success: true, data: {title, rankings: [...], trendData: [...], mode: "growth"}}
     if (apiResponse.success && apiResponse.data) {
       const backendData = apiResponse.data;
 
@@ -155,15 +155,15 @@ export async function fetchGrowthRankings(): Promise<{
       const frontendData = {
         title: "Industry Growth Rankings",
         rankings:
-          backendData.rankings?.map((item: any, index: number) => ({
-            rank: index + 1,
+          backendData.rankings?.map((item: any) => ({
+            rank: item.rank, // 直接使用后端提供的排名
             industry: item.industry,
             growthRate: `${item.growthRate?.toFixed(1)}%`,
             startSalary: `€${item.startSalary?.toFixed(1)}k`,
             endSalary: `€${item.endSalary?.toFixed(1)}k`,
-            unit: "k€",
+            unit: item.unit || "k€",
           })) || [],
-        trendData: [], // 简化版：暂时返回空数组，后续可扩展
+        trendData: backendData.trendData || [], // 使用后端返回的真实趋势数据
       };
 
       return { data: frontendData };

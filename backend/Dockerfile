@@ -20,9 +20,24 @@ COPY src ./src
 # -DskipTests 会跳过耗时的单元测试，这在 CI/CD 流程中是常见做法
 RUN mvn package -DskipTests
 
+# --- 开发阶段 (Development Stage) ---
+# 基于构建阶段，添加开发工具和热重载支持
+FROM build AS dev
+
+# 暴露应用端口和DevTools LiveReload端口
+EXPOSE 8080
+EXPOSE 35729
+
+# 设置Spring Boot DevTools环境变量
+ENV SPRING_DEVTOOLS_RESTART_ENABLED=true
+ENV SPRING_DEVTOOLS_LIVERELOAD_ENABLED=true
+
+# 开发模式启动命令：使用Maven插件运行，支持热重载
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true"]
+
 # --- 生产阶段 (Production Stage) ---
 # 使用一个极度轻量级的、仅包含 Java 运行时的 slim 镜像
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-slim AS prod
 
 # 设置工作目录
 WORKDIR /app

@@ -36,9 +36,9 @@ export function useGrowthRankings(): GrowthRankingsHookResult {
         setGrowthRankings(result.data);
         setError(null);
 
-        // ✅ 基于API数据动态设置默认选中行业（全选）- 数据驱动
+        // ✅ 基于API数据动态设置默认选中行业（只选前5个）- 数据驱动
         setSelectedIndustries(
-          result.data.rankings.map((ranking) => ranking.industry),
+          result.data.rankings.slice(0, 5).map((ranking) => ranking.industry),
         );
       }
     } catch (err) {

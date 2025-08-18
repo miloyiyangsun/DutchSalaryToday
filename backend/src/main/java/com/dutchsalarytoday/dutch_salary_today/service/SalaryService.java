@@ -83,11 +83,11 @@ public class SalaryService {
     }
     
     /**
-     * 获取增长排名数据
+     * 获取增长排名数据 - 优化版本
      * 参考: interactive_crosstab_app.py的get_growth_champion_data()方法
      * 
      * @param isGrowthMode true=增长模式(降序), false=衰退模式(升序)
-     * @return 按增长率排序的行业列表
+     * @return 前5个行业的增长排名数据，包含rank字段
      */
     public List<Map<String, Object>> getGrowthRankings(boolean isGrowthMode) {
         List<SalaryRecord> validRecords = salaryRecordRepository
@@ -98,13 +98,69 @@ public class SalaryService {
         
         List<Map<String, Object>> growthData = calculateGrowthRates(industryRecords);
         
-        // 筛选有效行业并排序
-        return growthData.stream()
+        // 筛选有效行业、排序、限制前5个、添加排名
+        List<Map<String, Object>> sortedData = growthData.stream()
             .filter(data -> data.get("startSalary") != null && data.get("endSalary") != null)
             .sorted(isGrowthMode ? 
                 Comparator.comparing((Map<String, Object> data) -> (Double) data.get("growthRate")).reversed() :
                 Comparator.comparing((Map<String, Object> data) -> (Double) data.get("growthRate")))
+            .limit(5) // 只返回前5个行业
             .collect(Collectors.toList());
+        
+        // 添加排名字段和格式化数据
+        List<Map<String, Object>> rankedData = new ArrayList<>();
+        for (int i = 0; i < sortedData.size(); i++) {
+            Map<String, Object> originalData = sortedData.get(i);
+            Map<String, Object> rankedItem = new HashMap<>();
+            
+            rankedItem.put("rank", i + 1);
+            rankedItem.put("industry", originalData.get("industry"));
+            rankedItem.put("growthRate", (Double) originalData.get("growthRate"));
+            rankedItem.put("startSalary", (Double) originalData.get("startSalary"));
+            rankedItem.put("endSalary", (Double) originalData.get("endSalary"));
+            rankedItem.put("unit", "k€");
+            
+            rankedData.add(rankedItem);
+        }
+        
+        return rankedData;
+    }
+    
+    /**
+     * 生成前5个行业的年度薪资趋势数据
+     * 用于前端LineChart图表显示
+     * 
+     * @param topIndustries 前5个行业列表
+     * @return 2010-2024年每年的行业薪资数据，格式为: [{year: 2010, "行业A": 薪资, "行业B": 薪资}, ...]
+     */
+    public List<Map<String, Object>> generateTrendData(List<String> topIndustries) {
+        List<Map<String, Object>> trendData = new ArrayList<>();
+        
+        for (int year = START_YEAR; year <= END_YEAR; year++) {
+            Map<String, Object> yearData = new HashMap<>();
+            yearData.put("year", year);
+            
+            // 获取该年份的薪资记录
+            List<SalaryRecord> yearRecords = salaryRecordRepository
+                .findByYearPeriodAndWagesPerFteNotNull(year);
+            
+            // 为每个前5行业添加薪资数据
+            for (String industry : topIndustries) {
+                Double salary = yearRecords.stream()
+                    .filter(record -> record.getTitle().equals(industry))
+                    .map(record -> record.getWagesPerFte().doubleValue())
+                    .findFirst()
+                    .orElse(null);
+                
+                if (salary != null) {
+                    yearData.put(industry, salary);
+                }
+            }
+            
+            trendData.add(yearData);
+        }
+        
+        return trendData;
     }
     
     /**

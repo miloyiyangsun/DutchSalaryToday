@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 薪资数据REST API控制器
@@ -71,8 +72,18 @@ public class SalaryController {
                 return ResponseEntity.ok(createErrorResponse("No ranking data available for the specified period"));
             }
             
+            // 提取前5个行业名称用于生成趋势数据
+            List<String> topIndustries = rankings.stream()
+                .map(ranking -> (String) ranking.get("industry"))
+                .collect(Collectors.toList());
+            
+            // 生成趋势数据
+            List<Map<String, Object>> trendData = salaryService.generateTrendData(topIndustries);
+            
             Map<String, Object> response = Map.of(
+                "title", "Industry Growth Rankings",
                 "rankings", rankings,
+                "trendData", trendData, // 新增：前端图表需要的趋势数据
                 "mode", isGrowthMode ? "growth" : "slowest",
                 "totalIndustries", rankings.size(),
                 "timeRange", "2010-2024"
