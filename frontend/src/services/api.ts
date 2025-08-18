@@ -115,12 +115,27 @@ export async function fetchSalaryGapTrends(): Promise<{
       const frontendData = {
         title: "Salary Gap Evolution",
         data:
-          backendData.trends?.map((trend: any) => ({
-            year: trend.year,
-            gapRatio: trend.gapRatio,
-            industries: {}, // 简化版，暂时不提供详细行业数据
-          })) || [],
-        industries: [], // 简化版，暂时空数组
+          backendData.trends?.map((trend: any) => {
+            // 构建行业薪资映射：从后端的maxIndustry/minIndustry + maxSalary/minSalary
+            const industries: Record<string, number> = {};
+            
+            // 添加最高薪资行业
+            if (trend.maxIndustry && typeof trend.maxSalary === 'number') {
+              industries[trend.maxIndustry] = trend.maxSalary;
+            }
+            
+            // 添加最低薪资行业（确保不重复）
+            if (trend.minIndustry && typeof trend.minSalary === 'number') {
+              industries[trend.minIndustry] = trend.minSalary;
+            }
+            
+            return {
+              year: trend.year,
+              gapRatio: trend.gapRatio,
+              industries, // 真实的行业薪资数据：{行业名: 薪资值}
+            };
+          }) || [],
+        industries: [], // 保留空数组，实际数据在data中的industries字段
       };
 
       return { data: frontendData };

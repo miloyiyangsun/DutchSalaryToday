@@ -14,13 +14,22 @@ import { useStoryData, useGapTrends, useGrowthRankings } from "../../hooks";
 import InsightCard from "../../components/InsightCard";
 import "../../App.css";
 
-// 基于排名的配色规则 - 前端职责，按rank 1-5分配颜色
-const RANK_COLORS = [
-  "#8884d8", // rank 1
-  "#8dd1e1", // rank 2
-  "#82ca9d", // rank 3
-  "#ff7300", // rank 4
-  "#ffc658", // rank 5
+// 🔥 暖色系：增长最快的5个行业 (rank 1-5)
+const WARM_COLORS = [
+  "#FF6B35", // 热橙红 - rank 1 最快
+  "#F7931E", // 暖橙色 - rank 2
+  "#FFD23F", // 金黄色 - rank 3
+  "#FF8E53", // 暖橙色 - rank 4
+  "#FFA726", // 亮橙色 - rank 5
+];
+
+// ❄️ 冷色系：增长最慢的5个行业 (rank 6-10)
+const COOL_COLORS = [
+  "#4FC3F7", // 天蓝色 - rank 6 开始慢
+  "#26C6DA", // 青蓝色 - rank 7
+  "#66BB6A", // 薄荷绿 - rank 8
+  "#42A5F5", // 深蓝色 - rank 9
+  "#7E57C2", // 紫色    - rank 10 最慢
 ];
 
 function IceAndFirePage() {
@@ -40,12 +49,22 @@ function IceAndFirePage() {
     loading: rankingsLoading,
   } = useGrowthRankings();
 
-  // 基于API数据获取行业颜色的函数 - 完全数据驱动
+  // 基于API数据获取行业颜色的函数 - 冰火双色系
   const getIndustryColor = (industryName: string): string => {
     const ranking = growthRankings?.rankings?.find(
       (r) => r.industry === industryName,
     );
-    return ranking ? RANK_COLORS[ranking.rank - 1] : "#cccccc"; // 默认颜色作为fallback
+
+    if (!ranking) return "#CCCCCC"; // 默认灰色
+
+    // rank 1-5: 使用暖色系 (增长最快)
+    if (ranking.rank <= 5) {
+      return WARM_COLORS[ranking.rank - 1];
+    }
+    // rank 6-10: 使用冷色系 (增长最慢)
+    else {
+      return COOL_COLORS[ranking.rank - 6]; // rank 6 → index 0
+    }
   };
 
   // 切换行业选择状态
@@ -132,42 +151,112 @@ function IceAndFirePage() {
           <h2 className="text-xl font-bold mb-4">
             🚀 Industry Growth Trends & Rankings
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 左侧：动态折线图 */}
-            <div className="lg:col-span-2">
-              {growthRankings?.trendData ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={growthRankings.trendData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    {selectedIndustries.map((industryKey) => {
-                      return (
-                        <Line
-                          key={industryKey}
-                          type="monotone"
-                          dataKey={industryKey}
-                          stroke={getIndustryColor(industryKey)}
-                          name={industryKey} // 直接使用完整的行业名称
-                          strokeWidth={2}
-                        />
-                      );
-                    })}
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[300px] flex items-center justify-center text-gray-500">
-                  Loading chart data...
-                </div>
-              )}
-            </div>
+          {/* 折线图区域：横向占满 */}
+          <div className="w-full mb-6">
+            {growthRankings?.trendData ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={growthRankings.trendData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis domain={[25, 100]} />
+                  <Tooltip
+                    wrapperStyle={{ zIndex: 9999 }}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        // 对数据按薪资降序排序
+                        const sortedPayload = [...payload].sort(
+                          (a, b) => b.value - a.value,
+                        );
 
-            {/* 右侧：可点击的增长冠军排名选择器 */}
-            <div className="lg:col-span-1">
-              <h3 className="font-semibold mb-3">
-                🏆 Growth Champions (Click to Select)
+                        return (
+                          <div
+                            style={{
+                              backgroundColor: "rgba(0, 0, 0, 0.8)",
+                              border: "none",
+                              borderRadius: "6px",
+                              color: "white",
+                              padding: "10px",
+                              zIndex: 9999,
+                            }}
+                          >
+                            <p
+                              style={{
+                                color: "white",
+                                margin: "0 0 5px 0",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {label}
+                            </p>
+                            {sortedPayload.map((entry, index) => (
+                              <p
+                                key={index}
+                                style={{
+                                  color: entry.color,
+                                  margin: "2px 0",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {`${entry.name} : ${entry.value} k€/y`}
+                              </p>
+                            ))}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend />
+                  {selectedIndustries.map((industryKey) => {
+                    return (
+                      <Line
+                        key={industryKey}
+                        type="monotone"
+                        dataKey={industryKey}
+                        stroke={getIndustryColor(industryKey)}
+                        name={industryKey} // 直接使用完整的行业名称
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                    );
+                  })}
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[400px] flex items-center justify-center text-gray-500">
+                Loading chart data...
+              </div>
+            )}
+          </div>
+
+          {/* 选择控制按钮 */}
+          <div className="flex justify-center gap-4 mb-6">
+            <button
+              onClick={() =>
+                setSelectedIndustries(
+                  growthRankings?.rankings.map((ranking) => ranking.industry) ||
+                    [],
+                )
+              }
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+            >
+              Select All
+            </button>
+            <button
+              onClick={() => setSelectedIndustries([])}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+            >
+              Select None
+            </button>
+          </div>
+
+          {/* 下方：冰火双卡片并列显示 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 🔥 增长最快的5个行业 */}
+            <div className="bg-gradient-to-br from-red-50 to-orange-50 p-4 rounded-lg border-2 border-red-200">
+              <h3 className="font-semibold mb-3 text-red-800">
+                🔥 Growth Champions (Fastest 5)
               </h3>
               {growthRankings?.rankings ? (
                 <div className="space-y-3">
@@ -177,8 +266,8 @@ function IceAndFirePage() {
                       onClick={() => toggleIndustry(item.industry)}
                       className={`p-3 rounded cursor-pointer transition-colors border-2 ${
                         selectedIndustries.includes(item.industry)
-                          ? "bg-blue-100 border-blue-300 text-blue-900" // 选中状态：蓝色
-                          : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100" // 未选中：灰色 + hover
+                          ? "bg-orange-100 border-orange-300 text-orange-900" // 选中状态：橙色
+                          : "bg-white border-red-200 text-gray-700 hover:bg-red-50" // 未选中：白色 + hover
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -199,7 +288,46 @@ function IceAndFirePage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-gray-500">Loading rankings...</div>
+                <div className="text-gray-500">Loading fastest rankings...</div>
+              )}
+            </div>
+
+            {/* ❄️ 增长最慢的5个行业 */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-lg border-2 border-blue-200">
+              <h3 className="font-semibold mb-3 text-blue-800">
+                ❄️ Slowest Growth (Bottom 5)
+              </h3>
+              {growthRankings?.rankings ? (
+                <div className="space-y-3">
+                  {growthRankings.rankings.slice(5, 10).map((item) => (
+                    <div
+                      key={item.rank}
+                      onClick={() => toggleIndustry(item.industry)}
+                      className={`p-3 rounded cursor-pointer transition-colors border-2 ${
+                        selectedIndustries.includes(item.industry)
+                          ? "bg-blue-100 border-blue-300 text-blue-900" // 选中状态：蓝色
+                          : "bg-white border-blue-200 text-gray-700 hover:bg-blue-50" // 未选中：白色 + hover
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-lg">#{item.rank}</span>
+                        <span className="text-blue-600 font-semibold">
+                          {item.growthRate}
+                        </span>
+                      </div>
+                      <h4 className="font-medium text-sm mb-2 leading-tight">
+                        {item.industry}
+                      </h4>
+                      <div className="text-xs opacity-75">
+                        <div>
+                          {item.startSalary} → {item.endSalary} {item.unit}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-500">Loading slowest rankings...</div>
               )}
             </div>
           </div>
@@ -267,7 +395,7 @@ function IceAndFirePage() {
                       {hoveredYearStats.highest.name}
                     </h5>
                     <p className="text-green-700 font-bold">
-                      €{hoveredYearStats.highest.salary.toLocaleString()}
+                      €{hoveredYearStats.highest.salary.toFixed(1)}k/year
                     </p>
                   </div>
 
@@ -282,7 +410,7 @@ function IceAndFirePage() {
                       {hoveredYearStats.lowest.name}
                     </h5>
                     <p className="text-orange-700 font-bold">
-                      €{hoveredYearStats.lowest.salary.toLocaleString()}
+                      €{hoveredYearStats.lowest.salary.toFixed(1)}k/year
                     </p>
                   </div>
 

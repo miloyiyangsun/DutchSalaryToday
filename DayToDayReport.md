@@ -613,3 +613,96 @@ PostgreSQL(3000条数据) → JPA Entity → Repository查询 → Service计算 
 - **环境一致性**：开发环境越接近生产环境，部署问题越少
 
 **开发体验突破**: 从需要频繁手动重启的低效开发模式，成功升级为代码修改即时生效的现代化容器开发环境，显著提升了迭代速度和调试效率，为Sprint后续开发建立了高效的技术基础。
+
+---
+
+## 2025年8月18日晚 - Salary Gap Evolution Chart完整功能实现
+
+### 📅 真实开发时间线 (第二阶段)
+
+**8月18日 21:11-21:23** | 后端API数据增强实施
+- `21:11-21:16` SalaryService.java - getSalaryGapTrends()方法重构，添加maxIndustry/minIndustry字段
+- `21:16` 后端API测试验证：curl确认新数据格式包含行业名称
+- 核心修复：每年返回最高/最低薪资行业的具体名称，而非仅数值
+
+**8月18日 21:17-21:19** | 前端API数据处理层重构  
+- `21:17` api.ts - fetchSalaryGapTrends()完整重写，处理后端新增字段
+- `21:19` 数据映射逻辑：backend.maxIndustry → frontend.industries[name] = salary
+- 关键技术：Record<string, number>类型安全的行业薪资映射
+
+**8月18日 21:19-21:23** | Hook状态管理与交互优化
+- `21:19` useGapTrends.ts - 默认显示2010年数据逻辑实现
+- `21:22` IceAndFirePage.tsx - 薪资单位格式化（€98.3k/year）
+- `21:23` 鼠标交互优化：hover显示年份数据，离开回到2010年默认值
+
+**8月18日 21:19** | React useMemo错误使用修复
+- 紧急修复：页面白屏问题（useMemo包装JSX组件导致渲染失败）
+- 技术错误：useMemo用于缓存计算值，不能包装React组件
+- 根本解决：恢复标准LineChart写法，移除不当性能优化
+
+### 🎯 核心解决问题
+
+**Chart交互数据缺失**：Salary Gap Evolution图表hover时无法显示具体行业信息
+**解决方案**：全栈数据流重构，从后端数据库查询到前端UI显示的完整实现
+
+**数据可视化不完整**：用户只能看到薪资差距数值，不知道具体哪些行业
+**解决方案**：每年显示最高薪资行业（如Mining）和最低薪资行业（如Food Service）
+
+**用户体验交互缺陷**：鼠标移开后右侧空白，缺乏默认信息显示
+**解决方案**：实现智能交互逻辑，默认显示2010年基准数据，hover显示年份数据
+
+**前端渲染崩溃**：错误的React Hook使用导致页面完全白屏
+**解决方案**：深度理解useMemo适用场景，修复React组件渲染流程
+
+### 🛠 技术栈深度应用
+
+- **Spring Boot JPA Stream**: maxSalaryRecord查询最高薪资行业，类型安全的数据聚合
+- **React Hook状态管理**: useState+useCallback实现复杂交互状态同步
+- **TypeScript类型守卫**: Record<string, number>确保行业薪资映射的类型安全
+- **前端数据转换**: 后端嵌套API响应→前端扁平化数据结构的适配器模式
+- **React性能优化陷阱**: useMemo错误使用的深度分析和标准修复方案
+
+### 💡 关键技术决策
+
+1. **数据权威性原则**: 行业名称从数据库实时查询，不使用前端硬编码
+2. **交互一致性设计**: 鼠标行为遵循用户预期，离开回到有意义的默认状态  
+3. **全栈数据契约**: 后端maxIndustry字段与前端industries映射的精确对应
+4. **React最佳实践**: Hook使用严格遵循官方规范，避免性能优化的过早实施
+
+### 📊 功能验证结果
+
+**完整数据流验证**:
+```
+PostgreSQL → SalaryService.getSalaryGapTrends() → Controller API → Frontend api.ts → useGapTrends Hook → IceAndFirePage UI
+```
+
+**交互体验验证**:
+- 页面加载: 自动显示2010年统计（Mining €80.9k vs Food Service €25.7k）✅
+- 鼠标悬停: 显示2018年统计（Mining €98.3k vs Food Service €28.5k）✅  
+- 鼠标移开: 自动回到2010年默认数据，不再空白 ✅
+- 薪资格式: 统一€XXX.Xk/year格式显示 ✅
+
+### 🔧 技术债务根治
+
+- 消除前端所有placeholder数据，实现100%后端API驱动
+- 修复React Hook使用错误，确保组件渲染稳定性
+- 建立前后端数据格式完整转换机制
+- 实现用户交互的完整状态管理
+
+### 🚀 最终状态
+
+- **Salary Gap Evolution**: 完整交互功能实现 ✅
+- **行业名称显示**: 真实数据库数据驱动 ✅  
+- **用户体验**: 智能默认状态+响应式交互 ✅
+- **技术稳定性**: React渲染无错误，Hook使用标准化 ✅
+- **Sprint 1进度**: "Industry Ice and Fire"故事完整实现 ✅
+
+### 💡 技术洞察
+
+通过今晚的深度功能实现，验证了现代React全栈开发的关键要素：
+- **数据驱动UI原则**: 每个显示元素都应来自真实数据源，硬编码是技术债务的根源
+- **Hook使用边界**: useMemo适用于昂贵计算缓存，不能用于组件包装
+- **交互设计一致性**: 用户操作的每个状态都需要明确定义，避免空白状态  
+- **全栈数据契约**: API设计需要深度理解前端UI需求，而非简单CRUD
+
+**功能完整性里程碑**: 从基础图表显示成功演进为包含丰富行业洞察的交互式数据可视化，用户现在可以精确了解每年薪资差距的具体行业构成，实现了真正意义上的数据故事叙述能力，为Sprint 1的"Industry Ice and Fire"主题提供了完整的技术支撑。

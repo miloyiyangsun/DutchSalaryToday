@@ -83,11 +83,11 @@ public class SalaryService {
     }
     
     /**
-     * 获取增长排名数据 - 优化版本
+     * 获取增长排名数据 - 扩展版本：返回前5+后5共10个行业
      * 参考: interactive_crosstab_app.py的get_growth_champion_data()方法
      * 
-     * @param isGrowthMode true=增长模式(降序), false=衰退模式(升序)
-     * @return 前5个行业的增长排名数据，包含rank字段
+     * @param isGrowthMode 暂时保留参数兼容性，实际总是返回前5+后5
+     * @return 前5个增长最快+后5个增长最慢的行业排名数据，共10个行业
      */
     public List<Map<String, Object>> getGrowthRankings(boolean isGrowthMode) {
         List<SalaryRecord> validRecords = salaryRecordRepository
@@ -98,42 +98,74 @@ public class SalaryService {
         
         List<Map<String, Object>> growthData = calculateGrowthRates(industryRecords);
         
-        // 筛选有效行业、排序、限制前5个、添加排名
-        List<Map<String, Object>> sortedData = growthData.stream()
+        // 筛选有效行业，按增长率降序排序获取完整数据
+        List<Map<String, Object>> allSortedData = growthData.stream()
             .filter(data -> data.get("startSalary") != null && data.get("endSalary") != null)
-            .sorted(isGrowthMode ? 
-                Comparator.comparing((Map<String, Object> data) -> (Double) data.get("growthRate")).reversed() :
-                Comparator.comparing((Map<String, Object> data) -> (Double) data.get("growthRate")))
-            .limit(5) // 只返回前5个行业
+            .sorted(Comparator.comparing((Map<String, Object> data) -> (Double) data.get("growthRate")).reversed())
             .collect(Collectors.toList());
         
-        // 添加排名字段和格式化数据
+        if (allSortedData.size() < 10) {
+            // 如果有效行业不足10个，返回所有可用的行业
+            List<Map<String, Object>> rankedData = new ArrayList<>();
+            for (int i = 0; i < allSortedData.size(); i++) {
+                rankedData.add(createRankedItem(allSortedData.get(i), i + 1, i < 5 ? "fastest" : "slowest"));
+            }
+            return rankedData;
+        }
+        
+        // 提取前5个(增长最快)和后5个(增长最慢)
+        List<Map<String, Object>> top5 = allSortedData.subList(0, 5);
+        List<Map<String, Object>> bottom5 = allSortedData.subList(
+            Math.max(0, allSortedData.size() - 5), 
+            allSortedData.size()
+        );
+        
+        // 合并前5和后5，添加排名和分类信息
         List<Map<String, Object>> rankedData = new ArrayList<>();
-        for (int i = 0; i < sortedData.size(); i++) {
-            Map<String, Object> originalData = sortedData.get(i);
-            Map<String, Object> rankedItem = new HashMap<>();
-            
-            rankedItem.put("rank", i + 1);
-            rankedItem.put("industry", originalData.get("industry"));
-            rankedItem.put("growthRate", (Double) originalData.get("growthRate"));
-            rankedItem.put("startSalary", (Double) originalData.get("startSalary"));
-            rankedItem.put("endSalary", (Double) originalData.get("endSalary"));
-            rankedItem.put("unit", "k€");
-            
-            rankedData.add(rankedItem);
+        
+        // 前5名：增长最快 (rank 1-5)
+        for (int i = 0; i < top5.size(); i++) {
+            rankedData.add(createRankedItem(top5.get(i), i + 1, "fastest"));
+        }
+        
+        // 后5名：增长最慢 (rank 6-10)
+        for (int i = 0; i < bottom5.size(); i++) {
+            rankedData.add(createRankedItem(bottom5.get(i), i + 6, "slowest"));
         }
         
         return rankedData;
     }
     
     /**
-     * 生成前5个行业的年度薪资趋势数据
+     * 创建格式化的排名项目
+     * 
+     * @param originalData 原始行业数据
+     * @param rank 排名 (1-10)
+     * @param category 分类 ("fastest" 或 "slowest")
+     * @return 格式化的排名数据
+     */
+    private Map<String, Object> createRankedItem(Map<String, Object> originalData, int rank, String category) {
+        Map<String, Object> rankedItem = new HashMap<>();
+        
+        rankedItem.put("rank", rank);
+        rankedItem.put("industry", originalData.get("industry"));
+        rankedItem.put("growthRate", (Double) originalData.get("growthRate"));
+        rankedItem.put("startSalary", (Double) originalData.get("startSalary"));
+        rankedItem.put("endSalary", (Double) originalData.get("endSalary"));
+        rankedItem.put("unit", "k€");
+        rankedItem.put("category", category); // 新增：标识是最快还是最慢
+        
+        return rankedItem;
+    }
+    
+    /**
+     * 生成指定行业的年度薪资趋势数据
      * 用于前端LineChart图表显示
      * 
-     * @param topIndustries 前5个行业列表
+     * @param industries 行业列表 (支持10个行业：前5快+后5慢)
      * @return 2010-2024年每年的行业薪资数据，格式为: [{year: 2010, "行业A": 薪资, "行业B": 薪资}, ...]
      */
-    public List<Map<String, Object>> generateTrendData(List<String> topIndustries) {
+    public List<Map<String, Object>> generateTrendData(List<String> industries) {
         List<Map<String, Object>> trendData = new ArrayList<>();
         
         for (int year = START_YEAR; year <= END_YEAR; year++) {
@@ -144,8 +176,8 @@ public class SalaryService {
             List<SalaryRecord> yearRecords = salaryRecordRepository
                 .findByYearPeriodAndWagesPerFteNotNull(year);
             
-            // 为每个前5行业添加薪资数据
-            for (String industry : topIndustries) {
+            // 为每个行业添加薪资数据 (支持10个行业)
+            for (String industry : industries) {
                 Double salary = yearRecords.stream()
                     .filter(record -> record.getTitle().equals(industry))
                     .map(record -> record.getWagesPerFte().doubleValue())
@@ -177,29 +209,35 @@ public class SalaryService {
                 .findByYearPeriodAndWagesPerFteNotNull(year);
             
             if (!yearRecords.isEmpty()) {
-                // 计算该年最高和最低薪资
-                BigDecimal maxSalary = yearRecords.stream()
-                    .map(SalaryRecord::getWagesPerFte)
-                    .max(BigDecimal::compareTo)
-                    .orElse(BigDecimal.ZERO);
+                // 找到该年最高薪资的行业记录
+                SalaryRecord maxSalaryRecord = yearRecords.stream()
+                    .max(Comparator.comparing(SalaryRecord::getWagesPerFte))
+                    .orElse(null);
                 
-                BigDecimal minSalary = yearRecords.stream()
-                    .map(SalaryRecord::getWagesPerFte)
-                    .min(BigDecimal::compareTo)
-                    .orElse(BigDecimal.ONE);
+                // 找到该年最低薪资的行业记录
+                SalaryRecord minSalaryRecord = yearRecords.stream()
+                    .min(Comparator.comparing(SalaryRecord::getWagesPerFte))
+                    .orElse(null);
                 
-                // 计算差距倍数
-                double gapRatio = minSalary.equals(BigDecimal.ZERO) ? 0.0 : 
-                    maxSalary.divide(minSalary, 2, RoundingMode.HALF_UP).doubleValue();
-                
-                Map<String, Object> yearData = new HashMap<>();
-                yearData.put("year", year);
-                yearData.put("gapRatio", Math.round(gapRatio * 100.0) / 100.0);
-                yearData.put("maxSalary", maxSalary.doubleValue());
-                yearData.put("minSalary", minSalary.doubleValue());
-                yearData.put("industryCount", yearRecords.size());
-                
-                trends.add(yearData);
+                if (maxSalaryRecord != null && minSalaryRecord != null) {
+                    BigDecimal maxSalary = maxSalaryRecord.getWagesPerFte();
+                    BigDecimal minSalary = minSalaryRecord.getWagesPerFte();
+                    
+                    // 计算差距倍数
+                    double gapRatio = minSalary.equals(BigDecimal.ZERO) ? 0.0 : 
+                        maxSalary.divide(minSalary, 2, RoundingMode.HALF_UP).doubleValue();
+                    
+                    Map<String, Object> yearData = new HashMap<>();
+                    yearData.put("year", year);
+                    yearData.put("gapRatio", Math.round(gapRatio * 100.0) / 100.0);
+                    yearData.put("maxSalary", maxSalary.doubleValue());
+                    yearData.put("minSalary", minSalary.doubleValue());
+                    yearData.put("maxIndustry", maxSalaryRecord.getTitle()); // 新增：最高薪资行业名
+                    yearData.put("minIndustry", minSalaryRecord.getTitle()); // 新增：最低薪资行业名
+                    yearData.put("industryCount", yearRecords.size());
+                    
+                    trends.add(yearData);
+                }
             }
         }
         

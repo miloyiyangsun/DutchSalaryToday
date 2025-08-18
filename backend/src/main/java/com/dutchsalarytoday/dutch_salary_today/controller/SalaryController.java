@@ -72,20 +72,20 @@ public class SalaryController {
                 return ResponseEntity.ok(createErrorResponse("No ranking data available for the specified period"));
             }
             
-            // 提取前5个行业名称用于生成趋势数据
-            List<String> topIndustries = rankings.stream()
+            // 提取所有10个行业名称用于生成趋势数据
+            List<String> allIndustries = rankings.stream()
                 .map(ranking -> (String) ranking.get("industry"))
                 .collect(Collectors.toList());
             
-            // 生成趋势数据
-            List<Map<String, Object>> trendData = salaryService.generateTrendData(topIndustries);
+            // 生成10个行业的趋势数据
+            List<Map<String, Object>> trendData = salaryService.generateTrendData(allIndustries);
             
             Map<String, Object> response = Map.of(
-                "title", "Industry Growth Rankings",
+                "title", "Industry Growth Rankings (Top 5 + Bottom 5)",
                 "rankings", rankings,
-                "trendData", trendData, // 新增：前端图表需要的趋势数据
-                "mode", isGrowthMode ? "growth" : "slowest",
-                "totalIndustries", rankings.size(),
+                "trendData", trendData, // 10个行业的完整趋势数据
+                "mode", "combined", // 新增：表示包含最快+最慢
+                "totalIndustries", 10, // 固定为10个行业
                 "timeRange", "2010-2024"
             );
             

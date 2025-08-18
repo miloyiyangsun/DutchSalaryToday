@@ -18,6 +18,7 @@ export interface GapTrendsHookResult {
 export function useGapTrends(): GapTrendsHookResult {
   const [gapTrends, setGapTrends] = useState<SalaryGapTrends | null>(null);
   const [hoveredYearStats, setHoveredYearStats] = useState<YearStatistics | null>(null);
+  const [defaultYearStats, setDefaultYearStats] = useState<YearStatistics | null>(null); // 保存2010年默认数据
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,10 +55,13 @@ export function useGapTrends(): GapTrendsHookResult {
     }
   }, [calculateYearStatistics]);
 
-  // 处理鼠标离开图表
+  // 处理鼠标离开图表 - 恢复到2010年默认数据
   const handleChartMouseLeave = useCallback(() => {
-    setHoveredYearStats(null);
-  }, []);
+    // 如果有默认数据，恢复到默认数据；否则保持当前状态
+    if (defaultYearStats) {
+      setHoveredYearStats(defaultYearStats);
+    }
+  }, [defaultYearStats]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -72,6 +76,27 @@ export function useGapTrends(): GapTrendsHookResult {
       } else {
         setGapTrends(result.data!);
         setError(null);
+        
+        // 默认显示2010年数据 - 延迟执行以避免状态冲突
+        setTimeout(() => {
+          const yearData2010 = result.data!.data.find(d => d.year === 2010);
+          if (yearData2010?.industries && Object.keys(yearData2010.industries).length > 0) {
+            const industriesEntries = Object.entries(yearData2010.industries);
+            const highest = industriesEntries.reduce((max, [name, salary]) => 
+              salary > max.salary ? { name, salary } : max,
+              { name: industriesEntries[0][0], salary: industriesEntries[0][1] }
+            );
+            
+            const lowest = industriesEntries.reduce((min, [name, salary]) => 
+              salary < min.salary ? { name, salary } : min,
+              { name: industriesEntries[0][0], salary: industriesEntries[0][1] }
+            );
+            
+            const default2010Stats = { year: 2010, highest, lowest };
+            setDefaultYearStats(default2010Stats); // 保存默认数据
+            setHoveredYearStats(default2010Stats); // 初始显示
+          }
+        }, 100);
       }
     } catch (err) {
       setError('Unexpected error occurred while fetching gap trends data');
