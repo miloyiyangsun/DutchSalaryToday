@@ -2,8 +2,79 @@
 
 **项目**: DutchSalaryToday
 **文档创建时间**: 2025-08-18
-**文档版本**: 2.0
-**最后更新**: 2025-08-18 22:00:00 - 集成免费额度监控与实时状态分析
+**文档版本**: 2.1
+**最后更新**: 2025-08-19 03:30:00 - 更新Azure免费服务额度基准清单
+
+---
+
+# Azure 免费服务额度清单 (Azure Free Services Quota)
+
+**有效期至 (Expires on): 2026 年 8 月 14 日 (Friday, August 14, 2026)**
+
+本项目将严格遵守以下 Azure 免费服务额度，以确保在 12 个月的免费期内零成本运营。所有架构设计和技术选型都将以此为基准。
+
+| 服务类别 (Category)         | 服务名称 (Service Name)                                         | 每月免费额度 (Monthly Free Limit) |
+| :-------------------------- | :-------------------------------------------------------------- | :-------------------------------- |
+| **计算 (Compute)**    | 虚拟机 (Virtual Machines, B1s)                                  | 750 小时 (Hours)                  |
+|                             | 虚拟机 (Virtual Machines, B2pts v2)                             | 750 小时 (Hours)                  |
+|                             | 虚拟机 (Virtual Machines, B2ats v2)                             | 750 小时 (Hours)                  |
+|                             | Windows 虚拟机 (Windows VM, B1s)                                | 750 小时 (Hours)                  |
+|                             | Windows 虚拟机 (Windows VM, B2pts v2)                           | 750 小时 (Hours)                  |
+|                             | Windows 虚拟机 (Windows VM, B2ats v2)                           | 750 小时 (Hours)                  |
+|                             | 红帽企业版 Linux 许可证 (RHEL License)                          | 750 小时 (Hours)                  |
+| **存储 (Storage)**    | 文件存储-LRS (Files, LRS Data Stored)                           | 100 GB                            |
+|                             | 高级页 Blob-P6 磁盘 (Premium Page Blob, P6 Disks)               | 2.2 个 (Units)                    |
+|                             | 标准 HDD 托管磁盘-LRS 快照 (HDD Managed Disks, LRS Snapshots)   | 1 GB                              |
+|                             | 标准 HDD 托管磁盘-磁盘操作 (HDD Managed Disks, Disk Operations) | 200 万次 (2M Operations)          |
+|                             | 分层块 Blob-热 LRS (Tiered Block Blob, Hot LRS)                 | 5 GB                              |
+|                             | 分层块 Blob-存档 LRS (Tiered Block Blob, Archive LRS)           | 10 GB                             |
+|                             | 容器注册表-标准 (Container Registry, Standard)                  | 31 天 (Days) / 100 GB             |
+| **数据库 (Database)** | SQL 数据库-S0 (SQL Database, S0)                                | 31 天 (Days) / 10 DTUs            |
+|                             | Azure Cosmos DB - 存储 (Cosmos DB, Data Stored)                 | 25 GB                             |
+|                             | Azure Cosmos DB - 吞吐量 (Cosmos DB, 100 RU/s)                  | 2,976 小时 (Hours)                |
+|                             | Azure Database for PostgreSQL - 计算 (B1MS)                     | 750 小时 (Hours)                  |
+|                             | Azure Database for PostgreSQL - 存储                            | 32 GB                             |
+|                             | Azure Database for PostgreSQL - 备份                            | 32 GB                             |
+|                             | Azure Database for MySQL - 计算 (B1MS)                          | 750 小时 (Hours)                  |
+|                             | Azure Database for MySQL - 存储                                 | 32 GB                             |
+|                             | Azure Database for MySQL - 备份                                 | 32 GB                             |
+| **网络 (Networking)** | 数据传出 (Data Transfer Out)                                    | 15 GB                             |
+|                             | 公共 IP 地址 (Public IP Addresses)                              | 1,500 小时 (Hours)                |
+|                             | 负载均衡器-标准 (Load Balancer, Standard)                       | 750 小时 (Hours)                  |
+|                             | VPN 网关 (VPN Gateway)                                          | 750 小时 (Hours)                  |
+| **人工智能 (AI)**     | 认知服务-自定义视觉 (Custom Vision, S0)                         | 10,000 次调用, 1 小时训练         |
+|                             | 认知服务-计算机视觉 (Computer Vision, S1)                       | 5,000 次调用 (Transactions)       |
+|                             | 认知服务-语言理解 (Language Understanding)                      | 10,000 次调用 (Transactions)      |
+|                             | 认知服务-人脸识别 (Face, Standard)                              | 30,000 次调用 (Transactions)      |
+|                             | 认知服务-文本翻译 (Translator Text, S1)                         | 200 万字符 (2M Characters)        |
+|                             | 认知服务-文本分析 (Text Analytics, Standard)                    | 5,000 条记录 (Text Records)       |
+|                             | 认知服务-内容审查 (Content Moderator, Standard)                 | 10,000 次调用 (Transactions)      |
+|                             | 认知服务-异常检测 (Anomaly Detector, Standard)                  | 20,000 次调用 (Transactions)      |
+|                             | 认知服务-表单识别器 (Form Recognizer, S0)                       | 500 次调用 (Transactions)         |
+| **其他 (Others)**     | 密钥保管库 (Key Vault, Premium HSM)                             | 10,000 次操作 (Operations)        |
+|                             | 服务总线 (Service Bus, Standard)                                | 750 小时 (Hours)                  |
+|                             | 媒体服务-编码 (Media Services, Encoding)                        | 20 分钟 (Minutes)                 |
+|                             | 媒体服务-直播 (Media Services, Live Channels)                   | 5 小时 (Hours)                    |
+
+---
+
+## 📊 当前项目免费额度使用情况
+
+### ✅ 已使用的免费服务
+
+| 服务类别 | 使用的服务 | 配置详情 | 使用率 | 状态 |
+|----------|------------|----------|--------|------|
+| **数据库** | Azure Database for PostgreSQL | B1MS, 32GB存储, 32GB备份 | 750小时/月: 100% ✅ | 🆓 免费 |
+| **存储** | 容器注册表-标准 | Standard, 4.2GB/100GB | 4.2% 存储使用 | 🆓 免费 |
+| **网络** | 数据传出 | ~900MB/15GB月度限制 | 6% 带宽使用 | 🆓 免费 |
+| **计算** | App Service F1 | Linux容器 (2个应用) | F1免费计划 | 🆓 免费 |
+
+### 🎯 成本分析结论
+- **理论月费用**: $0 USD (100%免费额度覆盖)
+- **有效期至**: 2026年8月14日
+- **风险等级**: 🟢 低风险 (所有服务在免费范围内)
+
+---
 
 \*\* \*\*我为你创建了完整的监控体系：
 
