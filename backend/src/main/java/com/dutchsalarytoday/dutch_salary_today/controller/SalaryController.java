@@ -17,7 +17,11 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
+@CrossOrigin(origins = {
+    "http://localhost:3000", 
+    "http://localhost:5173",
+    "https://frontend-webapp-16283450340.azurewebsites.net"
+})
 public class SalaryController {
     
     private final SalaryService salaryService;
