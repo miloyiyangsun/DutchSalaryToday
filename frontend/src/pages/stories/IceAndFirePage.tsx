@@ -1,5 +1,6 @@
 // IceAndFirePage.tsx - Sprint1: Industry Ice and Fire 完整故事页面
 import { Link } from "react-router-dom";
+import { useMemo, useCallback } from "react";
 import {
   LineChart,
   Line,
@@ -76,6 +77,37 @@ function IceAndFirePage() {
           : [...prev, industryKey], // 添加选择
     );
   };
+
+  // 🔧 稳定的事件处理器引用 - 防止图表重新渲染
+  const stableOnChartHover = useCallback((data: any) => {
+    onChartHover(data);
+  }, [onChartHover]);
+
+  const stableOnChartMouseLeave = useCallback(() => {
+    onChartMouseLeave();
+  }, [onChartMouseLeave]);
+
+  // 📊 缓存的图表组件 - 只依赖于图表数据，不依赖于UI状态
+  const memoizedLineChart = useMemo(() => (
+    <LineChart
+      data={gapTrends?.data || []}
+      onMouseMove={stableOnChartHover}
+      onMouseLeave={stableOnChartMouseLeave}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="year" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line
+        type="monotone"
+        dataKey="gapRatio"
+        stroke="#8884d8"
+        strokeWidth={2}
+        name="Gap Ratio"
+      />
+    </LineChart>
+  ), [gapTrends?.data, stableOnChartHover, stableOnChartMouseLeave]);
 
   // ✅ 统一loading状态
   const isLoading = coreLoading || trendsLoading || rankingsLoading;
@@ -252,7 +284,7 @@ function IceAndFirePage() {
           </div>
 
           {/* 下方：冰火双卡片并列显示 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             {/* 🔥 增长最快的5个行业 */}
             <div className="bg-gradient-to-br from-red-50 to-orange-50 p-4 rounded-lg border-2 border-red-200">
               <h3 className="font-semibold mb-3 text-red-800">
@@ -340,29 +372,12 @@ function IceAndFirePage() {
           <h2 className="text-xl font-bold mb-4">
             📈 Salary Gap Evolution Over Time
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-6">
             {/* 左侧：折线图 */}
-            <div className="lg:col-span-2">
+            <div className="col-span-2">
               {gapTrends ? (
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart
-                    data={gapTrends.data}
-                    onMouseMove={onChartHover}
-                    onMouseLeave={onChartMouseLeave}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="gapRatio"
-                      stroke="#8884d8"
-                      strokeWidth={2}
-                      name="Gap Ratio"
-                    />
-                  </LineChart>
+                  {memoizedLineChart}
                 </ResponsiveContainer>
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-gray-500">
@@ -372,7 +387,7 @@ function IceAndFirePage() {
             </div>
 
             {/* 右侧：年份统计显示 */}
-            <div className="lg:col-span-1">
+            <div className="col-span-1">
               <h3 className="font-semibold mb-3">📊 Year Statistics</h3>
               {hoveredYearStats ? (
                 <div className="space-y-4">

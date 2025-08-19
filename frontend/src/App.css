@@ -17,8 +17,8 @@ header {
 }
 
 .insights-grid {
-  /* 洞察网格：移动端单列，桌面端三列，间距6 */
-  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mb-8;
+  /* 洞察网格：始终保持三列布局，比例缩放而不是垂直堆叠 */
+  @apply grid grid-cols-3 gap-6 mb-8;
 }
 
 footer {

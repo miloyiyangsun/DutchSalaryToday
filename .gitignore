@@ -1,10 +1,27 @@
+# === 开发环境 ===
 .history/
 .venv/
-__pycache__/
-data_acquisition/raw_data/ # 忽略原始数据
-*.log
+.env*
 node_modules/
 target/
+dist/
+build/
+
+# === 数据文件 ===
+data_acquisition/raw_data/*.json
+data_analysis/*.csv
+data_analysis/*.xlsx
+*.jsonl
+
+# === 大型依赖文件 ===
+package-lock.json
+yarn.lock
+
+# === Jupyter输出 ===
+*.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# === IDE配置 ===
 .idea/
 .vscode/
 *.iml
