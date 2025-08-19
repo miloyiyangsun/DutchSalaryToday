@@ -7,11 +7,31 @@ import type {
   GrowthRankings,
 } from "../types/salary";
 
-// 统一API URL构建函数 - 支持环境变量配置
-// Unified API URL builder - supports environment variable configuration
+// 统一API URL构建函数 - 动态环境检测
+// Unified API URL builder - dynamic environment detection
 function getApiUrl(endpoint: string): string {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
-  return `${baseUrl}/api/v1/${endpoint}`;
+  // 优先使用环境变量配置
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return `${import.meta.env.VITE_API_BASE_URL}/api/v1/${endpoint}`;
+  }
+  
+  // 动态检测运行环境
+  const hostname = window.location.hostname;
+  
+  // Azure生产环境自动检测
+  if (hostname.includes('azurewebsites.net')) {
+    const baseUrl = 'https://backend-webapp-16283450340.azurewebsites.net';
+    return `${baseUrl}/api/v1/${endpoint}`;
+  }
+  
+  // 本地开发环境
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    const baseUrl = 'http://localhost:8080';
+    return `${baseUrl}/api/v1/${endpoint}`;
+  }
+  
+  // 默认fallback
+  return `http://localhost:8080/api/v1/${endpoint}`;
 }
 
 // 获取核心洞察数据 - 最简单的实现
