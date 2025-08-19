@@ -5,9 +5,13 @@ export { useStoryData } from './useStoryData';
 export { useGapTrends } from './useGapTrends';
 export { useGrowthRankings } from './useGrowthRankings';
 export { useWorkHoursData } from './useWorkHoursData';
+export { useGenderPowerData } from './useGenderPowerData';
+export { useWorkIntensificationData } from './useWorkIntensificationData';
+export { useHiddenCostData } from './useHiddenCostData';
 
 // Hook类型导出
 export type { StoryDataHookResult } from './useStoryData';
 export type { GapTrendsHookResult } from './useGapTrends';
 export type { GrowthRankingsHookResult } from './useGrowthRankings';
 export type { WorkHoursDataHookResult } from './useWorkHoursData';
+export type { UseHiddenCostDataReturn } from './useHiddenCostData';

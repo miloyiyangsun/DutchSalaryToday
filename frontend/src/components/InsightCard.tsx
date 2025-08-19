@@ -41,9 +41,79 @@ interface WageRankingData {
   gapRatio: number;
 }
 
+// 故事3: 性别力量数据结构
+interface HistoricalBreakthroughData {
+  percentage1995: number;
+  percentage2024: number;
+  changePoints: number;
+}
+
+interface JobsContributionData {
+  contributionRate: number;
+  femaleNewJobs: number;
+  totalNewJobs: number;
+}
+
+interface IndustryDominanceData {
+  dominantIndustryCount: number;
+  topFemaleIndustry: {
+    industry: string;
+    femalePercentage: number;
+  };
+}
+
+// 故事4: 工作密集化数据结构
+interface WorkloadDistributionData {
+  parttimeRatio: number;
+  totalFte: number;
+  totalEmployees: number;
+}
+
+interface IntensificationIndexData {
+  intensificationIndex: number;
+  interpretation: 'increasing_workload' | 'decreasing_workload';
+}
+
+interface IndustryWorkloadRankingData {
+  heaviestWorkload: {
+    industry: string;
+    parttimeRatio: number;
+  };
+  totalIndustries: number;
+}
+
+// 故事5: 隐形人力成本数据结构
+interface BenefitBurdenLevelData {
+  benefitRatio: number;
+  totalSocialContributions: number;
+  totalCompensation: number;
+  interpretation: string;
+}
+
+interface IndustryGapMultipleData {
+  gapMultiple: number;
+  highestBenefitIndustry: {
+    industry: string;
+    benefitRatio: number;
+  };
+  lowestBenefitIndustry: {
+    industry: string;
+    benefitRatio: number;
+  };
+  totalIndustries: number;
+}
+
+interface AbsoluteCostGrowthData {
+  startAmount: number;
+  endAmount: number;
+  growthRate: number;
+  startYear: number;
+  endYear: number;
+}
+
 // InsightCard组件属性
 interface InsightCardProps {
-  type: 'champion' | 'slowest' | 'gap' | 'average-hours' | 'hours-ranking' | 'wage-ranking';
+  type: 'champion' | 'slowest' | 'gap' | 'average-hours' | 'hours-ranking' | 'wage-ranking' | 'historical-breakthrough' | 'jobs-contribution' | 'industry-dominance' | 'workload-distribution' | 'intensification-index' | 'industry-workload-ranking' | 'benefit-burden-level' | 'industry-gap-multiple' | 'absolute-cost-growth';
   championData?: ChampionData;
   slowestData?: SlowestData;
   gapData?: GapData;
@@ -51,6 +121,18 @@ interface InsightCardProps {
   averageHoursData?: AverageHoursData;
   hoursRankingData?: HoursRankingData;
   wageRankingData?: WageRankingData;
+  // 故事3数据属性
+  historicalBreakthroughData?: HistoricalBreakthroughData;
+  jobsContributionData?: JobsContributionData;
+  industryDominanceData?: IndustryDominanceData;
+  // 故事4数据属性  
+  workloadDistributionData?: WorkloadDistributionData;
+  intensificationIndexData?: IntensificationIndexData;
+  industryWorkloadRankingData?: IndustryWorkloadRankingData;
+  // 故事5数据属性
+  benefitBurdenLevelData?: BenefitBurdenLevelData;
+  industryGapMultipleData?: IndustryGapMultipleData;
+  absoluteCostGrowthData?: AbsoluteCostGrowthData;
   onClick?: () => void;
   clickable?: boolean;
   variant?: 'home' | 'detail'; // 控制文案版本
@@ -64,6 +146,15 @@ const InsightCard: React.FC<InsightCardProps> = ({
   averageHoursData,
   hoursRankingData,
   wageRankingData,
+  historicalBreakthroughData,
+  jobsContributionData,
+  industryDominanceData,
+  workloadDistributionData,
+  intensificationIndexData,
+  industryWorkloadRankingData,
+  benefitBurdenLevelData,
+  industryGapMultipleData,
+  absoluteCostGrowthData,
   onClick,
   clickable = false,
   variant = 'home'
@@ -142,6 +233,111 @@ const InsightCard: React.FC<InsightCardProps> = ({
             <h3>{wageRankingData.highest.industry}</h3>
             <div className="rate success">€{wageRankingData.highest.hourlyWage}/hour</div>
             <p>{wageRankingData.gapRatio}x vs lowest industry</p>
+          </>
+        );
+      
+      // 故事3: 性别力量卡片类型 - 大数字居中突出
+      case 'historical-breakthrough':
+        if (!historicalBreakthroughData) return null;
+        return (
+          <>
+            <h2>🚺 Female Breakthrough</h2>
+            <div className="rate success">+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
+            <h3>Historical Growth</h3>
+            <p>1995: {historicalBreakthroughData.percentage1995.toFixed(1)}% → 2024: {historicalBreakthroughData.percentage2024.toFixed(1)}%</p>
+          </>
+        );
+      
+      case 'jobs-contribution':
+        if (!jobsContributionData) return null;
+        return (
+          <>
+            <h2>💼 New Jobs Power</h2>
+            <div className="rate info">{jobsContributionData.contributionRate.toFixed(1)}%</div>
+            <h3>Female contribution rate</h3>
+            <p>{jobsContributionData.femaleNewJobs.toLocaleString()} of {jobsContributionData.totalNewJobs.toLocaleString()} new positions</p>
+          </>
+        );
+      
+      case 'industry-dominance':
+        if (!industryDominanceData) return null;
+        return (
+          <>
+            <h2>👑 Industry Dominance</h2>
+            <div className="rate success">{industryDominanceData.dominantIndustryCount} industries</div>
+            <h3>Female majority (&gt;50%)</h3>
+            <p>Top: {industryDominanceData.topFemaleIndustry.femalePercentage.toFixed(1)}% in {industryDominanceData.topFemaleIndustry.industry.substring(0, 20)}...</p>
+          </>
+        );
+      
+      // 故事4: 工作密集化卡片类型 - 大数字居中突出
+      case 'workload-distribution':
+        if (!workloadDistributionData) return null;
+        return (
+          <>
+            <h2>⚖️ Work Distribution</h2>
+            <div className="rate info">{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
+            <h3>Non-standard arrangements</h3>
+            <p>{workloadDistributionData.totalFte.toLocaleString()} FTE / {workloadDistributionData.totalEmployees.toLocaleString()} total employees</p>
+          </>
+        );
+      
+      case 'intensification-index':
+        if (!intensificationIndexData) return null;
+        const isIncreasing = intensificationIndexData.interpretation === 'increasing_workload';
+        return (
+          <>
+            <h2>{isIncreasing ? '📈' : '📉'} Work Trend</h2>
+            <div className={`rate ${isIncreasing ? 'warning' : 'success'}`}>
+              {intensificationIndexData.intensificationIndex.toFixed(1)}%
+            </div>
+            <h3>{isIncreasing ? 'More Intensive' : 'More Standard'}</h3>
+            <p>{isIncreasing ? 'Work becoming more flexible' : 'More standard employment'} (2010-2024)</p>
+          </>
+        );
+      
+      case 'industry-workload-ranking':
+        if (!industryWorkloadRankingData) return null;
+        return (
+          <>
+            <h2>🏭 Heaviest Workload</h2>
+            <div className="rate danger">{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
+            <h3>Non-standard work extreme</h3>
+            <p>{industryWorkloadRankingData.heaviestWorkload.industry.substring(0, 30)}... leads {industryWorkloadRankingData.totalIndustries} industries</p>
+          </>
+        );
+      
+      // 故事5: 隐形人力成本卡片类型 - 大数字居中突出
+      case 'benefit-burden-level':
+        if (!benefitBurdenLevelData) return null;
+        return (
+          <>
+            <h2>🧾 Benefit Burden</h2>
+            <div className="rate warning">{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
+            <h3>Social contribution level</h3>
+            <p>{benefitBurdenLevelData.interpretation.substring(0, 40)}...</p>
+          </>
+        );
+      
+      case 'industry-gap-multiple':
+        if (!industryGapMultipleData) return null;
+        return (
+          <>
+            <h2>💸 Industry Gap</h2>
+            <div className="rate danger">{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
+            <h3>Benefit burden disparity</h3>
+            <p>Range: {industryGapMultipleData.lowestBenefitIndustry.benefitRatio.toFixed(1)}% - {industryGapMultipleData.highestBenefitIndustry.benefitRatio.toFixed(1)}% across {industryGapMultipleData.totalIndustries} industries</p>
+          </>
+        );
+      
+      case 'absolute-cost-growth':
+        if (!absoluteCostGrowthData) return null;
+        return (
+          <>
+            <h2>📈 Cost Growth</h2>
+            <div className="rate info">+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
+            <h3>Absolute increase</h3>
+            <p>€{absoluteCostGrowthData.startAmount}B → €{absoluteCostGrowthData.endAmount}B ({absoluteCostGrowthData.startYear}-{absoluteCostGrowthData.endYear})</p>
           </>
         );
       

@@ -156,6 +156,75 @@ public class SalaryController {
     }
     
     /**
+     * 获取性别力量洞察数据API - Story 3: Gender Power Rise
+     * 
+     * 端点: GET /api/v1/gender-power-insights
+     * 返回: 包含三个Big Numbers的性别力量分析数据
+     * 
+     * 前端调用: fetchGenderPowerInsights()
+     */
+    @GetMapping("/gender-power-insights")
+    public ResponseEntity<Map<String, Object>> getGenderPowerInsights() {
+        try {
+            Map<String, Object> insights = salaryService.getGenderPowerInsights();
+            
+            // 检查是否有有效数据
+            if (insights.get("totalIndustries2024").equals(0)) {
+                return ResponseEntity.ok(createErrorResponse("No complete gender data found for analysis"));
+            }
+            
+            return ResponseEntity.ok(createSuccessResponse(insights));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(createErrorResponse("Failed to fetch gender power insights: " + e.getMessage()));
+        }
+    }
+    
+    /**
+     * 获取工作密集化洞察数据API - Story 4: Work Intensification Revolution
+     * 
+     * 端点: GET /api/v1/work-intensification
+     * 返回: 包含三个Big Numbers的工作密集化分析数据
+     * 
+     * 前端调用: fetchWorkIntensificationInsights()
+     */
+    @GetMapping("/work-intensification")
+    public ResponseEntity<Map<String, Object>> getWorkIntensificationInsights() {
+        try {
+            Map<String, Object> insights = salaryService.getWorkIntensificationInsights();
+            
+            // 检查是否有有效数据
+            if (insights.get("totalIndustries2024").equals(0)) {
+                return ResponseEntity.ok(createErrorResponse("No complete work intensification data found for analysis"));
+            }
+            
+            return ResponseEntity.ok(createSuccessResponse(insights));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(createErrorResponse("Failed to fetch work intensification insights: " + e.getMessage()));
+        }
+    }
+    
+    /**
+     * 获取隐形人力成本洞察 - Story 5
+     * 
+     * 端点: GET /api/v1/hidden-costs-insights
+     * 返回: 福利负担水平、行业差异悬殊、绝对成本增长的3大数字
+     * 参考: sprint2-5.md中Story 5的具体需求
+     */
+    @GetMapping("/hidden-costs-insights")
+    public ResponseEntity<Map<String, Object>> getHiddenCostInsights() {
+        try {
+            Map<String, Object> insights = salaryService.getHiddenCostInsights();
+            
+            return ResponseEntity.ok(createSuccessResponse(insights));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(createErrorResponse("Failed to fetch hidden cost insights: " + e.getMessage()));
+        }
+    }
+    
+    /**
      * 健康检查端点
      * 
      * 端点: GET /api/v1/health

@@ -1,18 +1,18 @@
-// Work Hours Analysis Page - Story 2 Detail Page
-// 工时分析详情页 - 故事2详情页面
+// Gender Power Page - Story 3 Detail Page
+// 性别力量详情页 - 故事3详情页面
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from "../../types/routes";
 import "../../App.css";
 
-function WorkHoursPage() {
+function GenderPowerPage() {
   const navigate = useNavigate();
 
   return (
     <div className="container">
       <header>
-        <h1>🕒 Work Hours Analysis - Detailed Analysis</h1>
-        <p>Story 2: Dutch Working Hours and Wage Reality</p>
+        <h1>🚺 Gender Power Rise - Detailed Analysis</h1>
+        <p>Story 3: Female Workforce Breakthrough in Netherlands</p>
       </header>
 
       {/* Under Development Notice */}
@@ -32,9 +32,9 @@ function WorkHoursPage() {
         <div style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
           <p style={{ color: '#28a745', fontWeight: 'bold' }}>✅ Available Data:</p>
           <ul style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
-            <li>🕒 Average Work Hours: 32.4 hours/week (1686 hours annually)</li>
-            <li>⚠️ Longest Hours: 57.7 hours/week in fishing and aquaculture</li>
-            <li>💰 Wage Gap Reality: €77.2/hour top industry, 3x vs lowest</li>
+            <li>🚺 Female Breakthrough: 1995 (41.5%) → 2024 (48.6%)</li>
+            <li>💼 New Jobs Power: 60.1% female contribution rate</li>
+            <li>👑 Industry Dominance: 17 female-majority industries</li>
           </ul>
         </div>
 
@@ -89,8 +89,8 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #ffeaa7'
           }}>
-            <h4>🕒 Average Work Hours</h4>
-            <p>Netherlands average <strong>32.4 hours/week</strong> (1686 hours annually) in 2024</p>
+            <h4>🚺 Historical Breakthrough</h4>
+            <p>Female workforce percentage increased by <strong>7.1 points</strong> over 30 years</p>
           </div>
           
           <div style={{ 
@@ -99,8 +99,8 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #bee5eb'
           }}>
-            <h4>⚠️ Industry Extremes</h4>
-            <p>Fishing industry leads with <strong>57.7 hours/week</strong>, 2x more than shortest hours</p>
+            <h4>💼 Job Creation Power</h4>
+            <p>Women secured <strong>60.1%</strong> of all new positions created 2010-2024</p>
           </div>
           
           <div style={{ 
@@ -109,17 +109,17 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #c3e6cb'
           }}>
-            <h4>💰 Hourly Wage Gap</h4>
-            <p><strong>€77.2/hour</strong> in petroleum industry vs €25.8/hour in hospitality (3x gap)</p>
+            <h4>👑 Industry Leadership</h4>
+            <p><strong>17 industries</strong> now have female majority workforce</p>
           </div>
         </div>
       </section>
 
       <footer style={{ marginTop: '3rem' }}>
-        <p>Story 2 Data Source: CBS Netherlands Statistics | Work Hours Analysis</p>
+        <p>Story 3 Data Source: CBS Netherlands Statistics | Gender Employment Analysis</p>
       </footer>
     </div>
   );
 }
 
-export default WorkHoursPage;
+export default GenderPowerPage;

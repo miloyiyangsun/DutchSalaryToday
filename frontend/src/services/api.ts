@@ -6,6 +6,9 @@ import type {
   SalaryGapTrends,
   GrowthRankings,
   WorkHoursAnalysis,
+  GenderPowerInsights,
+  WorkIntensificationInsights,
+  HiddenCostInsights,
 } from "../types/salary";
 
 // 统一API URL构建函数 - 动态环境检测
@@ -219,6 +222,84 @@ export async function fetchWorkHoursAnalysis(): Promise<{
 }> {
   try {
     const response = await fetch(getApiUrl("work-hours-analysis"));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取性别力量洞察数据 - Story 3
+// Fetch gender power insights data - Story 3
+export async function fetchGenderPowerInsights(): Promise<{
+  data?: GenderPowerInsights;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("gender-power-insights"));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取工作密集化洞察数据 - Story 4
+// Fetch work intensification insights data - Story 4
+export async function fetchWorkIntensificationInsights(): Promise<{
+  data?: WorkIntensificationInsights;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("work-intensification"));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取隐形人力成本洞察数据 - Story 5
+// Fetch hidden labor cost insights data - Story 5
+export async function fetchHiddenCostInsights(): Promise<{
+  data?: HiddenCostInsights;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("hidden-costs-insights"));
 
     if (!response.ok) {
       return { error: `Loading Failed: ${response.status}` };

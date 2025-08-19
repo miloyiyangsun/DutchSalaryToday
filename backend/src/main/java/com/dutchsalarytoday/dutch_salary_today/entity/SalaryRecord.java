@@ -36,6 +36,26 @@ public class SalaryRecord {
     @Column(name = "compensation_per_hour_worked_11")
     private BigDecimal compensationPerHourWorked; // 每小时薪酬(欧元)
     
+    // 性别统计字段 - Story 3: Gender Power Rise
+    @Column(name = "male_28")
+    private BigDecimal male; // 男性数量(千人)
+    
+    @Column(name = "female_29") 
+    private BigDecimal female; // 女性数量(千人)
+    
+    @Column(name = "total_27")
+    private BigDecimal total; // 总计数量(千人)
+    
+    // 故事5: 隐形人力成本分析字段 - Hidden Labor Costs
+    @Column(name = "compensation_of_employees_1")
+    private BigDecimal compensationOfEmployees; // 员工薪酬总额(百万欧元)
+    
+    @Column(name = "wages_and_salaries_2")
+    private BigDecimal wagesAndSalaries; // 工资薪金总额(百万欧元)
+    
+    @Column(name = "employers_social_contributions_3")
+    private BigDecimal employersSocialContributions; // 雇主社保支出(百万欧元)
+    
     // 辅助字段
     @Column(name = "description")
     private String description;
@@ -127,6 +147,56 @@ public class SalaryRecord {
         this.compensationPerHourWorked = compensationPerHourWorked;
     }
     
+    // 性别统计字段的getter和setter方法 - Story 3
+    public BigDecimal getMale() {
+        return male;
+    }
+    
+    public void setMale(BigDecimal male) {
+        this.male = male;
+    }
+    
+    public BigDecimal getFemale() {
+        return female;
+    }
+    
+    public void setFemale(BigDecimal female) {
+        this.female = female;
+    }
+    
+    public BigDecimal getTotal() {
+        return total;
+    }
+    
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+    
+    // 隐形成本字段的getter和setter方法 - Story 5
+    public BigDecimal getCompensationOfEmployees() {
+        return compensationOfEmployees;
+    }
+    
+    public void setCompensationOfEmployees(BigDecimal compensationOfEmployees) {
+        this.compensationOfEmployees = compensationOfEmployees;
+    }
+    
+    public BigDecimal getWagesAndSalaries() {
+        return wagesAndSalaries;
+    }
+    
+    public void setWagesAndSalaries(BigDecimal wagesAndSalaries) {
+        this.wagesAndSalaries = wagesAndSalaries;
+    }
+    
+    public BigDecimal getEmployersSocialContributions() {
+        return employersSocialContributions;
+    }
+    
+    public void setEmployersSocialContributions(BigDecimal employersSocialContributions) {
+        this.employersSocialContributions = employersSocialContributions;
+    }
+    
     @Override
     public String toString() {
         return "SalaryRecord{" +
@@ -137,6 +207,12 @@ public class SalaryRecord {
                 ", hoursWorked=" + hoursWorked +
                 ", fullTimeEquivalentFte=" + fullTimeEquivalentFte +
                 ", compensationPerHourWorked=" + compensationPerHourWorked +
+                ", male=" + male +
+                ", female=" + female +
+                ", total=" + total +
+                ", compensationOfEmployees=" + compensationOfEmployees +
+                ", wagesAndSalaries=" + wagesAndSalaries +
+                ", employersSocialContributions=" + employersSocialContributions +
                 '}';
     }
 }

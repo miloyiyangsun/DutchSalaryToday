@@ -64,4 +64,41 @@ public interface SalaryRecordRepository extends JpaRepository<SalaryRecord, Long
     // 11. 综合工时时薪分析查询 - 获取工时、FTE、时薪三项数据都完整的记录
     @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.hoursWorked IS NOT NULL AND s.fullTimeEquivalentFte IS NOT NULL AND s.compensationPerHourWorked IS NOT NULL")
     List<SalaryRecord> findByYearPeriodAndCompleteWorkHoursData(@Param("year") Integer year);
+    
+    // 12. 性别分析专用查询 - Story 3: Gender Power Rise
+    // 查询特定年份性别数据完整的记录
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.male IS NOT NULL AND s.female IS NOT NULL AND s.total IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndGenderDataNotNull(@Param("year") Integer year);
+    
+    // 13. 查询年份区间内性别数据完整的记录 - 用于女性力量历史趋势分析
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod BETWEEN :startYear AND :endYear AND s.male IS NOT NULL AND s.female IS NOT NULL AND s.total IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodBetweenAndGenderDataNotNull(
+        @Param("startYear") Integer startYear, 
+        @Param("endYear") Integer endYear
+    );
+    
+    // 14. 查询指定年份列表中性别数据完整的记录 - 用于跨年份对比分析
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod IN :years AND s.male IS NOT NULL AND s.female IS NOT NULL AND s.total IS NOT NULL ORDER BY s.yearPeriod, s.title")
+    List<SalaryRecord> findByYearPeriodInAndGenderDataNotNull(@Param("years") List<Integer> years);
+    
+    // 15. 工作密集化分析专用查询 - Story 4: Work Intensification Revolution
+    // 查询特定年份工作密集化数据完整的记录 (FTE + Total字段)
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.fullTimeEquivalentFte IS NOT NULL AND s.total IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndWorkIntensificationDataNotNull(@Param("year") Integer year);
+    
+    // 16. 隐形成本分析专用查询 - Story 5: Hidden Labor Costs
+    // 查询特定年份隐形成本数据完整的记录 (雇主社保支出 + 总薪酬)
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.employersSocialContributions IS NOT NULL AND s.compensationOfEmployees IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndHiddenCostDataNotNull(@Param("year") Integer year);
+    
+    // 17. 查询年份区间内隐形成本数据完整的记录 - 用于趋势分析(2010-2024)
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod BETWEEN :startYear AND :endYear AND s.employersSocialContributions IS NOT NULL AND s.compensationOfEmployees IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodBetweenAndHiddenCostDataNotNull(
+        @Param("startYear") Integer startYear, 
+        @Param("endYear") Integer endYear
+    );
+    
+    // 18. 查询指定年份列表中隐形成本数据完整的记录 - 用于跨年份对比分析
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod IN :years AND s.employersSocialContributions IS NOT NULL AND s.compensationOfEmployees IS NOT NULL ORDER BY s.yearPeriod, s.title")
+    List<SalaryRecord> findByYearPeriodInAndHiddenCostDataNotNull(@Param("years") List<Integer> years);
 }

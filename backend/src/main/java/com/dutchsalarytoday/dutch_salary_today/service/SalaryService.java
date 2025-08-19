@@ -482,4 +482,465 @@ public class SalaryService {
         empty.put("error", "No complete work hours data available for " + END_YEAR);
         return empty;
     }
+    
+    /**
+     * 获取性别力量洞察数据 - Story 3: Gender Power Rise
+     * 参考: data_analysis/gender_power_analysis.py
+     * 
+     * @return 包含三个Big Numbers的性别力量分析数据
+     */
+    public Map<String, Object> getGenderPowerInsights() {
+        // 关键年份定义，参考sprint2-5.md
+        final int HISTORICAL_START = 1995; // 历史突破起点
+        final int GROWTH_START = 2010;     // 新增岗位计算起点
+        final int CURRENT_YEAR = 2024;     // 当前年份
+        
+        // 获取关键年份的性别数据
+        List<SalaryRecord> data1995 = salaryRecordRepository.findByYearPeriodAndGenderDataNotNull(HISTORICAL_START);
+        List<SalaryRecord> data2010 = salaryRecordRepository.findByYearPeriodAndGenderDataNotNull(GROWTH_START);
+        List<SalaryRecord> data2024 = salaryRecordRepository.findByYearPeriodAndGenderDataNotNull(CURRENT_YEAR);
+        
+        if (data1995.isEmpty() || data2010.isEmpty() || data2024.isEmpty()) {
+            return createEmptyGenderPowerAnalysis();
+        }
+        
+        // Big Number 1: 女性占比历史突破 (1995-2024)
+        Map<String, Object> historicalBreakthrough = calculateHistoricalBreakthrough(data1995, data2024);
+        
+        // Big Number 2: 新增岗位贡献力 (2010-2024)
+        Map<String, Object> newJobsContribution = calculateNewJobsContribution(data2010, data2024);
+        
+        // Big Number 3: 行业主导地位 (2024年现状)
+        Map<String, Object> industryDominance = calculateIndustryDominance(data2024);
+        
+        Map<String, Object> insights = new HashMap<>();
+        insights.put("historicalBreakthrough", historicalBreakthrough);
+        insights.put("newJobsContribution", newJobsContribution);
+        insights.put("industryDominance", industryDominance);
+        insights.put("analysisYears", Map.of(
+            "historical", "1995-2024",
+            "growth", "2010-2024", 
+            "current", CURRENT_YEAR
+        ));
+        insights.put("totalIndustries2024", data2024.size());
+        insights.put("dataSource", "CBS Netherlands Statistics - Gender Employment Data");
+        
+        return insights;
+    }
+    
+    /**
+     * Big Number 1: 计算女性占比历史突破
+     * 公式: 女性占比 = SUM(female_29) / SUM(total_27) * 100
+     */
+    private Map<String, Object> calculateHistoricalBreakthrough(List<SalaryRecord> data1995, List<SalaryRecord> data2024) {
+        // 1995年全国女性占比
+        double female1995 = data1995.stream().mapToDouble(r -> r.getFemale().doubleValue()).sum();
+        double total1995 = data1995.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        double percentage1995 = (female1995 / total1995) * 100;
+        
+        // 2024年全国女性占比
+        double female2024 = data2024.stream().mapToDouble(r -> r.getFemale().doubleValue()).sum();
+        double total2024 = data2024.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        double percentage2024 = (female2024 / total2024) * 100;
+        
+        // 计算变化
+        double changePoints = percentage2024 - percentage1995;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("percentage1995", Math.round(percentage1995 * 10.0) / 10.0);
+        result.put("percentage2024", Math.round(percentage2024 * 10.0) / 10.0);
+        result.put("changePoints", Math.round(changePoints * 10.0) / 10.0);
+        result.put("description", "Female workforce historical breakthrough");
+        result.put("trend", changePoints > 0 ? "increasing" : "decreasing");
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 2: 计算新增岗位贡献力
+     * 公式: 贡献率 = (女性新增岗位 / 总新增岗位) * 100
+     */
+    private Map<String, Object> calculateNewJobsContribution(List<SalaryRecord> data2010, List<SalaryRecord> data2024) {
+        // 2010年总计
+        double female2010 = data2010.stream().mapToDouble(r -> r.getFemale().doubleValue()).sum();
+        double total2010 = data2010.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        
+        // 2024年总计
+        double female2024 = data2024.stream().mapToDouble(r -> r.getFemale().doubleValue()).sum();
+        double total2024 = data2024.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        
+        // 计算新增岗位
+        double femaleNewJobs = female2024 - female2010;
+        double totalNewJobs = total2024 - total2010;
+        
+        // 计算贡献率
+        double contributionRate = totalNewJobs > 0 ? (femaleNewJobs / totalNewJobs) * 100 : 0.0;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("contributionRate", Math.round(contributionRate * 10.0) / 10.0);
+        result.put("femaleNewJobs", Math.round(femaleNewJobs));
+        result.put("totalNewJobs", Math.round(totalNewJobs));
+        result.put("description", "Female contribution to new jobs (2010-2024)");
+        result.put("unit", "percentage of new positions");
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 3: 计算行业主导地位
+     * 女性占比>50%的行业数量统计
+     */
+    private Map<String, Object> calculateIndustryDominance(List<SalaryRecord> data2024) {
+        // 计算各行业女性占比
+        List<Map<String, Object>> industryGenderData = data2024.stream()
+            .map(record -> {
+                double femalePercentage = (record.getFemale().doubleValue() / record.getTotal().doubleValue()) * 100;
+                Map<String, Object> industry = new HashMap<>();
+                industry.put("industry", record.getTitle());
+                industry.put("femalePercentage", Math.round(femalePercentage * 10.0) / 10.0);
+                industry.put("femaleCount", record.getFemale().doubleValue());
+                industry.put("totalCount", record.getTotal().doubleValue());
+                return industry;
+            })
+            .collect(Collectors.toList());
+        
+        // 统计女性主导行业 (>50%)
+        List<Map<String, Object>> femaleDominantIndustries = industryGenderData.stream()
+            .filter(industry -> (Double) industry.get("femalePercentage") > 50.0)
+            .sorted(Comparator.comparing((Map<String, Object> i) -> (Double) i.get("femalePercentage")).reversed())
+            .collect(Collectors.toList());
+        
+        // 找到女性占比最高的行业
+        Map<String, Object> topFemaleIndustry = industryGenderData.stream()
+            .max(Comparator.comparing(i -> (Double) i.get("femalePercentage")))
+            .orElse(null);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("dominantIndustryCount", femaleDominantIndustries.size());
+        result.put("totalIndustries", industryGenderData.size());
+        result.put("topFemaleIndustry", topFemaleIndustry);
+        result.put("description", "Industries where women dominate (>50%)");
+        result.put("analysisYear", 2024);
+        
+        return result;
+    }
+    
+    /**
+     * 创建空的性别力量分析数据（无有效数据时使用）
+     */
+    private Map<String, Object> createEmptyGenderPowerAnalysis() {
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("historicalBreakthrough", null);
+        empty.put("newJobsContribution", null);
+        empty.put("industryDominance", null);
+        empty.put("totalIndustries2024", 0);
+        empty.put("error", "No complete gender data available for analysis years");
+        return empty;
+    }
+    
+    /**
+     * 获取工作密集化洞察数据 - Story 4: Work Intensification Revolution
+     * 参考: data_analysis/interactive_crosstab_app.py calculate_parttime_big_numbers()
+     * 
+     * @return 包含三个Big Numbers的工作密集化分析数据
+     */
+    public Map<String, Object> getWorkIntensificationInsights() {
+        final int ANALYSIS_START = 2010; // 分析起点
+        final int CURRENT_YEAR = 2024;   // 当前年份
+        
+        // 获取关键年份的工作数据 (需要FTE和Total字段)
+        List<SalaryRecord> data2010 = salaryRecordRepository.findByYearPeriodAndWorkIntensificationDataNotNull(ANALYSIS_START);
+        List<SalaryRecord> data2024 = salaryRecordRepository.findByYearPeriodAndWorkIntensificationDataNotNull(CURRENT_YEAR);
+        
+        if (data2010.isEmpty() || data2024.isEmpty()) {
+            return createEmptyWorkIntensificationAnalysis();
+        }
+        
+        // Big Number 1: 工作负荷分布 (2024年现状)
+        Map<String, Object> workloadDistribution = calculateWorkloadDistribution(data2024);
+        
+        // Big Number 2: 工作密集化指数 (2010-2024年变化)
+        Map<String, Object> intensificationIndex = calculateIntensificationIndex(data2010, data2024);
+        
+        // Big Number 3: 行业工作负荷排名 (2024年对比)
+        Map<String, Object> industryWorkloadRanking = calculateIndustryWorkloadRanking(data2024);
+        
+        Map<String, Object> insights = new HashMap<>();
+        insights.put("workloadDistribution", workloadDistribution);
+        insights.put("intensificationIndex", intensificationIndex);
+        insights.put("industryWorkloadRanking", industryWorkloadRanking);
+        insights.put("analysisYears", ANALYSIS_START + "-" + CURRENT_YEAR);
+        insights.put("totalIndustries2024", data2024.size());
+        insights.put("dataSource", "CBS Netherlands Statistics - Work Intensification Analysis");
+        
+        return insights;
+    }
+    
+    /**
+     * Big Number 1: 计算工作负荷分布
+     * 公式: 非全职工作比例 = (1 - SUM(FTE) / SUM(Total)) * 100
+     */
+    private Map<String, Object> calculateWorkloadDistribution(List<SalaryRecord> data2024) {
+        // 全国总计
+        double totalFte = data2024.stream().mapToDouble(r -> r.getFullTimeEquivalentFte().doubleValue()).sum();
+        double totalEmployees = data2024.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        
+        // 计算非全职工作比例
+        double parttimeRatio = (1 - (totalFte / totalEmployees)) * 100;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("parttimeRatio", Math.round(parttimeRatio * 10.0) / 10.0);
+        result.put("totalFte", Math.round(totalFte));
+        result.put("totalEmployees", Math.round(totalEmployees));
+        result.put("description", "Non-standard work arrangements distribution");
+        result.put("unit", "percentage of workforce");
+        result.put("analysisYear", 2024);
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 2: 计算工作密集化指数
+     * 公式: |员工增长率 - FTE增长率| = 工作密集化程度
+     */
+    private Map<String, Object> calculateIntensificationIndex(List<SalaryRecord> data2010, List<SalaryRecord> data2024) {
+        // 2010年总计
+        double totalEmployees2010 = data2010.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        double totalFte2010 = data2010.stream().mapToDouble(r -> r.getFullTimeEquivalentFte().doubleValue()).sum();
+        
+        // 2024年总计
+        double totalEmployees2024 = data2024.stream().mapToDouble(r -> r.getTotal().doubleValue()).sum();
+        double totalFte2024 = data2024.stream().mapToDouble(r -> r.getFullTimeEquivalentFte().doubleValue()).sum();
+        
+        // 计算增长率
+        double employeeGrowthRate = ((totalEmployees2024 - totalEmployees2010) / totalEmployees2010) * 100;
+        double fteGrowthRate = ((totalFte2024 - totalFte2010) / totalFte2010) * 100;
+        
+        // 工作密集化指数 = 员工增长率与FTE增长率的差异
+        double intensificationIndex = Math.abs(employeeGrowthRate - fteGrowthRate);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("intensificationIndex", Math.round(intensificationIndex * 10.0) / 10.0);
+        result.put("employeeGrowthRate", Math.round(employeeGrowthRate * 10.0) / 10.0);
+        result.put("fteGrowthRate", Math.round(fteGrowthRate * 10.0) / 10.0);
+        result.put("description", "Work intensification index (2010-2024)");
+        result.put("interpretation", employeeGrowthRate > fteGrowthRate ? "increasing_workload" : "decreasing_workload");
+        result.put("unit", "percentage points difference");
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 3: 计算行业工作负荷排名
+     * 找到非标准工作安排最重和最轻的行业
+     */
+    private Map<String, Object> calculateIndustryWorkloadRanking(List<SalaryRecord> data2024) {
+        // 计算各行业的非全职工作比例
+        List<Map<String, Object>> industryWorkloadData = data2024.stream()
+            .map(record -> {
+                double parttimeRatio = (1 - (record.getFullTimeEquivalentFte().doubleValue() / record.getTotal().doubleValue())) * 100;
+                Map<String, Object> industry = new HashMap<>();
+                industry.put("industry", record.getTitle());
+                industry.put("parttimeRatio", Math.round(parttimeRatio * 10.0) / 10.0);
+                industry.put("fteCount", record.getFullTimeEquivalentFte().doubleValue());
+                industry.put("totalEmployees", record.getTotal().doubleValue());
+                return industry;
+            })
+            .collect(Collectors.toList());
+        
+        // 找到工作负荷最重和最轻的行业
+        Map<String, Object> heaviestWorkload = industryWorkloadData.stream()
+            .max(Comparator.comparing(i -> (Double) i.get("parttimeRatio")))
+            .orElse(null);
+            
+        Map<String, Object> lightestWorkload = industryWorkloadData.stream()
+            .min(Comparator.comparing(i -> (Double) i.get("parttimeRatio")))
+            .orElse(null);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("heaviestWorkload", heaviestWorkload);
+        result.put("lightestWorkload", lightestWorkload);
+        result.put("totalIndustries", industryWorkloadData.size());
+        result.put("description", "Industry workload intensity ranking");
+        result.put("analysisYear", 2024);
+        result.put("unit", "percentage non-standard work arrangements");
+        
+        return result;
+    }
+    
+    /**
+     * 创建空的工作密集化分析数据（无有效数据时使用）
+     */
+    private Map<String, Object> createEmptyWorkIntensificationAnalysis() {
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("workloadDistribution", null);
+        empty.put("intensificationIndex", null);
+        empty.put("industryWorkloadRanking", null);
+        empty.put("totalIndustries2024", 0);
+        empty.put("error", "No complete work intensification data available");
+        return empty;
+    }
+    
+    /**
+     * 获取隐形人力成本洞察数据 - Story 5
+     * 参考: interactive_crosstab_app.py的calculate_hidden_cost_big_numbers()方法
+     * 
+     * @return 包含福利负担水平、行业差异悬殊、绝对成本增长的隐形成本洞察
+     */
+    public Map<String, Object> getHiddenCostInsights() {
+        final int ANALYSIS_START = 2010;
+        final int CURRENT_YEAR = 2024;
+        
+        try {
+            // 获取2024年和2010年的隐形成本数据
+            List<SalaryRecord> data2024 = salaryRecordRepository.findByYearPeriodAndHiddenCostDataNotNull(CURRENT_YEAR);
+            List<SalaryRecord> data2010 = salaryRecordRepository.findByYearPeriodAndHiddenCostDataNotNull(ANALYSIS_START);
+            
+            if (data2024.isEmpty() || data2010.isEmpty()) {
+                return createEmptyHiddenCostAnalysis();
+            }
+            
+            // 计算三个Big Numbers
+            Map<String, Object> benefitBurdenLevel = calculateBenefitBurdenLevel(data2024);
+            Map<String, Object> industryGapMultiple = calculateIndustryGapMultiple(data2024);
+            Map<String, Object> absoluteCostGrowth = calculateAbsoluteCostGrowth(data2010, data2024);
+            
+            // 组装完整响应
+            Map<String, Object> insights = new HashMap<>();
+            insights.put("benefitBurdenLevel", benefitBurdenLevel);
+            insights.put("industryGapMultiple", industryGapMultiple);
+            insights.put("absoluteCostGrowth", absoluteCostGrowth);
+            insights.put("analysisYear", CURRENT_YEAR);
+            insights.put("comparisonBaseYear", ANALYSIS_START);
+            insights.put("totalIndustriesAnalyzed", data2024.size());
+            insights.put("dataComplete", true);
+            
+            return insights;
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = createEmptyHiddenCostAnalysis();
+            errorResponse.put("error", "Failed to calculate hidden cost insights: " + e.getMessage());
+            return errorResponse;
+        }
+    }
+    
+    /**
+     * Big Number 1: 计算福利负担水平
+     * 公式: 雇主社保支出占总薪酬比重 = EmployersSocialContributions / CompensationOfEmployees * 100
+     */
+    private Map<String, Object> calculateBenefitBurdenLevel(List<SalaryRecord> data2024) {
+        // 计算2024年总体福利负担水平
+        double totalSocialContributions = data2024.stream()
+            .mapToDouble(r -> r.getEmployersSocialContributions().doubleValue())
+            .sum();
+            
+        double totalCompensation = data2024.stream()
+            .mapToDouble(r -> r.getCompensationOfEmployees().doubleValue())
+            .sum();
+        
+        double benefitRatio = (totalSocialContributions / totalCompensation) * 100;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("benefitRatio", Math.round(benefitRatio * 10.0) / 10.0);
+        result.put("totalSocialContributions", Math.round(totalSocialContributions));
+        result.put("totalCompensation", Math.round(totalCompensation));
+        result.put("description", "Employer social contributions burden level");
+        result.put("unit", "percentage of total compensation");
+        result.put("interpretation", String.format("For every €100 salary, employers pay €%.0f in hidden costs", benefitRatio));
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 2: 计算行业差异悬殊
+     * 找到福利占比最高和最低的行业，计算差异倍数
+     */
+    private Map<String, Object> calculateIndustryGapMultiple(List<SalaryRecord> data2024) {
+        // 计算各行业的福利占比
+        List<Map<String, Object>> industryBenefitRatios = data2024.stream()
+            .map(record -> {
+                double benefitRatio = (record.getEmployersSocialContributions().doubleValue() / 
+                                     record.getCompensationOfEmployees().doubleValue()) * 100;
+                Map<String, Object> industry = new HashMap<>();
+                industry.put("industry", record.getTitle());
+                industry.put("benefitRatio", Math.round(benefitRatio * 10.0) / 10.0);
+                industry.put("socialContributions", record.getEmployersSocialContributions().doubleValue());
+                industry.put("totalCompensation", record.getCompensationOfEmployees().doubleValue());
+                return industry;
+            })
+            .collect(Collectors.toList());
+        
+        // 找到最高和最低福利占比的行业
+        Map<String, Object> highestBenefitIndustry = industryBenefitRatios.stream()
+            .max(Comparator.comparing(i -> (Double) i.get("benefitRatio")))
+            .orElse(null);
+            
+        Map<String, Object> lowestBenefitIndustry = industryBenefitRatios.stream()
+            .min(Comparator.comparing(i -> (Double) i.get("benefitRatio")))
+            .orElse(null);
+        
+        // 计算差异倍数
+        double gapMultiple = 0.0;
+        if (highestBenefitIndustry != null && lowestBenefitIndustry != null) {
+            double highestRatio = (Double) highestBenefitIndustry.get("benefitRatio");
+            double lowestRatio = (Double) lowestBenefitIndustry.get("benefitRatio");
+            gapMultiple = highestRatio / lowestRatio;
+        }
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("highestBenefitIndustry", highestBenefitIndustry);
+        result.put("lowestBenefitIndustry", lowestBenefitIndustry);
+        result.put("gapMultiple", Math.round(gapMultiple * 10.0) / 10.0);
+        result.put("description", "Industry benefit burden disparity");
+        result.put("unit", "multiple difference between highest and lowest");
+        result.put("totalIndustries", industryBenefitRatios.size());
+        
+        return result;
+    }
+    
+    /**
+     * Big Number 3: 计算绝对成本增长
+     * 计算2010-2024年社保支出的绝对增长幅度
+     */
+    private Map<String, Object> calculateAbsoluteCostGrowth(List<SalaryRecord> data2010, List<SalaryRecord> data2024) {
+        // 计算2010年总社保支出
+        double totalSocialContributions2010 = data2010.stream()
+            .mapToDouble(r -> r.getEmployersSocialContributions().doubleValue())
+            .sum();
+            
+        // 计算2024年总社保支出
+        double totalSocialContributions2024 = data2024.stream()
+            .mapToDouble(r -> r.getEmployersSocialContributions().doubleValue())
+            .sum();
+        
+        // 计算增长率和绝对增长额
+        double growthRate = ((totalSocialContributions2024 - totalSocialContributions2010) / totalSocialContributions2010) * 100;
+        double absoluteGrowth = totalSocialContributions2024 - totalSocialContributions2010;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("startAmount", Math.round(totalSocialContributions2010 / 1000.0)); // 转换为十亿欧元
+        result.put("endAmount", Math.round(totalSocialContributions2024 / 1000.0));   // 转换为十亿欧元
+        result.put("growthRate", Math.round(growthRate * 10.0) / 10.0);
+        result.put("absoluteGrowth", Math.round(absoluteGrowth));
+        result.put("description", "Absolute social contribution cost growth (2010-2024)");
+        result.put("unit", "billion euros and percentage growth");
+        result.put("startYear", 2010);
+        result.put("endYear", 2024);
+        
+        return result;
+    }
+    
+    /**
+     * 创建空的隐形成本分析数据（无有效数据时使用）
+     */
+    private Map<String, Object> createEmptyHiddenCostAnalysis() {
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("benefitBurdenLevel", null);
+        empty.put("industryGapMultiple", null);
+        empty.put("absoluteCostGrowth", null);
+        empty.put("totalIndustriesAnalyzed", 0);
+        empty.put("dataComplete", false);
+        empty.put("error", "No complete hidden cost data available");
+        return empty;
+    }
 }

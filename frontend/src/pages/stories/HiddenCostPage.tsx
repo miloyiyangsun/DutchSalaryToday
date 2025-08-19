@@ -1,18 +1,18 @@
-// Work Hours Analysis Page - Story 2 Detail Page
-// 工时分析详情页 - 故事2详情页面
+// Hidden Labor Cost Page - Story 5 Detail Page
+// 隐形人力成本详情页 - 故事5详情页面
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from "../../types/routes";
 import "../../App.css";
 
-function WorkHoursPage() {
+function HiddenCostPage() {
   const navigate = useNavigate();
 
   return (
     <div className="container">
       <header>
-        <h1>🕒 Work Hours Analysis - Detailed Analysis</h1>
-        <p>Story 2: Dutch Working Hours and Wage Reality</p>
+        <h1>💰 Hidden Labor Costs - Detailed Analysis</h1>
+        <p>Story 5: Employer Social Contribution Insights in Netherlands</p>
       </header>
 
       {/* Under Development Notice */}
@@ -32,9 +32,9 @@ function WorkHoursPage() {
         <div style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
           <p style={{ color: '#28a745', fontWeight: 'bold' }}>✅ Available Data:</p>
           <ul style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
-            <li>🕒 Average Work Hours: 32.4 hours/week (1686 hours annually)</li>
-            <li>⚠️ Longest Hours: 57.7 hours/week in fishing and aquaculture</li>
-            <li>💰 Wage Gap Reality: €77.2/hour top industry, 3x vs lowest</li>
+            <li>🧾 Benefit Burden: 22.8% employer social contribution level</li>
+            <li>💸 Industry Gap: 6.6x disparity between highest and lowest sectors</li>
+            <li>📈 Cost Growth: +85.8% absolute increase (€256B → €476B)</li>
           </ul>
         </div>
 
@@ -89,8 +89,8 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #ffeaa7'
           }}>
-            <h4>🕒 Average Work Hours</h4>
-            <p>Netherlands average <strong>32.4 hours/week</strong> (1686 hours annually) in 2024</p>
+            <h4>🧾 Benefit Burden Level</h4>
+            <p>Netherlands employers pay <strong>€22.8</strong> in social contributions for every €100 in total compensation (2024)</p>
           </div>
           
           <div style={{ 
@@ -99,8 +99,8 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #bee5eb'
           }}>
-            <h4>⚠️ Industry Extremes</h4>
-            <p>Fishing industry leads with <strong>57.7 hours/week</strong>, 2x more than shortest hours</p>
+            <h4>💸 Industry Gap Multiple</h4>
+            <p>Benefit burden varies: <strong>6.6x difference</strong> between highest (30.3%) and lowest (4.6%) industries</p>
           </div>
           
           <div style={{ 
@@ -109,17 +109,17 @@ function WorkHoursPage() {
             borderRadius: '6px',
             border: '1px solid #c3e6cb'
           }}>
-            <h4>💰 Hourly Wage Gap</h4>
-            <p><strong>€77.2/hour</strong> in petroleum industry vs €25.8/hour in hospitality (3x gap)</p>
+            <h4>📈 Absolute Cost Growth</h4>
+            <p><strong>+85.8% increase</strong> in total social contributions (€256B → €476B, 2010-2024)</p>
           </div>
         </div>
       </section>
 
       <footer style={{ marginTop: '3rem' }}>
-        <p>Story 2 Data Source: CBS Netherlands Statistics | Work Hours Analysis</p>
+        <p>Story 5 Data Source: CBS Netherlands Statistics | Hidden Labor Cost Analysis</p>
       </footer>
     </div>
   );
 }
 
-export default WorkHoursPage;
+export default HiddenCostPage;
