@@ -331,4 +331,155 @@ public class SalaryService {
         emptyInsights.put("validIndustries", 0);
         return emptyInsights;
     }
+    
+    /**
+     * 获取工时分析数据 - Story 2
+     * 参考: sprint2-5.md工时分析需求
+     * 
+     * @return 包含三个Big Numbers的工时分析数据
+     */
+    public Map<String, Object> getWorkHoursAnalysis() {
+        // 获取2024年最新数据用于分析
+        List<SalaryRecord> currentYearData = salaryRecordRepository
+            .findByYearPeriodAndCompleteWorkHoursData(END_YEAR);
+        
+        if (currentYearData.isEmpty()) {
+            return createEmptyWorkHoursAnalysis();
+        }
+        
+        // Big Number 1: 平均工时水平 (2024年)
+        Map<String, Object> averageHours = calculateAverageWorkHours(currentYearData);
+        
+        // Big Number 2: 行业工时排名
+        Map<String, Object> hoursRanking = calculateIndustryHoursRanking(currentYearData);
+        
+        // Big Number 3: 行业时薪排名  
+        Map<String, Object> wageRanking = calculateIndustryWageRanking(currentYearData);
+        
+        Map<String, Object> analysis = new HashMap<>();
+        analysis.put("averageHours", averageHours);
+        analysis.put("hoursRanking", hoursRanking);  
+        analysis.put("wageRanking", wageRanking);
+        analysis.put("analysisYear", END_YEAR);
+        analysis.put("totalIndustries", currentYearData.size());
+        analysis.put("dataSource", "CBS Netherlands Statistics");
+        
+        return analysis;
+    }
+    
+    /**
+     * 计算平均工时水平 - Big Number 1
+     * 公式: 年度工时 = SUM(hours_worked_21) * 1000 / SUM(full_time_equivalent_fte_20)
+     */
+    private Map<String, Object> calculateAverageWorkHours(List<SalaryRecord> data) {
+        // 计算全国总工时和总FTE
+        double totalHoursMillions = data.stream()
+            .mapToDouble(record -> record.getHoursWorked().doubleValue())
+            .sum();
+        
+        double totalFteThousands = data.stream()
+            .mapToDouble(record -> record.getFullTimeEquivalentFte().doubleValue()) 
+            .sum();
+        
+        // 计算年度工时和周工时
+        double annualHours = (totalHoursMillions * 1000) / totalFteThousands;
+        double weeklyHours = annualHours / 52;
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("weeklyHours", Math.round(weeklyHours * 10.0) / 10.0); // 保留1位小数
+        result.put("annualHours", Math.round(annualHours));
+        result.put("description", "Netherlands Average Work Hours 2024");
+        result.put("unit", "hours/week");
+        
+        return result;
+    }
+    
+    /**
+     * 计算行业工时排名 - Big Number 2
+     * 找到工时最高和最低的行业，计算差距倍数
+     */
+    private Map<String, Object> calculateIndustryHoursRanking(List<SalaryRecord> data) {
+        // 计算各行业的周工时
+        List<Map<String, Object>> industryHours = data.stream()
+            .map(record -> {
+                double annualHours = (record.getHoursWorked().doubleValue() * 1000) / 
+                                   record.getFullTimeEquivalentFte().doubleValue();
+                double weeklyHours = annualHours / 52;
+                
+                Map<String, Object> industry = new HashMap<>();
+                industry.put("industry", record.getTitle());
+                industry.put("weeklyHours", Math.round(weeklyHours * 10.0) / 10.0);
+                industry.put("annualHours", Math.round(annualHours));
+                return industry;
+            })
+            .sorted(Comparator.comparing((Map<String, Object> m) -> (Double) m.get("weeklyHours")).reversed())
+            .collect(Collectors.toList());
+        
+        if (industryHours.isEmpty()) {
+            return new HashMap<>();
+        }
+        
+        Map<String, Object> highest = industryHours.get(0);
+        Map<String, Object> lowest = industryHours.get(industryHours.size() - 1);
+        
+        double gapRatio = (Double) highest.get("weeklyHours") / (Double) lowest.get("weeklyHours");
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("highest", highest);
+        result.put("lowest", lowest);
+        result.put("gapRatio", Math.round(gapRatio * 10.0) / 10.0);
+        result.put("description", "Industry Work Hours Ranking");
+        result.put("unit", "hours/week");
+        
+        return result;
+    }
+    
+    /**
+     * 计算行业时薪排名 - Big Number 3
+     * 找到时薪最高和最低的行业，计算差距倍数
+     */
+    private Map<String, Object> calculateIndustryWageRanking(List<SalaryRecord> data) {
+        // 按时薪排序
+        List<Map<String, Object>> industryWages = data.stream()
+            .map(record -> {
+                Map<String, Object> industry = new HashMap<>();
+                industry.put("industry", record.getTitle());
+                industry.put("hourlyWage", record.getCompensationPerHourWorked().doubleValue());
+                return industry;
+            })
+            .sorted(Comparator.comparing((Map<String, Object> m) -> (Double) m.get("hourlyWage")).reversed())
+            .collect(Collectors.toList());
+        
+        if (industryWages.isEmpty()) {
+            return new HashMap<>();
+        }
+        
+        Map<String, Object> highest = industryWages.get(0);
+        Map<String, Object> lowest = industryWages.get(industryWages.size() - 1);
+        
+        double gapRatio = (Double) highest.get("hourlyWage") / (Double) lowest.get("hourlyWage");
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("highest", highest);
+        result.put("lowest", lowest);
+        result.put("gapRatio", Math.round(gapRatio * 10.0) / 10.0);
+        result.put("description", "Industry Hourly Wage Ranking");
+        result.put("unit", "euros/hour");
+        
+        return result;
+    }
+    
+    /**
+     * 创建空的工时分析数据（无有效数据时使用）
+     */
+    private Map<String, Object> createEmptyWorkHoursAnalysis() {
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("averageHours", null);
+        empty.put("hoursRanking", null);
+        empty.put("wageRanking", null);
+        empty.put("analysisYear", END_YEAR);
+        empty.put("totalIndustries", 0);
+        empty.put("error", "No complete work hours data available for " + END_YEAR);
+        return empty;
+    }
 }

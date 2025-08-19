@@ -26,6 +26,16 @@ public class SalaryRecord {
     @Column(name = "wages_per_fte_9")
     private BigDecimal wagesPerFte;
     
+    // 工时分析专用字段 - Story 2
+    @Column(name = "hours_worked_21")
+    private BigDecimal hoursWorked; // 工作小时数(百万小时)
+    
+    @Column(name = "full_time_equivalent_fte_20") 
+    private BigDecimal fullTimeEquivalentFte; // 全职等价人数(千人)
+    
+    @Column(name = "compensation_per_hour_worked_11")
+    private BigDecimal compensationPerHourWorked; // 每小时薪酬(欧元)
+    
     // 辅助字段
     @Column(name = "description")
     private String description;
@@ -92,6 +102,31 @@ public class SalaryRecord {
         this.sectorCode = sectorCode;
     }
     
+    // 工时分析字段的getter和setter
+    public BigDecimal getHoursWorked() {
+        return hoursWorked;
+    }
+    
+    public void setHoursWorked(BigDecimal hoursWorked) {
+        this.hoursWorked = hoursWorked;
+    }
+    
+    public BigDecimal getFullTimeEquivalentFte() {
+        return fullTimeEquivalentFte;
+    }
+    
+    public void setFullTimeEquivalentFte(BigDecimal fullTimeEquivalentFte) {
+        this.fullTimeEquivalentFte = fullTimeEquivalentFte;
+    }
+    
+    public BigDecimal getCompensationPerHourWorked() {
+        return compensationPerHourWorked;
+    }
+    
+    public void setCompensationPerHourWorked(BigDecimal compensationPerHourWorked) {
+        this.compensationPerHourWorked = compensationPerHourWorked;
+    }
+    
     @Override
     public String toString() {
         return "SalaryRecord{" +
@@ -99,6 +134,9 @@ public class SalaryRecord {
                 ", yearPeriod=" + yearPeriod +
                 ", title='" + title + '\'' +
                 ", wagesPerFte=" + wagesPerFte +
+                ", hoursWorked=" + hoursWorked +
+                ", fullTimeEquivalentFte=" + fullTimeEquivalentFte +
+                ", compensationPerHourWorked=" + compensationPerHourWorked +
                 '}';
     }
 }

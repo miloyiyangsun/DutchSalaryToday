@@ -18,12 +18,39 @@ interface GapData {
   to: string;
 }
 
+// 故事2: 工时分析数据结构
+interface AverageHoursData {
+  weeklyHours: number;
+  annualHours: number;
+  description: string;
+}
+
+interface HoursRankingData {
+  highest: {
+    industry: string;
+    weeklyHours: number;
+  };
+  gapRatio: number;
+}
+
+interface WageRankingData {
+  highest: {
+    industry: string;
+    hourlyWage: number;
+  };
+  gapRatio: number;
+}
+
 // InsightCard组件属性
 interface InsightCardProps {
-  type: 'champion' | 'slowest' | 'gap';
+  type: 'champion' | 'slowest' | 'gap' | 'average-hours' | 'hours-ranking' | 'wage-ranking';
   championData?: ChampionData;
   slowestData?: SlowestData;
   gapData?: GapData;
+  // 故事2数据属性
+  averageHoursData?: AverageHoursData;
+  hoursRankingData?: HoursRankingData;
+  wageRankingData?: WageRankingData;
   onClick?: () => void;
   clickable?: boolean;
   variant?: 'home' | 'detail'; // 控制文案版本
@@ -34,6 +61,9 @@ const InsightCard: React.FC<InsightCardProps> = ({
   championData,
   slowestData,
   gapData,
+  averageHoursData,
+  hoursRankingData,
+  wageRankingData,
   onClick,
   clickable = false,
   variant = 'home'
@@ -78,6 +108,40 @@ const InsightCard: React.FC<InsightCardProps> = ({
               </div>
             </div>
             <p>{variant === 'detail' ? 'Industry Salary Gap Expansion' : 'Inter-industry Gap Change'}</p>
+          </>
+        );
+      
+      // 故事2: 工时分析卡片类型
+      case 'average-hours':
+        if (!averageHoursData) return null;
+        return (
+          <>
+            <h2>🕒 Average Work Hours</h2>
+            <h3>{averageHoursData.annualHours} hours/year</h3>
+            <div className="rate info">{averageHoursData.weeklyHours} hours/week</div>
+            <p>{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
+          </>
+        );
+      
+      case 'hours-ranking':
+        if (!hoursRankingData) return null;
+        return (
+          <>
+            <h2>⚠️ Longest Hours</h2>
+            <h3>{hoursRankingData.highest.industry}</h3>
+            <div className="rate warning">{hoursRankingData.highest.weeklyHours} hours/week</div>
+            <p>{hoursRankingData.gapRatio}x vs lowest industry</p>
+          </>
+        );
+      
+      case 'wage-ranking':
+        if (!wageRankingData) return null;
+        return (
+          <>
+            <h2>💰 Wage Champion</h2>
+            <h3>{wageRankingData.highest.industry}</h3>
+            <div className="rate success">€{wageRankingData.highest.hourlyWage}/hour</div>
+            <p>{wageRankingData.gapRatio}x vs lowest industry</p>
           </>
         );
       

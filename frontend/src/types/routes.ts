@@ -6,13 +6,13 @@ export const ROUTES = {
   // 主页
   HOME: '/',
   
-  // 故事路由 - 按Sprint组织
+  // 故事路由 - 按Sprint组织 (重新排序后)
   ICE_AND_FIRE: '/ice-and-fire',           // Sprint 1: Industry Ice and Fire
-  GENDER_POWER: '/gender-power',           // Sprint 2: Gender Power (未来)
-  HIDDEN_COSTS: '/hidden-costs',           // Sprint 3: Hidden Costs (未来)
-  WORK_REVOLUTION: '/work-revolution',     // Sprint 4: Work Revolution (未来)
-  EFFICIENCY_MYSTERY: '/efficiency-mystery' // Sprint 5: Efficiency Mystery (未来)
+  WORK_HOURS: '/work-hours',               // Sprint 2: Work Hours Analysis 
+  GENDER_POWER: '/gender-power',           // Sprint 3: Gender Power (未来)
+  WORK_INTENSIFICATION: '/work-intensification', // Sprint 4: Work Intensification (未来)
+  HIDDEN_COSTS: '/hidden-costs'            // Sprint 5: Hidden Costs (未来)
 } as const;
 
-// 故事主题类型
-export type StoryTheme = 'ice-and-fire' | 'gender-power' | 'hidden-costs' | 'work-revolution' | 'efficiency-mystery';
+// 故事主题类型 - 更新后的顺序
+export type StoryTheme = 'ice-and-fire' | 'work-hours' | 'gender-power' | 'work-intensification' | 'hidden-costs';

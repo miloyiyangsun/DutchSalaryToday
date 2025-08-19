@@ -59,5 +59,47 @@ export interface GrowthRankings {
   }[];
 }
 
-// Sprint 1 特定类型导出
+// Work Hours Analysis data type definition - Story 2
+// API endpoint: /api/v1/work-hours-analysis
+export interface WorkHoursAnalysis {
+  averageHours: {
+    weeklyHours: number;
+    annualHours: number;
+    description: string;
+    unit: string;
+  };
+  hoursRanking: {
+    highest: {
+      industry: string;
+      weeklyHours: number;
+      annualHours: number;
+    };
+    lowest: {
+      industry: string;
+      weeklyHours: number;
+      annualHours: number;
+    };
+    gapRatio: number;
+    description: string;
+    unit: string;
+  };
+  wageRanking: {
+    highest: {
+      industry: string;
+      hourlyWage: number;
+    };
+    lowest: {
+      industry: string;
+      hourlyWage: number;
+    };
+    gapRatio: number;
+    description: string;
+    unit: string;
+  };
+  analysisYear: number;
+  totalIndustries: number;
+  dataSource: string;
+}
+
+// Sprint 1 specific type exports
 export type Sprint1CoreInsights = CoreInsights;

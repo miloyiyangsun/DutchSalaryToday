@@ -131,6 +131,31 @@ public class SalaryController {
     }
     
     /**
+     * 获取工时分析数据API - Story 2
+     * 
+     * 端点: GET /api/v1/work-hours-analysis
+     * 返回: 包含三个Big Numbers的工时分析数据
+     * 
+     * 前端调用: fetchWorkHoursAnalysis()
+     */
+    @GetMapping("/work-hours-analysis")
+    public ResponseEntity<Map<String, Object>> getWorkHoursAnalysis() {
+        try {
+            Map<String, Object> analysis = salaryService.getWorkHoursAnalysis();
+            
+            // 检查是否有有效数据
+            if (analysis.get("totalIndustries").equals(0)) {
+                return ResponseEntity.ok(createErrorResponse("No complete work hours data found for 2024"));
+            }
+            
+            return ResponseEntity.ok(createSuccessResponse(analysis));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(createErrorResponse("Failed to fetch work hours analysis: " + e.getMessage()));
+        }
+    }
+    
+    /**
      * 健康检查端点
      * 
      * 端点: GET /api/v1/health

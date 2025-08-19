@@ -52,4 +52,16 @@ public interface SalaryRecordRepository extends JpaRepository<SalaryRecord, Long
         @Param("startYear") Integer startYear, 
         @Param("endYear") Integer endYear
     );
+    
+    // 9. 工时分析专用查询 - 查询特定年份工时和FTE数据完整的记录
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.hoursWorked IS NOT NULL AND s.fullTimeEquivalentFte IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndWorkHoursNotNull(@Param("year") Integer year);
+    
+    // 10. 时薪分析专用查询 - 查询特定年份时薪数据完整的记录
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.compensationPerHourWorked IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndHourlyCompensationNotNull(@Param("year") Integer year);
+    
+    // 11. 综合工时时薪分析查询 - 获取工时、FTE、时薪三项数据都完整的记录
+    @Query("SELECT s FROM SalaryRecord s WHERE s.yearPeriod = :year AND s.hoursWorked IS NOT NULL AND s.fullTimeEquivalentFte IS NOT NULL AND s.compensationPerHourWorked IS NOT NULL")
+    List<SalaryRecord> findByYearPeriodAndCompleteWorkHoursData(@Param("year") Integer year);
 }

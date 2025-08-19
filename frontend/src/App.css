@@ -49,6 +49,24 @@ footer {
   @apply border-l-red-500;
 }
 
+/* 故事2: 工时分析卡片样式 */
+/* Story 2: Work Hours Analysis Card Styles */
+
+.insight-card.average-hours {
+  /* 平均工时卡片：蓝色左边框 */
+  @apply border-l-blue-500;
+}
+
+.insight-card.hours-ranking {
+  /* 工时排名卡片：橙色左边框 */
+  @apply border-l-orange-500;
+}
+
+.insight-card.wage-ranking {
+  /* 时薪排名卡片：绿色左边框 */
+  @apply border-l-green-500;
+}
+
 /* 数据展示系统 */
 /* Data Display System */
 
@@ -65,6 +83,11 @@ footer {
 .rate.warning {
   /* 警告状态：黄色文字，浅黄背景 */
   @apply text-yellow-700 bg-yellow-50;
+}
+
+.rate.info {
+  /* 信息状态：蓝色文字，浅蓝背景 */
+  @apply text-blue-700 bg-blue-50;
 }
 
 /* 差距对比组件 */

@@ -5,6 +5,7 @@ import type {
   CoreInsights,
   SalaryGapTrends,
   GrowthRankings,
+  WorkHoursAnalysis,
 } from "../types/salary";
 
 // 统一API URL构建函数 - 动态环境检测
@@ -202,6 +203,32 @@ export async function fetchGrowthRankings(): Promise<{
       };
 
       return { data: frontendData };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取工时分析数据 - Story 2
+// Fetch work hours analysis data - Story 2
+export async function fetchWorkHoursAnalysis(): Promise<{
+  data?: WorkHoursAnalysis;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("work-hours-analysis"));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
     }
 
     return { error: "Invalid API response format" };
