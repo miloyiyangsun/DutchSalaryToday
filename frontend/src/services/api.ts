@@ -11,6 +11,12 @@ import type {
   HiddenCostInsights,
 } from "../types/salary";
 
+import type {
+  FeedbackData,
+  FeedbackStatistics, 
+  FeedbackRequest,
+} from "../types/feedback";
+
 // 统一API URL构建函数 - 动态环境检测
 // Unified API URL builder - dynamic environment detection
 function getApiUrl(endpoint: string): string {
@@ -308,6 +314,156 @@ export async function fetchHiddenCostInsights(): Promise<{
     const apiResponse = await response.json();
 
     // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// ==================== 平台反馈系统 API 函数 - Emoji简化版 ====================
+// Platform Feedback System API Functions - Emoji Simplified Version
+
+// 获取用户emoji反馈数据
+// Fetch user emoji feedback data
+export async function fetchUserFeedback(userId: string): Promise<{
+  data?: FeedbackData | null;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl(`feedback/user/${userId}`));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...} | null}
+    if (apiResponse.success) {
+      return { data: apiResponse.data }; // 可能为null（用户无反馈）
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 获取平台emoji反馈统计数据  
+// Fetch platform emoji feedback statistics
+export async function fetchFeedbackStatistics(): Promise<{
+  data?: FeedbackStatistics;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("feedback/statistics"));
+
+    if (!response.ok) {
+      return { error: `Loading Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 提交新emoji反馈 - CREATE操作
+// Submit new emoji feedback - CREATE operation
+export async function submitFeedback(request: FeedbackRequest): Promise<{
+  data?: FeedbackData;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl("feedback"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.error || `Submit Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 更新现有emoji反馈 - UPDATE操作
+// Update existing emoji feedback - UPDATE operation  
+export async function updateFeedback(feedbackId: number, request: FeedbackRequest): Promise<{
+  data?: FeedbackData;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl(`feedback/${feedbackId}`), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.error || `Update Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {...}}
+    if (apiResponse.success && apiResponse.data) {
+      return { data: apiResponse.data };
+    }
+
+    return { error: "Invalid API response format" };
+  } catch (error) {
+    return { error: "Network Failed, please retry." };
+  }
+}
+
+// 删除emoji反馈 - DELETE操作
+// Delete emoji feedback - DELETE operation
+export async function deleteFeedback(feedbackId: number): Promise<{
+  data?: { message: string };
+  error?: string;
+}> {
+  try {
+    const response = await fetch(getApiUrl(`feedback/${feedbackId}`), {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.error || `Delete Failed: ${response.status}` };
+    }
+
+    const apiResponse = await response.json();
+
+    // 后端返回格式: {success: true, data: {message: "..."}}
     if (apiResponse.success && apiResponse.data) {
       return { data: apiResponse.data };
     }

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useStoryData, useWorkHoursData, useGenderPowerData, useWorkIntensificationData, useHiddenCostData } from "../hooks";
 import InsightCard from "../components/InsightCard";
+import FeedbackWidget from "../components/FeedbackWidget";
 import { ROUTES } from "../types/routes";
 import "../App.css";
 
@@ -238,6 +239,11 @@ function HomePage() {
             clickable={true}
           />
         </main>
+      </section>
+
+      {/* Platform Feedback Section */}
+      <section style={{ marginTop: '4rem', marginBottom: '2rem' }}>
+        <FeedbackWidget className="feedback-section" />
       </section>
 
       <footer>
