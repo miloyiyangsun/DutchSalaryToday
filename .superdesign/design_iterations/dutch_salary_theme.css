@@ -1,0 +1,192 @@
+/* Dutch Salary Insights Professional Theme */
+/* 荷兰薪资洞察专业主题 - 2024现代数据分析风格 */
+
+:root {
+  /* === 核心色彩系统 (Core Color System) === */
+  --background: oklch(0.0627 0.0216 285.82);           /* 深蓝黑背景 - 专业数据感 */
+  --foreground: oklch(0.9647 0.0131 285.82);           /* 高对比白色文字 */
+  --card: oklch(0.0941 0.0176 285.82);                 /* 卡片深蓝背景 */
+  --card-foreground: oklch(0.9647 0.0131 285.82);      /* 卡片白色文字 */
+  
+  /* === 荷兰特色主色调 (Dutch Primary Colors) === */
+  --primary: oklch(0.6863 0.2118 45.24);               /* 荷兰橙 - 重要数据强调色 */
+  --primary-foreground: oklch(0.0627 0.0216 285.82);   /* 橙色上的深色文字 */
+  --secondary: oklch(0.2196 0.0784 285.82);             /* 深蓝色 - 次要元素 */
+  --secondary-foreground: oklch(0.9647 0.0131 285.82); /* 深蓝上的白色文字 */
+  
+  /* === 数据可视化专用色 (Data Visualization Colors) === */
+  --success: oklch(0.7294 0.1686 142.50);              /* 成功绿 - 增长数据 */
+  --success-foreground: oklch(0.0627 0.0216 285.82);   /* 绿色上的深色文字 */
+  --destructive: oklch(0.6275 0.2196 28.74);           /* 警示红 - 下降数据 */
+  --destructive-foreground: oklch(0.9647 0.0131 285.82); /* 红色上的白色文字 */
+  --warning: oklch(0.7843 0.1686 85.87);               /* 警告黄 - 中性指标 */
+  --warning-foreground: oklch(0.0627 0.0216 285.82);   /* 黄色上的深色文字 */
+  
+  /* === 界面辅助色 (Interface Support Colors) === */
+  --muted: oklch(0.1569 0.0392 285.82);                /* 静音蓝灰 - 辅助区域 */
+  --muted-foreground: oklch(0.7451 0.0392 285.82);     /* 静音区域文字 */
+  --accent: oklch(0.6863 0.2118 45.24);                /* 强调橙 - 交互元素 */
+  --accent-foreground: oklch(0.0627 0.0216 285.82);    /* 强调色上的文字 */
+  
+  /* === 边框和输入 (Borders and Inputs) === */
+  --border: oklch(0.1961 0.0588 285.82);               /* 边框蓝灰色 */
+  --input: oklch(0.1569 0.0392 285.82);                /* 输入框背景 */
+  --ring: oklch(0.6863 0.2118 45.24);                  /* 焦点环橙色 */
+  
+  /* === 图表专用色彩 (Chart Specific Colors) === */
+  --chart-1: oklch(0.6863 0.2118 45.24);              /* 图表主色-荷兰橙 */
+  --chart-2: oklch(0.7294 0.1686 142.50);             /* 图表次色-成功绿 */
+  --chart-3: oklch(0.7294 0.1686 200.50);             /* 图表第三色-信息蓝 */
+  --chart-4: oklch(0.7843 0.1686 85.87);              /* 图表第四色-警告黄 */
+  --chart-5: oklch(0.6275 0.2196 28.74);              /* 图表第五色-警示红 */
+  
+  /* === 字体系统 (Typography System) === */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace; /* 数字专用等宽字体 */
+  
+  /* === 圆角和间距 (Border Radius and Spacing) === */
+  --radius: 0.75rem;                                   /* 现代圆角 */
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+  
+  /* === 阴影系统 (Shadow System) === */
+  --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* === 荷兰特色渐变 (Dutch Gradient Effects) === */
+  --gradient-dutch: linear-gradient(135deg, oklch(0.6863 0.2118 45.24) 0%, oklch(0.2196 0.0784 285.82) 100%);
+  --gradient-success: linear-gradient(135deg, oklch(0.7294 0.1686 142.50) 0%, oklch(0.5490 0.1372 142.50) 100%);
+  --gradient-card: linear-gradient(135deg, oklch(0.0941 0.0176 285.82) 0%, oklch(0.1176 0.0216 285.82) 100%);
+  
+  /* === 数据突出显示 (Data Emphasis) === */
+  --big-number-size: 3.5rem;                          /* 大数字字体大小 */
+  --big-number-weight: 800;                           /* 大数字字重 */
+  --big-number-spacing: -0.025em;                     /* 大数字字母间距 */
+  
+  /* === 动画时长 (Animation Duration) === */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* === 间距系统 (Spacing System) === */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+}
+
+/* === 全局基础样式 (Global Base Styles) === */
+* {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body {
+  font-family: var(--font-sans) !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  line-height: 1.6 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* === 大数字专用样式 (Big Numbers Styling) === */
+.big-number {
+  font-family: var(--font-mono) !important;
+  font-size: var(--big-number-size) !important;
+  font-weight: var(--big-number-weight) !important;
+  letter-spacing: var(--big-number-spacing) !important;
+  line-height: 1.1 !important;
+  color: var(--primary) !important;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 0.3) !important;
+}
+
+/* === 卡片和容器 (Cards and Containers) === */
+.story-card {
+  background: var(--gradient-card) !important;
+  border: 2px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--spacing-xl) !important;
+  box-shadow: var(--shadow-lg) !important;
+  transition: all var(--duration-normal) ease !important;
+}
+
+.story-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: var(--shadow-xl) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* === 成功/增长数据样式 (Success/Growth Data) === */
+.growth-positive .big-number {
+  color: var(--success) !important;
+}
+
+/* === 警告/下降数据样式 (Warning/Decline Data) === */
+.growth-negative .big-number {
+  color: var(--destructive) !important;
+}
+
+/* === 中性数据样式 (Neutral Data) === */
+.growth-neutral .big-number {
+  color: var(--warning) !important;
+}
+
+/* === Sprint标题样式 (Sprint Title Styling) === */
+.sprint-title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+  margin-bottom: var(--spacing-lg) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+}
+
+/* === 响应式适配 (Responsive Adaptations) === */
+@media (max-width: 768px) {
+  .big-number {
+    font-size: 2.5rem !important;
+  }
+  
+  .story-card {
+    padding: var(--spacing-lg) !important;
+  }
+  
+  .sprint-title {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* === 反馈区域样式 (Feedback Section) === */
+.feedback-section {
+  background: var(--gradient-card) !important;
+  border: 2px solid var(--accent) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-xl) !important;
+  margin-top: var(--spacing-2xl) !important;
+  text-align: center !important;
+}
+
+/* === 表情符号反馈样式 (Emoji Feedback Styling) === */
+.emoji-feedback {
+  font-size: 2rem !important;
+  margin: 0 var(--spacing-sm) !important;
+  cursor: pointer !important;
+  transition: transform var(--duration-fast) ease !important;
+}
+
+.emoji-feedback:hover {
+  transform: scale(1.2) !important;
+}

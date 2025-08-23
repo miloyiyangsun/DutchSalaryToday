@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕒 Work Hours Analysis - Dutch Salary Insights (Story 2)</title>
+    
+    <!-- 字体引入 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* 统一设计风格 - 与homepage保持一致 */
+        :root {
+            --bg-primary: #0f1419;
+            --bg-card: #1a2332;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent-orange: #fb923c;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #eab308;
+            --border-color: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #1e293b 50%, var(--bg-primary) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .story-card-hover {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #2d3748 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .story-card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-orange);
+        }
+
+        .big-number-responsive {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0.8rem 0;
+            line-height: 1.1;
+        }
+
+        .number-counter {
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .development-notice {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(251, 146, 60, 0.05) 100%);
+            border: 2px solid rgba(251, 146, 60, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn-primary {
+            background: var(--accent-orange);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-orange);
+        }
+
+        @keyframes countUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .number-animate {
+            animation: countUp 0.8s ease-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .story-card-hover {
+                min-height: 200px;
+                padding: 0.8rem;
+            }
+            
+            /* 移动端改为单列布局 */
+            .mb-16 > div {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <nav class="breadcrumb">
+            <a href="/">← Back to Dashboard</a>
+        </nav>
+
+        <!-- 页面标题 -->
+        <header class="text-center mb-12">
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1rem;">
+                🕒 Work Hours Analysis
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary);">
+                Story 2: Dutch Working Hours and Wage Reality (2010-2024)
+            </p>
+        </header>
+
+        <!-- 核心洞察卡片 -->
+        <section class="mb-16">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                
+                <!-- 平均工时卡片 -->
+                <div class="story-card-hover">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🕒</div>
+                    <div class="big-number-responsive" style="color: var(--accent-blue);">
+                        <span class="number-counter">32.4</span>
+                    </div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem;">Average Work Hours</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        hours/week (1686 hours annually)<br>
+                        <span style="font-weight: 500;">Netherlands 2024 Average</span>
+                    </p>
+                </div>
+
+                <!-- 最长工时卡片 -->
+                <div class="story-card-hover">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">⚠️</div>
+                    <div class="big-number-responsive" style="color: var(--accent-yellow);">
+                        <span class="number-counter">57.7</span>
+                    </div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem;">Longest Hours</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        hours/week in fishing industry<br>
+                        <span style="font-weight: 500;">2x More Than Shortest</span>
+                    </p>
+                </div>
+
+                <!-- 时薪差距卡片 -->
+                <div class="story-card-hover">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">💰</div>
+                    <div class="big-number-responsive" style="color: #22c55e;">
+                        €<span class="number-counter">77.2</span>
+                    </div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem;">Top Hourly Wage</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        /hour petroleum industry<br>
+                        <span style="font-weight: 500;">3x Gap vs Lowest Sector</span>
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 开发中通知 -->
+        <section class="development-notice">
+            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-orange);">
+                🚧 Under Development
+            </h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-secondary);">
+                This detailed analysis page is currently under development.<br>
+                <strong>Three Big Numbers</strong> are available above.
+            </p>
+            
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+                For now, explore our <strong>completed Story 1</strong> with full interactive charts.
+            </p>
+
+            <!-- 导航按钮 -->
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/" class="btn-primary">← Back to Homepage</a>
+                <a href="/stories/ice-and-fire" class="btn-secondary">🔥 Explore Story 1 (Complete)</a>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <p style="color: var(--text-secondary);">
+                Story 2 Data Source: CBS Netherlands Statistics | Work Hours Analysis (2010-2024)
+            </p>
+        </footer>
+    </div>
+
+    <!-- 数字动画脚本 -->
+    <script>
+        // 简单的数字计数动画
+        function animateCounter(element, target, duration = 1500) {
+            const start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = start + (target - start) * easeOut;
+                
+                if (target < 10) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // 页面加载后启动动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const counters = document.querySelectorAll('.number-counter');
+            counters.forEach((counter, index) => {
+                const target = parseFloat(counter.textContent);
+                setTimeout(() => {
+                    animateCounter(counter, target);
+                }, index * 200 + 500);
+            });
+        });
+    </script>
+</body>
+</html>

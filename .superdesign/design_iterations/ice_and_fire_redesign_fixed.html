@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥❄️ Industry Ice and Fire - Dutch Salary Insights (Complete Redesign)</title>
+    
+    <!-- 字体引入 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- 引入专属CSS主题 -->
+    <link rel="stylesheet" href="ice_and_fire_theme.css">
+    
+    <!-- 内联修复样式 -->
+    <style>
+        /* 确保样式优先级 - 修复所有问题 */
+        .gap-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .gap-arrow {
+            font-size: 1.5rem;
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        
+        .year-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        /* Chart container styles - 修复刷新问题 */
+        .chart-wrapper, .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chart-wrapper canvas, .chart-container canvas {
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+        
+        /* Industry list styles - 横向5个布局 */
+        .industry-list {
+            display: flex;
+            gap: var(--spacing-sm);
+            overflow-x: auto;
+            overflow-y: visible;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+            padding-bottom: var(--spacing-sm);
+        }
+        
+        .industry-list::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .industry-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .industry-list::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        /* 重新设计行业卡片 - 参考homepage风格 */
+        .industry-card {
+            min-width: 180px;
+            max-width: 180px;
+            height: 120px;
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%);
+            border: 2px solid #374151;
+            border-radius: 1rem;
+            padding: 0.75rem !important;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .industry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-orange);
+        }
+
+        .industry-rank {
+            font-size: 0.7rem !important;
+            font-weight: 800 !important;
+            align-self: flex-start;
+            background: var(--accent-orange);
+            color: #000;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.375rem;
+            min-width: fit-content;
+        }
+
+        .industry-name {
+            font-size: 0.65rem !important;
+            line-height: 1.2 !important;
+            font-weight: 500 !important;
+            margin: 0.25rem 0 !important;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+            opacity: 0.9;
+        }
+
+        .industry-rate {
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            text-align: center;
+        }
+
+        .industry-details {
+            font-size: 0.6rem !important;
+            opacity: 0.7;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        /* Fire Zone 特殊样式 */
+        .fire-zone .industry-card.selected-fire {
+            border-color: #ff6b35 !important;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(26, 35, 50, 0.9) 100%);
+        }
+
+        /* Ice Zone 特殊样式 */
+        .ice-zone .industry-card.selected-ice {
+            border-color: #4fc3f7 !important;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.15) 0%, rgba(26, 35, 50, 0.9) 100%);
+        }
+        
+        /* Stats panel styles - 左右并排布局 */
+        .stats-panel {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* 删除重复定义，在下方统一设置 */
+        
+        /* 重新设计统计卡片 - 参考homepage风格 */
+        .stat-item {
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%);
+            border: 2px solid #374151;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-item:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px -4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-item.highest {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(26, 35, 50, 0.9) 100%);
+        }
+        
+        .stat-item.lowest {
+            border-color: #eab308;
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(26, 35, 50, 0.9) 100%);
+        }
+        
+        .stat-item .font-bold {
+            font-size: 1.1rem !important;
+            margin-top: 0.25rem;
+        }
+
+        /* 重新设计顶部主要洞察卡片 - 参考homepage风格 */
+        .insight-card-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+            gap: 1.5rem !important;
+            margin-bottom: 3rem !important;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%) !important;
+            border: 2px solid #374151 !important;
+            border-radius: 1rem !important;
+            padding: 1.5rem !important;
+            text-align: center !important;
+            min-height: 280px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+            backdrop-filter: blur(10px) !important;
+            position: relative !important;
+        }
+
+        /* 去掉所有左边框和before伪元素 */
+        .insight-card::before {
+            display: none !important;
+        }
+
+        .insight-card.champion {
+            border-left: none !important;
+            border-color: #374151 !important;
+        }
+
+        .insight-card.slowest {
+            border-left: none !important;
+            border-color: #374151 !important;
+        }
+
+        .insight-card.gap {
+            border-left: none !important;
+            border-color: #374151 !important;
+        }
+
+        /* 统一的hover效果 */
+        .insight-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4) !important;
+            border-color: #fb923c !important;
+        }
+
+        .insight-card.champion:hover {
+            border-color: #ff6b35 !important;
+            box-shadow: 0 8px 25px -8px rgba(255, 107, 53, 0.4) !important;
+        }
+
+        .insight-card.slowest:hover {
+            border-color: #eab308 !important;
+            box-shadow: 0 8px 25px -8px rgba(234, 179, 8, 0.4) !important;
+        }
+
+        .insight-card.gap:hover {
+            border-color: #4fc3f7 !important;
+            box-shadow: 0 8px 25px -8px rgba(79, 195, 247, 0.4) !important;
+        }
+
+        .insight-card-icon {
+            font-size: 3rem !important;
+            margin-bottom: 1rem !important;
+            display: block !important;
+        }
+
+        .insight-card-title {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 1rem !important;
+            color: #ffffff !important;
+        }
+
+        .insight-card-description {
+            color: #94a3b8 !important;
+            font-size: 0.875rem !important;
+            line-height: 1.5 !important;
+        }
+        
+        /* Loading states */
+        .loading-placeholder {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-md);
+            height: 20px;
+            margin: 5px 0;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Trend Analysis Grid - 左右并排布局 */
+        .trend-analysis-grid {
+            display: grid !important;
+            grid-template-columns: 2fr 1fr !important;
+            gap: var(--spacing-xl) !important;
+            align-items: start !important;
+            width: 100% !important;
+        }
+
+        .chart-container {
+            grid-column: 1 !important;
+        }
+
+        .stats-panel {
+            grid-column: 2 !important;
+            max-width: none !important;
+        }
+        
+        @media (max-width: 1024px) {
+            .trend-analysis-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .stats-panel {
+                height: auto;
+                min-height: 300px;
+                position: relative;
+            }
+        }
+        
+        /* Custom tooltip styles for charts */
+        .chart-tooltip {
+            background: rgba(0, 0, 0, 0.9);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            padding: var(--spacing-md);
+            font-size: var(--text-sm);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        /* 额外的Fire和Ice Zone hover效果 */
+        .fire-zone .industry-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(255, 107, 53, 0.4);
+        }
+        
+        .ice-zone .industry-card:hover {
+            box-shadow: 0 8px 25px -8px rgba(79, 195, 247, 0.4);
+        }
+        
+        /* 确保数字始终可见 */
+        .industry-rank {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10;
+        }
+
+        /* 响应式设计 - 移动端适配 */
+        @media (max-width: 768px) {
+            .fire-ice-grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-xl) !important;
+            }
+            
+            .trend-analysis-grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-lg) !important;
+            }
+            
+            .chart-container, .stats-panel {
+                grid-column: 1 !important;
+            }
+            
+            .stats-panel {
+                min-width: auto !important;
+                order: -1;
+            }
+            
+            .industry-card {
+                min-width: 150px !important;
+                max-width: 150px !important;
+                height: 100px !important;
+                padding: 0.5rem !important;
+            }
+            
+            .industry-rank {
+                font-size: 0.65rem !important;
+                padding: 0.125rem 0.25rem !important;
+            }
+            
+            .industry-name {
+                font-size: 0.6rem !important;
+                margin: 0.125rem 0 !important;
+            }
+            
+            .industry-rate {
+                font-size: 0.85rem !important;
+            }
+            
+            .industry-details {
+                font-size: 0.55rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .industry-card {
+                min-width: 140px !important;
+                max-width: 140px !important;
+                height: 95px !important;
+                padding: 0.5rem !important;
+            }
+            
+            .industry-rank {
+                font-size: 0.6rem !important;
+                padding: 0.125rem 0.25rem !important;
+            }
+            
+            .industry-name {
+                font-size: 0.55rem !important;
+                -webkit-line-clamp: 2;
+            }
+            
+            .industry-rate {
+                font-size: 0.8rem !important;
+            }
+            
+            .industry-details {
+                font-size: 0.5rem !important;
+            }
+            
+            /* 顶部洞察卡片响应式 */
+            .insight-card-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .insight-card {
+                min-height: 200px !important;
+                padding: 1rem !important;
+            }
+            
+            .insight-card-icon {
+                font-size: 2rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .insight-card-title {
+                font-size: 1rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .insight-card-description {
+                font-size: 0.75rem !important;
+            }
+            
+            .gap-comparison {
+                gap: 0.5rem !important;
+                margin: 0.5rem 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 主容器 -->
+    <div class="ice-fire-container">
+        
+        <!-- 页面标题区域 -->
+        <header class="page-header">
+            <!-- 面包屑导航 -->
+            <nav class="breadcrumb">
+                <a href="/" class="text-lg">← Back to Dashboard</a>
+            </nav>
+            
+            <!-- 主标题 -->
+            <h1 class="main-title">
+                <span style="margin-right: 0.5rem;">🔥</span>
+                Industry Ice and Fire
+                <span style="margin-left: 0.5rem;">❄️</span>
+            </h1>
+            <p class="subtitle">The Great Salary Divide: How Industries Drifted Apart (2010-2024)</p>
+        </header>
+
+        <!-- 核心洞察卡片区域 -->
+        <section class="section-spacing">
+            <div class="insight-card-grid">
+                <!-- Growth Champion Card -->
+                <div class="insight-card champion card-slide-in" style="--delay: 0.2s">
+                    <span class="insight-card-icon">🚀</span>
+                    <div class="big-number-responsive number-fire number-animate" style="--delay: 0.5s">
+                        <span class="number-counter" data-target="164.5">0.0</span>%
+                    </div>
+                    <h3 class="insight-card-title">Growth Champion</h3>
+                    <div class="insight-card-description">
+                        <strong>79 Travel agencies, tour operators etc</strong><br>
+                        <span class="small-annotation">2010-2024 Salary Growth Leader</span>
+                    </div>
+                </div>
+                
+                <!-- Slowest Growth Card -->
+                <div class="insight-card slowest card-slide-in" style="--delay: 0.4s">
+                    <span class="insight-card-icon">🐌</span>
+                    <div class="big-number-responsive number-warning number-animate" style="--delay: 0.7s">
+                        <span class="number-counter" data-target="20.8">0.0</span>%
+                    </div>
+                    <h3 class="insight-card-title">Slowest Growth</h3>
+                    <div class="insight-card-description">
+                        <strong>18 Printing and reproduction</strong><br>
+                        <span class="small-annotation">2010-2024 Growth Laggard</span>
+                    </div>
+                </div>
+                
+                <!-- Salary Gap Card -->
+                <div class="insight-card gap card-slide-in" style="--delay: 0.6s">
+                    <span class="insight-card-icon">📊</span>
+                    <div class="gap-comparison">
+                        <div class="text-center">
+                            <div class="medium-number-responsive number-info number-animate" style="--delay: 0.9s">
+                                <span class="number-counter" data-target="3.15">0.0</span>x
+                            </div>
+                            <div class="year-label">2010</div>
+                        </div>
+                        <div class="gap-arrow">→</div>
+                        <div class="text-center">
+                            <div class="medium-number-responsive number-ice number-animate" style="--delay: 1.1s">
+                                <span class="number-counter" data-target="2.90">0.0</span>x
+                            </div>
+                            <div class="year-label">2024</div>
+                        </div>
+                    </div>
+                    <h3 class="insight-card-title">Salary Gap Evolution</h3>
+                    <div class="insight-card-description">
+                        <span class="small-annotation">Industry Salary Gap Improvement</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 交互式图表区域 -->
+        <section class="fire-ice-section section-spacing">
+            <h2 class="chart-title">🚀 Industry Growth Trends & Rankings</h2>
+            
+            <!-- 图表容器 -->
+            <div class="chart-wrapper">
+                <canvas id="industryTrendsChart" width="400" height="400"></canvas>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="control-buttons">
+                <button id="selectAllBtn" class="control-button">Select All Industries</button>
+                <button id="selectNoneBtn" class="control-button secondary">Clear Selection</button>
+                <button id="showTopBtn" class="control-button">Show Top 5</button>
+                <button id="showBottomBtn" class="control-button">Show Bottom 5</button>
+            </div>
+        </section>
+
+        <!-- 🔥❄️ 冰火双列表展示区域 -->
+        <section class="section-spacing">
+            <div class="fire-ice-grid">
+                <!-- 🔥 Fire Zone - Growth Champions -->
+                <div class="fire-zone fire-pulse">
+                    <h3 class="fire-zone-title">
+                        <span>🔥</span>
+                        <span>Growth Champions (Top 5)</span>
+                    </h3>
+                    <div class="industry-list" id="fireIndustries">
+                        <!-- 修复后的数据 -->
+                        <div class="industry-card selected-fire">
+                            <div class="industry-rank">#1</div>
+                            <div class="industry-name">79 Travel agencies, tour operators etc</div>
+                            <div class="industry-rate number-fire">+164.5%</div>
+                            <div class="industry-details">€33.8k → €89.4k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#2</div>
+                            <div class="industry-name">29 Manufacture of cars and trailers</div>
+                            <div class="industry-rate number-fire">+74.4%</div>
+                            <div class="industry-details">€39.1k → €68.2k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#3</div>
+                            <div class="industry-name">29-30 Transport equipment</div>
+                            <div class="industry-rate number-fire">+60.3%</div>
+                            <div class="industry-details">€41.6k → €66.7k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#4</div>
+                            <div class="industry-name">66 Other financial services</div>
+                            <div class="industry-rate number-fire">+55.1%</div>
+                            <div class="industry-details">€56.6k → €87.8k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#5</div>
+                            <div class="industry-name">28 Manufacture of machinery n.e.c.</div>
+                            <div class="industry-rate number-fire">+55.0%</div>
+                            <div class="industry-details">€47.5k → €73.6k</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ❄️ Ice Zone - Slowest Growth -->
+                <div class="ice-zone ice-pulse">
+                    <h3 class="ice-zone-title">
+                        <span>❄️</span>
+                        <span>Slowest Growth (Bottom 5)</span>
+                    </h3>
+                    <div class="industry-list" id="iceIndustries">
+                        <!-- 修复后的数据 -->
+                        <div class="industry-card">
+                            <div class="industry-rank">#6</div>
+                            <div class="industry-name">16 Manufacture of wood products</div>
+                            <div class="industry-rate number-ice">+29.3%</div>
+                            <div class="industry-details">€36.5k → €47.2k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#7</div>
+                            <div class="industry-name">90-92 Arts, culture and lotteries</div>
+                            <div class="industry-rate number-ice">+28.9%</div>
+                            <div class="industry-details">€40.2k → €51.8k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#8</div>
+                            <div class="industry-name">36 Water collection and distribution</div>
+                            <div class="industry-rate number-ice">+28.7%</div>
+                            <div class="industry-details">€50.1k → €64.5k</div>
+                        </div>
+                        
+                        <div class="industry-card">
+                            <div class="industry-rank">#9</div>
+                            <div class="industry-name">65 Insurance and pension funding</div>
+                            <div class="industry-rate number-ice">+28.5%</div>
+                            <div class="industry-details">€61.7k → €79.3k</div>
+                        </div>
+                        
+                        <div class="industry-card selected-ice">
+                            <div class="industry-rank">#10</div>
+                            <div class="industry-name">18 Printing and reproduction</div>
+                            <div class="industry-rate number-ice">+20.8%</div>
+                            <div class="industry-details">€38.5k → €46.5k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 薪资差距演变分析区域 - 修复布局 -->
+        <section class="fire-ice-section section-spacing">
+            <h2 class="chart-title">📈 Salary Gap Evolution Over Time</h2>
+            
+            <div class="trend-analysis-grid">
+                <!-- 左侧图表区域 -->
+                <div class="chart-container">
+                    <canvas id="gapTrendsChart" width="600" height="300"></canvas>
+                </div>
+                
+                <!-- 右侧统计面板 -->
+                <div class="stats-panel">
+                    <h3 class="text-lg font-bold mb-4 text-center">📊 Year Statistics</h3>
+                    <div id="yearStatsContent">
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-4">📈</div>
+                            <p class="text-sm opacity-70">
+                                Hover over the chart to see<br>
+                                year-specific statistics
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="page-footer">
+            <div class="flex items-center justify-center gap-2">
+                <span>🔥❄️</span>
+                <span>The Ice and Fire Story - Complete Homepage Style</span>
+                <span class="mx-2">•</span>
+                <span>Based on CBS Netherlands Statistics Bureau Data (2010-2024)</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript 动画、图表和交互逻辑 - 全面修复 -->
+    <script>
+        // ============================================
+        //           全局变量和数据管理
+        // ============================================
+        
+        let industryTrendsChart = null;
+        let gapTrendsChart = null;
+        let selectedIndustries = ['79 Travel agencies, tour operators etc', '18 Printing and reproduction'];
+        
+        // 模拟API数据 - 使用修复后的真实数据
+        const mockApiData = {
+            coreInsights: {
+                growthChampion: {
+                    industry: "79 Travel agencies, tour operators etc",
+                    rate: "164.5%"
+                },
+                growthSlowest: {
+                    industry: "18 Printing and reproduction", 
+                    rate: "20.8%"
+                },
+                salaryGap: {
+                    from: "3.15x",
+                    to: "2.90x"
+                }
+            },
+            
+            growthRankings: {
+                rankings: [
+                    { rank: 1, industry: "79 Travel agencies, tour operators etc", growthRate: 164.5, startSalary: 33.8, endSalary: 89.4 },
+                    { rank: 2, industry: "29 Manufacture of cars and trailers", growthRate: 74.4, startSalary: 39.1, endSalary: 68.2 },
+                    { rank: 3, industry: "29-30 Transport equipment", growthRate: 60.3, startSalary: 41.6, endSalary: 66.7 },
+                    { rank: 4, industry: "66 Other financial services", growthRate: 55.1, startSalary: 56.6, endSalary: 87.8 },
+                    { rank: 5, industry: "28 Manufacture of machinery n.e.c.", growthRate: 55.0, startSalary: 47.5, endSalary: 73.6 },
+                    { rank: 6, industry: "16 Manufacture of wood products", growthRate: 29.3, startSalary: 36.5, endSalary: 47.2 },
+                    { rank: 7, industry: "90-92 Arts, culture and lotteries", growthRate: 28.9, startSalary: 40.2, endSalary: 51.8 },
+                    { rank: 8, industry: "36 Water collection and distribution", growthRate: 28.7, startSalary: 50.1, endSalary: 64.5 },
+                    { rank: 9, industry: "65 Insurance and pension funding", growthRate: 28.5, startSalary: 61.7, endSalary: 79.3 },
+                    { rank: 10, industry: "18 Printing and reproduction", growthRate: 20.8, startSalary: 38.5, endSalary: 46.5 }
+                ],
+                
+                trendData: [
+                    { year: 2010, "79 Travel agencies, tour operators etc": 33.8, "29 Manufacture of cars and trailers": 39.1, "29-30 Transport equipment": 41.6, "66 Other financial services": 56.6, "28 Manufacture of machinery n.e.c.": 47.5, "16 Manufacture of wood products": 36.5, "90-92 Arts, culture and lotteries": 40.2, "36 Water collection and distribution": 50.1, "65 Insurance and pension funding": 61.7, "18 Printing and reproduction": 38.5 },
+                    { year: 2012, "79 Travel agencies, tour operators etc": 42.1, "29 Manufacture of cars and trailers": 45.8, "29-30 Transport equipment": 48.2, "66 Other financial services": 65.3, "28 Manufacture of machinery n.e.c.": 54.1, "16 Manufacture of wood products": 38.9, "90-92 Arts, culture and lotteries": 43.1, "36 Water collection and distribution": 53.2, "65 Insurance and pension funding": 65.8, "18 Printing and reproduction": 40.1 },
+                    { year: 2014, "79 Travel agencies, tour operators etc": 51.4, "29 Manufacture of cars and trailers": 52.7, "29-30 Transport equipment": 54.8, "66 Other financial services": 73.9, "28 Manufacture of machinery n.e.c.": 60.8, "16 Manufacture of wood products": 41.2, "90-92 Arts, culture and lotteries": 45.9, "36 Water collection and distribution": 56.4, "65 Insurance and pension funding": 69.9, "18 Printing and reproduction": 41.8 },
+                    { year: 2016, "79 Travel agencies, tour operators etc": 60.8, "29 Manufacture of cars and trailers": 59.4, "29-30 Transport equipment": 61.5, "66 Other financial services": 78.2, "28 Manufacture of machinery n.e.c.": 65.7, "16 Manufacture of wood products": 43.5, "90-92 Arts, culture and lotteries": 48.1, "36 Water collection and distribution": 59.1, "65 Insurance and pension funding": 73.2, "18 Printing and reproduction": 43.1 },
+                    { year: 2018, "79 Travel agencies, tour operators etc": 69.1, "29 Manufacture of cars and trailers": 62.8, "29-30 Transport equipment": 63.9, "66 Other financial services": 81.7, "28 Manufacture of machinery n.e.c.": 68.9, "16 Manufacture of wood products": 45.1, "90-92 Arts, culture and lotteries": 49.8, "36 Water collection and distribution": 61.2, "65 Insurance and pension funding": 75.8, "18 Printing and reproduction": 44.2 },
+                    { year: 2020, "79 Travel agencies, tour operators etc": 76.3, "29 Manufacture of cars and trailers": 65.1, "29-30 Transport equipment": 65.2, "66 Other financial services": 84.1, "28 Manufacture of machinery n.e.c.": 71.4, "16 Manufacture of wood products": 46.2, "90-92 Arts, culture and lotteries": 50.9, "36 Water collection and distribution": 62.8, "65 Insurance and pension funding": 77.1, "18 Printing and reproduction": 45.1 },
+                    { year: 2022, "79 Travel agencies, tour operators etc": 82.7, "29 Manufacture of cars and trailers": 66.8, "29-30 Transport equipment": 66.1, "66 Other financial services": 86.2, "28 Manufacture of machinery n.e.c.": 72.9, "16 Manufacture of wood products": 46.8, "90-92 Arts, culture and lotteries": 51.4, "36 Water collection and distribution": 63.7, "65 Insurance and pension funding": 78.2, "18 Printing and reproduction": 45.8 },
+                    { year: 2024, "79 Travel agencies, tour operators etc": 89.4, "29 Manufacture of cars and trailers": 68.2, "29-30 Transport equipment": 66.7, "66 Other financial services": 87.8, "28 Manufacture of machinery n.e.c.": 73.6, "16 Manufacture of wood products": 47.2, "90-92 Arts, culture and lotteries": 51.8, "36 Water collection and distribution": 64.5, "65 Insurance and pension funding": 79.3, "18 Printing and reproduction": 46.5 }
+                ]
+            },
+            
+            gapTrends: {
+                data: [
+                    { year: 2010, gapRatio: 3.15, industries: { "66 Other financial services": 56.6, "18 Printing and reproduction": 38.5 }},
+                    { year: 2012, gapRatio: 3.17, industries: { "66 Other financial services": 65.3, "18 Printing and reproduction": 40.1 }},
+                    { year: 2014, gapRatio: 3.27, industries: { "66 Other financial services": 73.9, "18 Printing and reproduction": 41.8 }},
+                    { year: 2016, gapRatio: 3.43, industries: { "66 Other financial services": 78.2, "18 Printing and reproduction": 43.1 }},
+                    { year: 2018, gapRatio: 3.47, industries: { "66 Other financial services": 81.7, "18 Printing and reproduction": 44.2 }},
+                    { year: 2020, gapRatio: 3.50, industries: { "66 Other financial services": 84.1, "18 Printing and reproduction": 45.1 }},
+                    { year: 2022, gapRatio: 3.48, industries: { "66 Other financial services": 86.2, "18 Printing and reproduction": 45.8 }},
+                    { year: 2024, gapRatio: 2.90, industries: { "79 Travel agencies, tour operators etc": 89.4, "18 Printing and reproduction": 46.5 }}
+                ]
+            }
+        };
+
+        // ============================================
+        //           工具函数 (Utility Functions)
+        // ============================================
+        
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // 数字动画函数
+        function animateCounter(element, target, duration = 1200) {
+            const start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = start + (target - start) * easeOut;
+                
+                if (target < 10) {
+                    element.textContent = current.toFixed(2);
+                } else if (target < 100) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // 获取行业颜色 - 冰火双色系
+        function getIndustryColor(industryName, rankings) {
+            const WARM_COLORS = ['#FF6B35', '#F7931E', '#FFD23F', '#FF8E53', '#FFA726'];
+            const COOL_COLORS = ['#4FC3F7', '#26C6DA', '#66BB6A', '#42A5F5', '#7E57C2'];
+            
+            const ranking = rankings.find(r => r.industry === industryName);
+            if (!ranking) return '#CCCCCC';
+            
+            if (ranking.rank <= 5) {
+                return WARM_COLORS[ranking.rank - 1];
+            } else {
+                return COOL_COLORS[ranking.rank - 6];
+            }
+        }
+
+        // ============================================
+        //           图表初始化函数 - 全面修复
+        // ============================================
+        
+        // 初始化行业趋势图表 - 修复刷新问题
+        function initIndustryTrendsChart() {
+            const ctx = document.getElementById('industryTrendsChart');
+            if (!ctx) return;
+            
+            const datasets = selectedIndustries.map(industry => {
+                const color = getIndustryColor(industry, mockApiData.growthRankings.rankings);
+                return {
+                    label: industry,
+                    data: mockApiData.growthRankings.trendData.map(item => ({
+                        x: item.year,
+                        y: item[industry]
+                    })),
+                    borderColor: color,
+                    backgroundColor: color + '20',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    tension: 0.2
+                };
+            });
+            
+            // 安全销毁现有图表
+            if (industryTrendsChart && typeof industryTrendsChart.destroy === 'function') {
+                industryTrendsChart.destroy();
+                industryTrendsChart = null;
+            }
+            
+            // 添加延迟确保DOM稳定
+            setTimeout(() => {
+                industryTrendsChart = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: datasets.length > 0 ? 750 : 0
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Industry Salary Growth Trends (2010-2024)',
+                                color: '#ffffff',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            },
+                            legend: {
+                                display: true,
+                                labels: {
+                                    color: '#ffffff',
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#fb923c',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                displayColors: true,
+                                callbacks: {
+                                    title: function(context) {
+                                        return `Year ${context[0].parsed.x}`;
+                                    },
+                                    label: function(context) {
+                                        return `${context.dataset.label}: €${context.parsed.y.toFixed(1)}k/year`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom',
+                                title: {
+                                    display: true,
+                                    text: 'Year',
+                                    color: '#ffffff'
+                                },
+                                ticks: {
+                                    color: '#ffffff',
+                                    stepSize: 2
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Salary (k€/year)',
+                                    color: '#ffffff'
+                                },
+                                ticks: {
+                                    color: '#ffffff'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+            }, 100);
+        }
+        
+        // 初始化薪资差距趋势图表 - 修复压缩问题
+        function initGapTrendsChart() {
+            const ctx = document.getElementById('gapTrendsChart');
+            if (!ctx) return;
+            
+            // 安全销毁现有图表
+            if (gapTrendsChart && typeof gapTrendsChart.destroy === 'function') {
+                gapTrendsChart.destroy();
+                gapTrendsChart = null;
+            }
+            
+            setTimeout(() => {
+                gapTrendsChart = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: mockApiData.gapTrends.data.map(item => item.year),
+                        datasets: [{
+                            label: 'Salary Gap Ratio',
+                            data: mockApiData.gapTrends.data.map(item => item.gapRatio),
+                            borderColor: '#3b82f6',
+                            backgroundColor: '#3b82f620',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 750
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Salary Gap Evolution (Highest/Lowest Industry Ratio)',
+                                color: '#ffffff',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            },
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                callbacks: {
+                                    title: function(context) {
+                                        return `Year ${context[0].label}`;
+                                    },
+                                    label: function(context) {
+                                        return `Gap Ratio: ${context.parsed.y.toFixed(2)}x`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Year',
+                                    color: '#ffffff'
+                                },
+                                ticks: {
+                                    color: '#ffffff'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Gap Ratio (times)',
+                                    color: '#ffffff'
+                                },
+                                ticks: {
+                                    color: '#ffffff',
+                                    callback: function(value) {
+                                        return value.toFixed(1) + 'x';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        onHover: function(event, activeElements) {
+                            if (activeElements.length > 0) {
+                                const index = activeElements[0].index;
+                                updateYearStats(mockApiData.gapTrends.data[index]);
+                            }
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        // ============================================
+        //           UI更新函数
+        // ============================================
+        
+        // 更新年份统计信息
+        function updateYearStats(yearData) {
+            const industries = yearData.industries;
+            const industryEntries = Object.entries(industries);
+            const highest = industryEntries.reduce((prev, current) => prev[1] > current[1] ? prev : current);
+            const lowest = industryEntries.reduce((prev, current) => prev[1] < current[1] ? prev : current);
+            
+            const statsContent = document.getElementById('yearStatsContent');
+            statsContent.innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 class="text-xl font-bold text-blue-400">${yearData.year}</h4>
+                    <p class="text-sm opacity-70">Salary Analysis</p>
+                </div>
+                
+                <div class="stat-item highest">
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold text-sm">🏆 HIGHEST</span>
+                    </div>
+                    <h5 class="font-medium text-sm mb-1 leading-tight">
+                        ${highest[0].substring(0, 30)}${highest[0].length > 30 ? '...' : ''}
+                    </h5>
+                    <p class="font-bold text-green-400">€${highest[1].toFixed(1)}k/year</p>
+                </div>
+                
+                <div class="stat-item lowest">
+                    <div class="flex items-center mb-2">
+                        <span class="font-semibold text-sm">📉 LOWEST</span>
+                    </div>
+                    <h5 class="font-medium text-sm mb-1 leading-tight">
+                        ${lowest[0].substring(0, 30)}${lowest[0].length > 30 ? '...' : ''}
+                    </h5>
+                    <p class="font-bold text-yellow-400">€${lowest[1].toFixed(1)}k/year</p>
+                </div>
+                
+                <div class="stat-item">
+                    <p class="text-center text-sm opacity-80">
+                        Gap Ratio: <span class="font-bold">${(highest[1] / lowest[1]).toFixed(2)}x</span>
+                    </p>
+                </div>
+            `;
+        }
+        
+        // 更新行业选择状态 - 优化性能
+        const debouncedInitIndustryChart = debounce(initIndustryTrendsChart, 300);
+        
+        function updateIndustrySelection() {
+            // 更新Fire Zone
+            const fireCards = document.querySelectorAll('#fireIndustries .industry-card');
+            fireCards.forEach(card => {
+                const industryName = card.querySelector('.industry-name')?.textContent;
+                if (industryName) {
+                    if (selectedIndustries.includes(industryName)) {
+                        card.classList.add('selected-fire');
+                    } else {
+                        card.classList.remove('selected-fire');
+                    }
+                }
+            });
+            
+            // 更新Ice Zone  
+            const iceCards = document.querySelectorAll('#iceIndustries .industry-card');
+            iceCards.forEach(card => {
+                const industryName = card.querySelector('.industry-name')?.textContent;
+                if (industryName) {
+                    if (selectedIndustries.includes(industryName)) {
+                        card.classList.add('selected-ice');
+                    } else {
+                        card.classList.remove('selected-ice');
+                    }
+                }
+            });
+            
+            // 使用防抖重新绘制图表
+            debouncedInitIndustryChart();
+        }
+
+        // ============================================
+        //           事件监听器设置
+        // ============================================
+        
+        function setupEventListeners() {
+            // 控制按钮事件
+            document.getElementById('selectAllBtn').addEventListener('click', () => {
+                selectedIndustries = mockApiData.growthRankings.rankings.map(r => r.industry);
+                updateIndustrySelection();
+            });
+            
+            document.getElementById('selectNoneBtn').addEventListener('click', () => {
+                selectedIndustries = [];
+                updateIndustrySelection();
+            });
+            
+            document.getElementById('showTopBtn').addEventListener('click', () => {
+                selectedIndustries = mockApiData.growthRankings.rankings.slice(0, 5).map(r => r.industry);
+                updateIndustrySelection();
+            });
+            
+            document.getElementById('showBottomBtn').addEventListener('click', () => {
+                selectedIndustries = mockApiData.growthRankings.rankings.slice(5, 10).map(r => r.industry);
+                updateIndustrySelection();
+            });
+            
+            // 行业卡片点击事件
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.industry-card')) {
+                    const card = e.target.closest('.industry-card');
+                    const industryName = card.querySelector('.industry-name').textContent;
+                    
+                    if (selectedIndustries.includes(industryName)) {
+                        selectedIndustries = selectedIndustries.filter(name => name !== industryName);
+                    } else {
+                        selectedIndustries.push(industryName);
+                    }
+                    
+                    updateIndustrySelection();
+                }
+            });
+        }
+
+        // ============================================
+        //           初始化函数
+        // ============================================
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延迟启动数字动画
+            setTimeout(() => {
+                const counters = document.querySelectorAll('.number-counter');
+                counters.forEach((counter, index) => {
+                    const target = parseFloat(counter.dataset.target);
+                    setTimeout(() => {
+                        animateCounter(counter, target);
+                    }, index * 200);
+                });
+            }, 800);
+            
+            // 初始化图表
+            setTimeout(() => {
+                initIndustryTrendsChart();
+                initGapTrendsChart();
+            }, 1000);
+            
+            // 设置事件监听器
+            setupEventListeners();
+            
+            // 初始化行业选择状态
+            updateIndustrySelection();
+            
+            console.log('🔥❄️ Ice and Fire page FIXED successfully!');
+        });
+
+        // ============================================
+        //           响应式处理 - 防抖优化
+        // ============================================
+        
+        // 防抖的resize处理函数
+        const debouncedResize = debounce(function() {
+            try {
+                if (industryTrendsChart && typeof industryTrendsChart.resize === 'function') {
+                    industryTrendsChart.resize();
+                }
+                if (gapTrendsChart && typeof gapTrendsChart.resize === 'function') {
+                    gapTrendsChart.resize();
+                }
+            } catch (error) {
+                console.warn('Chart resize failed:', error);
+            }
+        }, 250);
+        
+        // 窗口大小改变时重新调整图表 - 使用防抖
+        window.addEventListener('resize', debouncedResize);
+    </script>
+</body>
+</html>
