@@ -81,7 +81,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
     setPressedEmoji(null);
   };
 
-  // Emoji按钮组件 - Emoji Button Component
+  // Emoji按钮组件 - 完全按照SuperDesign样式
   const EmojiButton: React.FC<{ rating: EmojiRating }> = ({ rating }) => {
     const emoji = EMOJI_RATINGS[rating];
     const count = statistics?.emojiDistribution[rating] || 0;
@@ -89,20 +89,26 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
     const isPressed = pressedEmoji === rating;
     
     return (
-      <div className="emoji-button-container">
-        <button
-          className={`emoji-button ${isSelected ? 'selected' : ''} ${isPressed ? 'pressed' : ''}`}
+      <div className="emoji-feedback-container text-center">
+        <span 
+          className={`emoji-feedback ${isSelected ? 'opacity-100' : ''} ${isPressed ? 'animate-pulse' : ''}`}
           onClick={() => handleEmojiClick(rating)}
           onMouseDown={() => handleMouseDown(rating)}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
           onTouchStart={() => handleMouseDown(rating)}
           onTouchEnd={handleMouseUp}
-          disabled={isSubmitting}
+          style={{ 
+            pointerEvents: isSubmitting ? 'none' : 'auto',
+            opacity: isSubmitting ? 0.5 : undefined 
+          }}
+          title={rating === 1 ? 'Poor' : rating === 2 ? 'Okay' : rating === 3 ? 'Good' : rating === 4 ? 'Great' : 'Love it!'}
         >
-          <span className="emoji">{emoji}</span>
-        </button>
-        <div className="emoji-count">{count}</div>
+          {emoji}
+        </span>
+        <div className="emoji-count mt-2 text-sm text-gray-400">
+          <span className="count">{count}</span>
+        </div>
       </div>
     );
   };
@@ -110,78 +116,37 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
   // 加载状态 - Loading State
   if (feedbackLoading || statsLoading) {
     return (
-      <div className={`feedback-widget loading ${className}`}>
-        <div className="loading-spinner">Loading emoji feedback...</div>
+      <div className={`dutch-gradient-card rounded-3xl p-8 border-2 border-orange-500/30 text-center ${className}`}>
+        <div className="text-gray-300 text-base">Loading emoji feedback...</div>
       </div>
     );
   }
 
   return (
-    <div className={`feedback-widget ${className}`}>
+    <div className={`dutch-gradient-card rounded-3xl p-8 border-2 border-orange-500/30 text-center ${className}`}>
       {/* 反馈系统标题 - Feedback Header */}
-      <div className="feedback-header">
-        <h3>😊 How do you feel about Dutch Salary Insights?</h3>
-        <p>{feedback ? 'Tap emoji to change • Long press to remove' : 'Tap an emoji to share your feedback'}</p>
-      </div>
+      <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center justify-center">
+        <span className="mr-3">💬</span>
+        Your Feedback
+      </h3>
+      <p className="text-gray-300 text-lg mb-8">How useful were these salary insights?</p>
 
       {/* 错误显示 - Error Display */}
       {(feedbackError || statsError) && (
-        <div className="error-message">
+        <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-3 text-red-300 mb-4">
           {feedbackError || statsError}
         </div>
       )}
 
-      {/* Emoji选择器 - Emoji Selector */}
-      <div className="emoji-selector">
-        <div className="emoji-grid">
-          {[1, 2, 3, 4, 5].map((rating) => (
-            <EmojiButton key={rating} rating={rating as EmojiRating} />
-          ))}
-        </div>
+      {/* Emoji选择器 - 完全按照SuperDesign样式 */}
+      <div className="flex justify-center gap-8 mb-6">
+        {[1, 2, 3, 4, 5].map((rating) => (
+          <EmojiButton key={rating} rating={rating as EmojiRating} />
+        ))}
       </div>
-
-      {/* 平台统计信息 - Platform Statistics */}
-      {statistics && !statsError && (
-        <div className="feedback-stats">
-          <div className="stats-summary">
-            <span className="total-feedback">{statistics.totalFeedback} total responses</span>
-            <span className="average-rating">Avg: {statistics.averageRating.toFixed(1)}/5</span>
-          </div>
-        </div>
-      )}
-
-      {/* 用户反馈确认 - User Feedback Confirmation */}
-      {feedback && (
-        <div className="user-feedback-status">
-          <div className="status-message">
-            ✅ Your feedback: {EMOJI_RATINGS[feedback.overallRating]} 
-            <span className="feedback-date">
-              {new Date(feedback.createdAt || '').toLocaleDateString()}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* 长按提示 - Long Press Hint */}
-      {feedback && pressedEmoji && (
-        <div className="long-press-hint">
-          🗑️ Keep holding to remove your feedback...
-        </div>
-      )}
-
-      {/* 提交状态 - Submission Status */}
-      {isSubmitting && (
-        <div className="submission-status">
-          Updating your feedback...
-        </div>
-      )}
-
-      {/* 底部说明 - Footer Note */}
-      <div className="feedback-footer">
-        <p className="privacy-note">
-          Anonymous feedback • Helps improve our platform
-        </p>
-      </div>
+      
+      {/* 底部说明 - 完全按照SuperDesign */}
+      <p className="text-gray-500 text-sm mt-4">Tap an emoji to share your feedback</p>
     </div>
   );
 };

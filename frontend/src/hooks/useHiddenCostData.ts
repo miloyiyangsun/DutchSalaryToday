@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { fetchHiddenCostInsights } from "../services/api";
 import type { HiddenCostInsights } from "../types/salary";
 
-interface UseHiddenCostDataReturn {
+export interface UseHiddenCostDataReturn {
   data: HiddenCostInsights | null;
   loading: boolean;
   error: string | null;

@@ -166,10 +166,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!championData) return null;
         return (
           <>
-            <h2>🚀 Growth Champion</h2>
-            <h3>{championData.industry}</h3>
-            <div className="rate success">{championData.rate}</div>
-            <p>{variant === 'detail' ? '2010-2024 Salary Growth Leader' : '2010-2024 Salary Growth'}</p>
+            <div className="text-4xl mb-3">🚀</div>
+            <div className="big-number-responsive text-green-400 mb-2 number-animate">{championData.rate}</div>
+            <h3 className="text-xl font-bold text-white mb-2">Growth Champion</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {championData.industry}<br/>
+              <span className="text-gray-400 small-annotation">{variant === 'detail' ? '2010-2024 Salary Growth Leader' : '2010-2024 Growth'}</span>
+            </p>
           </>
         );
       
@@ -177,10 +180,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!slowestData) return null;
         return (
           <>
-            <h2>🐌 Slowest Growth</h2>
-            <h3>{slowestData.industry}</h3>
-            <div className="rate warning">{slowestData.rate}</div>
-            <p>{variant === 'detail' ? '2010-2024 Growth Laggard' : '2010-2024 Salary Growth'}</p>
+            <div className="text-4xl mb-3">🐌</div>
+            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{slowestData.rate}</div>
+            <h3 className="text-xl font-bold text-white mb-2">Slowest Growth</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {slowestData.industry}<br/>
+              <span className="text-gray-400 small-annotation">{variant === 'detail' ? '2010-2024 Growth Laggard' : '2010-2024 Growth'}</span>
+            </p>
           </>
         );
       
@@ -188,17 +194,21 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!gapData) return null;
         return (
           <>
-            <h2>{variant === 'detail' ? '📊 Salary Gap Evolution' : '📊 Salary Gap'}</h2>
-            <div className="gap-comparison">
-              <div>
-                2010: <span className="gap-value">{gapData.from}</span>
-              </div>
-              <div className="arrow">→</div>
-              <div>
-                2024: <span className="gap-value danger">{gapData.to}</span>
-              </div>
+            <div className="text-4xl mb-3">📊</div>
+            <div className="flex justify-center items-center gap-2 mb-1">
+              <div className="medium-number-responsive text-blue-400 number-animate">{gapData.from}</div>
+              <div className="text-2xl text-orange-400 mx-1">→</div>
+              <div className="big-number-responsive long-text text-pink-400 number-animate">{gapData.to}</div>
             </div>
-            <p>{variant === 'detail' ? 'Industry Salary Gap Expansion' : 'Inter-industry Gap Change'}</p>
+            <div className="flex justify-center items-center gap-4 mb-4">
+              <div className="small-annotation text-gray-400">2010</div>
+              <div className="small-annotation text-gray-400">2024</div>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Salary Gap</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {variant === 'detail' ? 'Industry Salary Gap Evolution' : 'Inter-industry Gap Change'}<br/>
+              <span className="text-gray-400 text-xs">Improvement in salary equality</span>
+            </p>
           </>
         );
       
@@ -207,10 +217,11 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!averageHoursData) return null;
         return (
           <>
-            <h2>🕒 Average Work Hours</h2>
-            <h3>{averageHoursData.annualHours} hours/year</h3>
-            <div className="rate info">{averageHoursData.weeklyHours} hours/week</div>
-            <p>{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
+            <div className="text-4xl mb-3">🕒</div>
+            <div className="big-number-responsive text-blue-400 mb-1 number-animate">{averageHoursData.weeklyHours}</div>
+            <div className="small-annotation text-gray-400 mb-3">hours/week</div>
+            <h3 className="text-xl font-bold text-white mb-2">Average Work Hours</h3>
+            <p className="text-gray-300 text-sm">{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
           </>
         );
       
@@ -218,10 +229,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!hoursRankingData) return null;
         return (
           <>
-            <h2>⚠️ Longest Hours</h2>
-            <h3>{hoursRankingData.highest.industry}</h3>
-            <div className="rate warning">{hoursRankingData.highest.weeklyHours} hours/week</div>
-            <p>{hoursRankingData.gapRatio}x vs lowest industry</p>
+            <div className="text-4xl mb-3">⚠️</div>
+            <div className="big-number-responsive text-yellow-400 mb-1 number-animate">{hoursRankingData.highest.weeklyHours}</div>
+            <div className="small-annotation text-gray-400 mb-3">hours/week</div>
+            <h3 className="text-xl font-bold text-white mb-2">Longest Hours</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {hoursRankingData.highest.industry}<br/>
+              <span className="text-gray-400 small-annotation">{hoursRankingData.gapRatio}x vs lowest industry</span>
+            </p>
           </>
         );
       
@@ -229,10 +244,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!wageRankingData) return null;
         return (
           <>
-            <h2>💰 Wage Champion</h2>
-            <h3>{wageRankingData.highest.industry}</h3>
-            <div className="rate success">€{wageRankingData.highest.hourlyWage}/hour</div>
-            <p>{wageRankingData.gapRatio}x vs lowest industry</p>
+            <div className="text-4xl mb-3">💰</div>
+            <div className="big-number-responsive text-green-400 mb-2 number-animate">€{wageRankingData.highest.hourlyWage}/h</div>
+            <h3 className="text-xl font-bold text-white mb-2">Wage Champion</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {wageRankingData.highest.industry}<br/>
+              <span className="text-gray-400 small-annotation">{wageRankingData.gapRatio}x vs lowest industry</span>
+            </p>
           </>
         );
       
@@ -241,10 +259,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!historicalBreakthroughData) return null;
         return (
           <>
-            <h2>🚺 Female Breakthrough</h2>
-            <div className="rate success">+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
-            <h3>Historical Growth</h3>
-            <p>1995: {historicalBreakthroughData.percentage1995.toFixed(1)}% → 2024: {historicalBreakthroughData.percentage2024.toFixed(1)}%</p>
+            <div className="text-4xl mb-3">🚺</div>
+            <div className="big-number-responsive long-text text-pink-400 mb-2 number-animate">+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
+            <h3 className="text-xl font-bold text-white mb-2">Female Breakthrough</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Historical Growth<br/>
+              <span className="text-gray-400">1995: {historicalBreakthroughData.percentage1995.toFixed(1)}% → 2024: {historicalBreakthroughData.percentage2024.toFixed(1)}%</span>
+            </p>
           </>
         );
       
@@ -252,10 +273,15 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!jobsContributionData) return null;
         return (
           <>
-            <h2>💼 New Jobs Power</h2>
-            <div className="rate info">{jobsContributionData.contributionRate.toFixed(1)}%</div>
-            <h3>Female contribution rate</h3>
-            <p>{jobsContributionData.femaleNewJobs.toLocaleString()} of {jobsContributionData.totalNewJobs.toLocaleString()} new positions</p>
+            <div className="text-4xl mb-3">💼</div>
+            <div className="big-number-responsive text-blue-400 mb-2 number-animate">{jobsContributionData.contributionRate.toFixed(1)}%</div>
+            <h3 className="text-xl font-bold text-white mb-2">New Jobs Power</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Female contribution rate
+            </p>
+            <div className="text-gray-400 mt-2 font-medium">
+              {jobsContributionData.femaleNewJobs.toLocaleString()} of {jobsContributionData.totalNewJobs.toLocaleString()} new positions
+            </div>
           </>
         );
       
@@ -263,10 +289,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!industryDominanceData) return null;
         return (
           <>
-            <h2>👑 Industry Dominance</h2>
-            <div className="rate success">{industryDominanceData.dominantIndustryCount} industries</div>
-            <h3>Female majority (&gt;50%)</h3>
-            <p>Top: {industryDominanceData.topFemaleIndustry.femalePercentage.toFixed(1)}% in {industryDominanceData.topFemaleIndustry.industry.substring(0, 20)}...</p>
+            <div className="text-4xl mb-3">👑</div>
+            <div className="big-number-responsive long-text text-purple-400 mb-2 number-animate">{industryDominanceData.dominantIndustryCount} industries</div>
+            <h3 className="text-xl font-bold text-white mb-2">Industry Dominance</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Female majority (&gt;50%)<br/>
+              <span className="text-gray-400">Top: {industryDominanceData.topFemaleIndustry.femalePercentage.toFixed(1)}% in {industryDominanceData.topFemaleIndustry.industry.substring(0, 20)}...</span>
+            </p>
           </>
         );
       
@@ -275,35 +304,45 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!workloadDistributionData) return null;
         return (
           <>
-            <h2>⚖️ Work Distribution</h2>
-            <div className="rate info">{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
-            <h3>Non-standard arrangements</h3>
-            <p>{workloadDistributionData.totalFte.toLocaleString()} FTE / {workloadDistributionData.totalEmployees.toLocaleString()} total employees</p>
+            <div className="text-4xl mb-3">⚖️</div>
+            <div className="big-number-responsive text-indigo-400 mb-2 number-animate">{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
+            <h3 className="text-xl font-bold text-white mb-2">Work Distribution</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Non-standard arrangements<br/>
+              <span className="text-gray-400 text-xs">{workloadDistributionData.totalFte.toLocaleString()} FTE / {workloadDistributionData.totalEmployees.toLocaleString()} total employees</span>
+            </p>
           </>
         );
       
-      case 'intensification-index':
+      case 'intensification-index': {
         if (!intensificationIndexData) return null;
         const isIncreasing = intensificationIndexData.interpretation === 'increasing_workload';
         return (
           <>
-            <h2>{isIncreasing ? '📈' : '📉'} Work Trend</h2>
-            <div className={`rate ${isIncreasing ? 'warning' : 'success'}`}>
+            <div className="text-4xl mb-3">{isIncreasing ? '📈' : '📉'}</div>
+            <div className={`big-number-responsive mb-2 number-animate ${isIncreasing ? 'text-yellow-400' : 'text-cyan-400'}`}>
               {intensificationIndexData.intensificationIndex.toFixed(1)}%
             </div>
-            <h3>{isIncreasing ? 'More Intensive' : 'More Standard'}</h3>
-            <p>{isIncreasing ? 'Work becoming more flexible' : 'More standard employment'} (2010-2024)</p>
+            <h3 className="text-xl font-bold text-white mb-2">Work Trend</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {isIncreasing ? 'More Intensive' : 'More Standard'}<br/>
+              <span className="text-gray-400 text-xs">{isIncreasing ? 'Work becoming more flexible' : 'More standard employment'} (2010-2024)</span>
+            </p>
           </>
         );
+      }
       
       case 'industry-workload-ranking':
         if (!industryWorkloadRankingData) return null;
         return (
           <>
-            <h2>🏭 Heaviest Workload</h2>
-            <div className="rate danger">{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
-            <h3>Non-standard work extreme</h3>
-            <p>{industryWorkloadRankingData.heaviestWorkload.industry.substring(0, 30)}... leads {industryWorkloadRankingData.totalIndustries} industries</p>
+            <div className="text-4xl mb-3">🏭</div>
+            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
+            <h3 className="text-xl font-bold text-white mb-2">Heaviest Workload</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Non-standard work extreme<br/>
+              <span className="text-gray-400 text-xs">{industryWorkloadRankingData.heaviestWorkload.industry.substring(0, 30)}... leads {industryWorkloadRankingData.totalIndustries} industries</span>
+            </p>
           </>
         );
       
@@ -312,10 +351,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!benefitBurdenLevelData) return null;
         return (
           <>
-            <h2>🧾 Benefit Burden</h2>
-            <div className="rate warning">{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
-            <h3>Social contribution level</h3>
-            <p>{benefitBurdenLevelData.interpretation.substring(0, 40)}...</p>
+            <div className="text-4xl mb-3">🧾</div>
+            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
+            <h3 className="text-xl font-bold text-white mb-2">Benefit Burden</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Social contribution level<br/>
+              <span className="text-gray-400 text-xs">For every €100 salary, employers pay €23...</span>
+            </p>
           </>
         );
       
@@ -323,10 +365,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!industryGapMultipleData) return null;
         return (
           <>
-            <h2>💸 Industry Gap</h2>
-            <div className="rate danger">{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
-            <h3>Benefit burden disparity</h3>
-            <p>Range: {industryGapMultipleData.lowestBenefitIndustry.benefitRatio.toFixed(1)}% - {industryGapMultipleData.highestBenefitIndustry.benefitRatio.toFixed(1)}% across {industryGapMultipleData.totalIndustries} industries</p>
+            <div className="text-4xl mb-3">💸</div>
+            <div className="big-number-responsive text-red-400 mb-2 number-animate">{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
+            <h3 className="text-xl font-bold text-white mb-2">Industry Gap</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Benefit burden disparity<br/>
+              <span className="text-gray-400 text-xs">Range: {industryGapMultipleData.lowestBenefitIndustry.benefitRatio.toFixed(1)}% - {industryGapMultipleData.highestBenefitIndustry.benefitRatio.toFixed(1)}% across {industryGapMultipleData.totalIndustries} industries</span>
+            </p>
           </>
         );
       
@@ -334,10 +379,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!absoluteCostGrowthData) return null;
         return (
           <>
-            <h2>📈 Cost Growth</h2>
-            <div className="rate info">+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
-            <h3>Absolute increase</h3>
-            <p>€{absoluteCostGrowthData.startAmount}B → €{absoluteCostGrowthData.endAmount}B ({absoluteCostGrowthData.startYear}-{absoluteCostGrowthData.endYear})</p>
+            <div className="text-4xl mb-3">📈</div>
+            <div className="big-number-responsive text-orange-400 mb-2 number-animate">+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
+            <h3 className="text-xl font-bold text-white mb-2">Cost Growth</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Absolute increase<br/>
+              <span className="text-gray-400 text-xs">€{absoluteCostGrowthData.startAmount}B → €{absoluteCostGrowthData.endAmount}B ({absoluteCostGrowthData.startYear}-{absoluteCostGrowthData.endYear})</span>
+            </p>
           </>
         );
       
@@ -348,10 +396,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
 
   return (
     <div 
-      className={`insight-card ${type} ${clickable ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
+      className={`story-card-hover dutch-gradient-card rounded-2xl border-2 border-gray-600 ${clickable ? 'cursor-pointer' : ''}`}
       onClick={onClick}
     >
-      {renderContent()}
+      <div className="text-center">
+        {renderContent()}
+      </div>
     </div>
   );
 };

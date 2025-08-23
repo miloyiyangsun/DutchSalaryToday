@@ -3,7 +3,8 @@ import { useStoryData, useWorkHoursData, useGenderPowerData, useWorkIntensificat
 import InsightCard from "../components/InsightCard";
 import FeedbackWidget from "../components/FeedbackWidget";
 import { ROUTES } from "../types/routes";
-import "../App.css";
+// import "../App.css";  // 临时禁用App.css
+import "../SuperDesign.css";
 
 function HomePage() {
   // 导航功能
@@ -35,19 +36,38 @@ function HomePage() {
     );
   }
 
-  // 显示正常数据
-  // Show normal data
+  // 显示正常数据 - Show normal data with SuperDesign styling
   return (
-    <div className="container">
-      <header>
-        <h1>🇳🇱 Dutch Salary Insights</h1>
-        <p>Data Stories Dashboard - CBS Netherlands</p>
-      </header>
+    <div className="gradient-bg min-h-screen">
+      <div className="container mx-auto px-6 py-16 max-w-5xl superdesign-container">
+        {/* 页面标题区域 - SuperDesign精确Header */}
+        <header className="text-center mb-16">
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-4xl mr-3">🇳🇱</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-title-fix">
+              Dutch Salary Insights
+            </h1>
+          </div>
+          <p className="text-lg md:text-xl text-gray-300 font-medium">
+            Data Stories Dashboard - CBS Netherlands (2010-2024)
+          </p>
+        </header>
 
-      {/* Sprint 1: Industry Ice and Fire */}
-      <section>
-        <h2 style={{ marginBottom: '1rem', color: '#374151' }}>🔥 Sprint 1: Industry Ice and Fire</h2>
-        <main className="insights-grid">
+        {/* Sprint 1: Industry Ice and Fire */}
+        <section className="mb-32 card-slide-in" style={{ "--delay": "0.2s" } as React.CSSProperties}>
+          <div className="flex items-center mb-8">
+            <div className="sprint-label mr-4">
+              SPRINT 1
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold superdesign-section-title flex items-center">
+              <span className="mr-3">🔥</span>
+              Industry Ice and Fire
+            </h2>
+          </div>
+          <p className="text-gray-400 mb-12 text-lg">
+            Explore salary growth champions and laggards across Dutch industries
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* 增长冠军 Growth Champion */}
           <InsightCard
             type="champion"
@@ -71,13 +91,24 @@ function HomePage() {
             onClick={() => navigate(ROUTES.ICE_AND_FIRE)}
             clickable={true}
           />
-        </main>
-      </section>
+          </div>
+        </section>
 
-      {/* Sprint 2: Work Hours Analysis */}
-      <section style={{ marginTop: '3rem' }}>
-        <h2 style={{ marginBottom: '1rem', color: '#374151' }}>🕒 Sprint 2: Work Hours Analysis</h2>
-        <main className="insights-grid">
+        {/* Sprint 2: Work Hours Analysis */}
+        <section className="mb-32 card-slide-in" style={{ "--delay": "0.4s" } as React.CSSProperties}>
+          <div className="flex items-center mb-8">
+            <div className="sprint-label mr-4">
+              SPRINT 2
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold superdesign-section-title flex items-center">
+              <span className="mr-3">⏰</span>
+              Work Hours Analysis
+            </h2>
+          </div>
+          <p className="text-gray-400 mb-12 text-lg">
+            Deep dive into working time patterns and hourly wage distributions
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* 平均工时 Average Hours */}
           <InsightCard
             type="average-hours"
@@ -111,13 +142,24 @@ function HomePage() {
             onClick={() => navigate(ROUTES.WORK_HOURS)}
             clickable={true}
           />
-        </main>
-      </section>
+          </div>
+        </section>
 
-      {/* Sprint 3: Gender Power Rise */}
-      <section style={{ marginTop: '3rem' }}>
-        <h2 style={{ marginBottom: '1rem', color: '#374151' }}>🚺 Sprint 3: Gender Power Rise</h2>
-        <main className="insights-grid">
+        {/* Sprint 3: Gender Power Rise */}
+        <section className="mb-32 card-slide-in" style={{ "--delay": "0.6s" } as React.CSSProperties}>
+          <div className="flex items-center mb-8">
+            <div className="sprint-label mr-4">
+              SPRINT 3
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold superdesign-section-title flex items-center">
+              <span className="mr-3">🚺</span>
+              Gender Power Rise
+            </h2>
+          </div>
+          <p className="text-gray-400 mb-12 text-lg">
+            Analyzing the transformation of gender representation in Dutch workforce
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* 女性占比历史突破 Historical Breakthrough */}
           <InsightCard
             type="historical-breakthrough"
@@ -152,13 +194,24 @@ function HomePage() {
             onClick={() => navigate(ROUTES.GENDER_POWER)}
             clickable={true}
           />
-        </main>
-      </section>
+          </div>
+        </section>
 
-      {/* Sprint 4: Work Intensification Revolution */}
-      <section style={{ marginTop: '3rem' }}>
-        <h2 style={{ marginBottom: '1rem', color: '#374151' }}>🏭 Sprint 4: Work Intensification Revolution</h2>
-        <main className="insights-grid">
+        {/* Sprint 4: Work Intensification Revolution */}
+        <section className="mb-32 card-slide-in" style={{ "--delay": "0.8s" } as React.CSSProperties}>
+          <div className="flex items-center mb-8">
+            <div className="sprint-label mr-4">
+              SPRINT 4
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold superdesign-section-title flex items-center">
+              <span className="mr-3">🏭</span>
+              Work Intensification Revolution
+            </h2>
+          </div>
+          <p className="text-gray-400 mb-12 text-lg">
+            Analyzing non-standard work arrangements and employment patterns transformation
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* 工作负载分布 Workload Distribution */}
           <InsightCard
             type="workload-distribution"
@@ -192,13 +245,24 @@ function HomePage() {
             onClick={() => navigate(ROUTES.WORK_INTENSIFICATION)}
             clickable={true}
           />
-        </main>
-      </section>
+          </div>
+        </section>
 
-      {/* Sprint 5: Hidden Labor Costs */}
-      <section style={{ marginTop: '3rem' }}>
-        <h2 style={{ marginBottom: '1rem', color: '#374151' }}>💰 Sprint 5: Hidden Labor Costs</h2>
-        <main className="insights-grid">
+        {/* Sprint 5: Hidden Labor Costs */}
+        <section className="mb-32 card-slide-in" style={{ "--delay": "1.0s" } as React.CSSProperties}>
+          <div className="flex items-center mb-8">
+            <div className="sprint-label mr-4">
+              SPRINT 5
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold superdesign-section-title flex items-center">
+              <span className="mr-3">💰</span>
+              Hidden Labor Costs
+            </h2>
+          </div>
+          <p className="text-gray-400 mb-12 text-lg">
+            Uncovering the true cost burden of Dutch employment beyond salaries
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* 福利负担水平 Benefit Burden Level */}
           <InsightCard
             type="benefit-burden-level"
@@ -238,17 +302,24 @@ function HomePage() {
             onClick={() => navigate(ROUTES.HIDDEN_COSTS)}
             clickable={true}
           />
-        </main>
-      </section>
+          </div>
+        </section>
 
-      {/* Platform Feedback Section */}
-      <section style={{ marginTop: '4rem', marginBottom: '2rem' }}>
-        <FeedbackWidget className="feedback-section" />
-      </section>
+        {/* Platform Feedback Section */}
+        <section className="mt-40 card-slide-in" style={{ "--delay": "1.2s" } as React.CSSProperties}>
+          <FeedbackWidget className="feedback-section superdesign" />
+        </section>
 
-      <footer>
-        <p>Based on CBS (Statistics Netherlands) Data | 5 Stories Available</p>
-      </footer>
+        {/* 页脚 - Footer */}
+        <footer className="mt-32 text-center text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <span>📊</span>
+            <span>Based on CBS Netherlands Statistics Bureau Data</span>
+            <span className="mx-2">•</span>
+            <span>5 Data Stories Available</span>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

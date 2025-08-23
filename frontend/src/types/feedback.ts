@@ -3,14 +3,14 @@
 // API endpoints: /api/v1/feedback/*
 
 /**
- * Emoji评分映射 - 1-5对应不同emoji
+ * Emoji评分映射 - 1-5对应不同emoji (按照SuperDesign标准)
  */
 export const EMOJI_RATINGS = {
-  1: '😞', // Very Bad
-  2: '😐', // Not Good
-  3: '😊', // OK
-  4: '😃', // Good
-  5: '🤩'  // Excellent
+  1: '😞', // Poor
+  2: '😕', // Okay
+  3: '😐', // Good
+  4: '😊', // Great
+  5: '😍'  // Love it!
 } as const;
 
 export type EmojiRating = keyof typeof EMOJI_RATINGS;
@@ -42,10 +42,10 @@ export interface FeedbackStatistics {
   averageRating: number;           // 平均评分
   emojiDistribution: {             // Emoji分布统计
     1: number;  // 😞 数量
-    2: number;  // 😐 数量
-    3: number;  // 😊 数量
-    4: number;  // 😃 数量
-    5: number;  // 🤩 数量
+    2: number;  // 😕 数量
+    3: number;  // 😐 数量
+    4: number;  // 😊 数量
+    5: number;  // 😍 数量
   };
 }
 
