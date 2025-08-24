@@ -166,12 +166,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!championData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🚀</div>
-            <div className="big-number-responsive text-green-400 mb-2 number-animate">{championData.rate}</div>
-            <h3 className="text-xl font-bold text-white mb-2">Growth Champion</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🚀</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success number-animate' : 'text-green-400 mb-2 number-animate'}`}>{championData.rate}</div>
+            <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Growth Champion</h3>
+            <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm leading-relaxed'}>
               {championData.industry}<br/>
-              <span className="text-gray-400 small-annotation">{variant === 'detail' ? '2010-2024 Salary Growth Leader' : '2010-2024 Growth'}</span>
+              <span className={variant === 'detail' ? 'small-annotation' : 'text-gray-400 small-annotation'}>{variant === 'detail' ? '2010-2024 Salary Growth Leader' : '2010-2024 Growth'}</span>
             </p>
           </>
         );
@@ -180,12 +180,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!slowestData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🐌</div>
-            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{slowestData.rate}</div>
-            <h3 className="text-xl font-bold text-white mb-2">Slowest Growth</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🐌</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{slowestData.rate}</div>
+            <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Slowest Growth</h3>
+            <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm leading-relaxed'}>
               {slowestData.industry}<br/>
-              <span className="text-gray-400 small-annotation">{variant === 'detail' ? '2010-2024 Growth Laggard' : '2010-2024 Growth'}</span>
+              <span className={variant === 'detail' ? 'small-annotation' : 'text-gray-400 small-annotation'}>{variant === 'detail' ? '2010-2024 Growth Laggard' : '2010-2024 Growth'}</span>
             </p>
           </>
         );
@@ -194,21 +194,48 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!gapData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">📊</div>
-            <div className="flex justify-center items-center gap-2 mb-1">
-              <div className="medium-number-responsive text-blue-400 number-animate">{gapData.from}</div>
-              <div className="text-2xl text-orange-400 mx-1">→</div>
-              <div className="big-number-responsive long-text text-pink-400 number-animate">{gapData.to}</div>
-            </div>
-            <div className="flex justify-center items-center gap-4 mb-4">
-              <div className="small-annotation text-gray-400">2010</div>
-              <div className="small-annotation text-gray-400">2024</div>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Salary Gap</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              {variant === 'detail' ? 'Industry Salary Gap Evolution' : 'Inter-industry Gap Change'}<br/>
-              <span className="text-gray-400 text-xs">Improvement in salary equality</span>
-            </p>
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>📊</div>
+            {variant === 'detail' ? (
+              // IceAndFirePage样式
+              <>
+                <div className="gap-comparison">
+                  <div className="medium-number-responsive number-info number-animate">{gapData.from}</div>
+                  <div className="gap-arrow">→</div>
+                  <div className="big-number-responsive long-text number-ice number-animate">{gapData.to}</div>
+                </div>
+                <div className="gap-comparison">
+                  <div className="year-label">2010</div>
+                  <div className="year-label">2024</div>
+                </div>
+                <h3 className="insight-card-title">Salary Gap</h3>
+                <p className="insight-card-description">
+                  Industry Salary Gap Evolution<br/>
+                  <span className="small-annotation">Improvement in salary equality</span>
+                </p>
+              </>
+            ) : (
+              // HomePage参考设计样式
+              <>
+                <div className="flex justify-center items-center gap-2 mb-1">
+                  <div className="medium-number-responsive text-blue-400 number-animate">
+                    {gapData.from}
+                  </div>
+                  <div className="text-2xl text-orange-400 mx-1">→</div>
+                  <div className="big-number-responsive long-text text-pink-400 number-animate">
+                    {gapData.to}
+                  </div>
+                </div>
+                <div className="flex justify-center items-center gap-4 mb-4">
+                  <div className="small-annotation text-gray-400">2010</div>
+                  <div className="small-annotation text-gray-400">2024</div>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Salary Gap</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Inter-industry Gap Change<br/>
+                  <span className="text-gray-400 text-xs">Improvement in salary equality</span>
+                </p>
+              </>
+            )}
           </>
         );
       
@@ -217,11 +244,11 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!averageHoursData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🕒</div>
-            <div className="big-number-responsive text-blue-400 mb-1 number-animate">{averageHoursData.weeklyHours}</div>
-            <div className="small-annotation text-gray-400 mb-3">hours/week</div>
-            <h3 className="text-xl font-bold text-white mb-2">Average Work Hours</h3>
-            <p className="text-gray-300 text-sm">{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🕒</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-blue-400 mb-1 number-animate'}`}>{averageHoursData.weeklyHours}</div>
+            <div className={variant === 'detail' ? 'small-annotation' : 'small-annotation text-gray-400 mb-3'}>hours/week</div>
+            <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Average Work Hours</h3>
+            <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm'}>{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
           </>
         );
       
@@ -229,13 +256,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!hoursRankingData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">⚠️</div>
-            <div className="big-number-responsive text-yellow-400 mb-1 number-animate">{hoursRankingData.highest.weeklyHours}</div>
-            <div className="small-annotation text-gray-400 mb-3">hours/week</div>
-            <h3 className="text-xl font-bold text-white mb-2">Longest Hours</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>⚠️</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-1 number-animate'}`}>{hoursRankingData.highest.weeklyHours}</div>
+            <div className={variant === 'detail' ? 'small-annotation' : 'small-annotation text-gray-400 mb-3'}>hours/week</div>
+            <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Longest Hours</h3>
+            <p className="insight-card-description">
               {hoursRankingData.highest.industry}<br/>
-              <span className="text-gray-400 small-annotation">{hoursRankingData.gapRatio}x vs lowest industry</span>
+              <span className="small-annotation">{hoursRankingData.gapRatio}x vs lowest industry</span>
             </p>
           </>
         );
@@ -244,12 +271,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!wageRankingData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">💰</div>
-            <div className="big-number-responsive text-green-400 mb-2 number-animate">€{wageRankingData.highest.hourlyWage}/h</div>
-            <h3 className="text-xl font-bold text-white mb-2">Wage Champion</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💰</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success number-animate' : 'text-green-400 mb-2 number-animate'}`}>€{wageRankingData.highest.hourlyWage}/h</div>
+            <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Wage Champion</h3>
+            <p className="insight-card-description">
               {wageRankingData.highest.industry}<br/>
-              <span className="text-gray-400 small-annotation">{wageRankingData.gapRatio}x vs lowest industry</span>
+              <span className="small-annotation">{wageRankingData.gapRatio}x vs lowest industry</span>
             </p>
           </>
         );
@@ -259,12 +286,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!historicalBreakthroughData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🚺</div>
-            <div className="big-number-responsive long-text text-pink-400 mb-2 number-animate">+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
-            <h3 className="text-xl font-bold text-white mb-2">Female Breakthrough</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🚺</div>
+            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice number-animate' : 'text-pink-400 mb-2 number-animate'}`}>+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
+            <h3 className="insight-card-title">Female Breakthrough</h3>
+            <p className="insight-card-description">
               Historical Growth<br/>
-              <span className="text-gray-400">1995: {historicalBreakthroughData.percentage1995.toFixed(1)}% → 2024: {historicalBreakthroughData.percentage2024.toFixed(1)}%</span>
+              <span className="small-annotation">1995: {historicalBreakthroughData.percentage1995.toFixed(1)}% → 2024: {historicalBreakthroughData.percentage2024.toFixed(1)}%</span>
             </p>
           </>
         );
@@ -273,13 +300,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!jobsContributionData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">💼</div>
-            <div className="big-number-responsive text-blue-400 mb-2 number-animate">{jobsContributionData.contributionRate.toFixed(1)}%</div>
-            <h3 className="text-xl font-bold text-white mb-2">New Jobs Power</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💼</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-blue-400 mb-2 number-animate'}`}>{jobsContributionData.contributionRate.toFixed(1)}%</div>
+            <h3 className="insight-card-title">New Jobs Power</h3>
+            <p className="insight-card-description">
               Female contribution rate
             </p>
-            <div className="text-gray-400 mt-2 font-medium">
+            <div className="small-annotation">
               {jobsContributionData.femaleNewJobs.toLocaleString()} of {jobsContributionData.totalNewJobs.toLocaleString()} new positions
             </div>
           </>
@@ -289,12 +316,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!industryDominanceData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">👑</div>
-            <div className="big-number-responsive long-text text-purple-400 mb-2 number-animate">{industryDominanceData.dominantIndustryCount} industries</div>
-            <h3 className="text-xl font-bold text-white mb-2">Industry Dominance</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>👑</div>
+            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice number-animate' : 'text-purple-400 mb-2 number-animate'}`}>{industryDominanceData.dominantIndustryCount} industries</div>
+            <h3 className="insight-card-title">Industry Dominance</h3>
+            <p className="insight-card-description">
               Female majority (&gt;50%)<br/>
-              <span className="text-gray-400">Top: {industryDominanceData.topFemaleIndustry.femalePercentage.toFixed(1)}% in {industryDominanceData.topFemaleIndustry.industry.substring(0, 20)}...</span>
+              <span className="small-annotation">Top: {industryDominanceData.topFemaleIndustry.femalePercentage.toFixed(1)}% in {industryDominanceData.topFemaleIndustry.industry.substring(0, 20)}...</span>
             </p>
           </>
         );
@@ -304,12 +331,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!workloadDistributionData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">⚖️</div>
-            <div className="big-number-responsive text-indigo-400 mb-2 number-animate">{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
-            <h3 className="text-xl font-bold text-white mb-2">Work Distribution</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>⚖️</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-indigo-400 mb-2 number-animate'}`}>{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
+            <h3 className="insight-card-title">Work Distribution</h3>
+            <p className="insight-card-description">
               Non-standard arrangements<br/>
-              <span className="text-gray-400 text-xs">{workloadDistributionData.totalFte.toLocaleString()} FTE / {workloadDistributionData.totalEmployees.toLocaleString()} total employees</span>
+              <span className="small-annotation">{workloadDistributionData.totalFte.toLocaleString()} FTE / {workloadDistributionData.totalEmployees.toLocaleString()} total employees</span>
             </p>
           </>
         );
@@ -319,14 +346,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         const isIncreasing = intensificationIndexData.interpretation === 'increasing_workload';
         return (
           <>
-            <div className="text-4xl mb-3">{isIncreasing ? '📈' : '📉'}</div>
-            <div className={`big-number-responsive mb-2 number-animate ${isIncreasing ? 'text-yellow-400' : 'text-cyan-400'}`}>
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>{isIncreasing ? '📈' : '📉'}</div>
+            <div className={`big-number-responsive number-animate ${variant === 'detail' ? (isIncreasing ? 'number-warning' : 'number-info') : (isIncreasing ? 'text-cyan-400 mb-2' : 'text-cyan-400 mb-2')}`}>
               {intensificationIndexData.intensificationIndex.toFixed(1)}%
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Work Trend</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <h3 className="insight-card-title">Work Trend</h3>
+            <p className="insight-card-description">
               {isIncreasing ? 'More Intensive' : 'More Standard'}<br/>
-              <span className="text-gray-400 text-xs">{isIncreasing ? 'Work becoming more flexible' : 'More standard employment'} (2010-2024)</span>
+              <span className="small-annotation">{isIncreasing ? 'Work becoming more flexible' : 'More standard employment'} (2010-2024)</span>
             </p>
           </>
         );
@@ -336,12 +363,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!industryWorkloadRankingData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🏭</div>
-            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
-            <h3 className="text-xl font-bold text-white mb-2">Heaviest Workload</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🏭</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
+            <h3 className="insight-card-title">Heaviest Workload</h3>
+            <p className="insight-card-description">
               Non-standard work extreme<br/>
-              <span className="text-gray-400 text-xs">{industryWorkloadRankingData.heaviestWorkload.industry.substring(0, 30)}... leads {industryWorkloadRankingData.totalIndustries} industries</span>
+              <span className="small-annotation">{industryWorkloadRankingData.heaviestWorkload.industry.substring(0, 30)}... leads {industryWorkloadRankingData.totalIndustries} industries</span>
             </p>
           </>
         );
@@ -351,12 +378,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!benefitBurdenLevelData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">🧾</div>
-            <div className="big-number-responsive text-yellow-400 mb-2 number-animate">{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
-            <h3 className="text-xl font-bold text-white mb-2">Benefit Burden</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🧾</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
+            <h3 className="insight-card-title">Benefit Burden</h3>
+            <p className="insight-card-description">
               Social contribution level<br/>
-              <span className="text-gray-400 text-xs">For every €100 salary, employers pay €23...</span>
+              <span className="small-annotation">For every €100 salary, employers pay €23...</span>
             </p>
           </>
         );
@@ -365,12 +392,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!industryGapMultipleData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">💸</div>
-            <div className="big-number-responsive text-red-400 mb-2 number-animate">{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
-            <h3 className="text-xl font-bold text-white mb-2">Industry Gap</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💸</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire number-animate' : 'text-red-400 mb-2 number-animate'}`}>{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
+            <h3 className="insight-card-title">Industry Gap</h3>
+            <p className="insight-card-description">
               Benefit burden disparity<br/>
-              <span className="text-gray-400 text-xs">Range: {industryGapMultipleData.lowestBenefitIndustry.benefitRatio.toFixed(1)}% - {industryGapMultipleData.highestBenefitIndustry.benefitRatio.toFixed(1)}% across {industryGapMultipleData.totalIndustries} industries</span>
+              <span className="small-annotation">Range: {industryGapMultipleData.lowestBenefitIndustry.benefitRatio.toFixed(1)}% - {industryGapMultipleData.highestBenefitIndustry.benefitRatio.toFixed(1)}% across {industryGapMultipleData.totalIndustries} industries</span>
             </p>
           </>
         );
@@ -379,12 +406,12 @@ const InsightCard: React.FC<InsightCardProps> = ({
         if (!absoluteCostGrowthData) return null;
         return (
           <>
-            <div className="text-4xl mb-3">📈</div>
-            <div className="big-number-responsive text-orange-400 mb-2 number-animate">+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
-            <h3 className="text-xl font-bold text-white mb-2">Cost Growth</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>📈</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire number-animate' : 'text-orange-400 mb-2 number-animate'}`}>+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
+            <h3 className="insight-card-title">Cost Growth</h3>
+            <p className="insight-card-description">
               Absolute increase<br/>
-              <span className="text-gray-400 text-xs">€{absoluteCostGrowthData.startAmount}B → €{absoluteCostGrowthData.endAmount}B ({absoluteCostGrowthData.startYear}-{absoluteCostGrowthData.endYear})</span>
+              <span className="small-annotation">€{absoluteCostGrowthData.startAmount}B → €{absoluteCostGrowthData.endAmount}B ({absoluteCostGrowthData.startYear}-{absoluteCostGrowthData.endYear})</span>
             </p>
           </>
         );
@@ -394,9 +421,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
     }
   };
 
+  // 根据variant选择容器样式
+  const containerClassName = variant === 'detail' 
+    ? `insight-card ${clickable ? 'cursor-pointer' : ''}` // IceAndFirePage使用SuperDesign样式
+    : `story-card-hover dutch-gradient-card rounded-2xl border-2 border-gray-600 ${clickable ? 'cursor-pointer' : ''}`; // HomePage使用参考设计样式
+
   return (
     <div 
-      className={`story-card-hover dutch-gradient-card rounded-2xl border-2 border-gray-600 ${clickable ? 'cursor-pointer' : ''}`}
+      className={containerClassName}
       onClick={onClick}
     >
       <div className="text-center">

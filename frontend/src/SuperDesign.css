@@ -191,7 +191,7 @@
   --spacing-3xl: 4rem;  /* 64px - 标题区域的关键分离间距 */
   --spacing-4xl: 5rem;  /* 80px - 主要段落间的重要分离间距 */
 
-  /* === 🔥❄️ 冰火主题专用变量系统 (Ice & Fire Theme Variables) === */
+/* === 🔥❄️ 冰火主题专用变量系统 (Ice & Fire Theme Variables) === */
   
   /* 🔥 FIRE 暖色系统 (Fire Warm Colors) */
   --fire-primary: #ff6b35;                 /* 主火色 - 热橙红 */
@@ -355,9 +355,13 @@ body {
 }
 
 .big-number-responsive.long-text {
-  font-size: clamp(1.5rem, 4vw, 2.2rem) !important;
+  font-size: clamp(1.3rem, 3.5vw, 1.9rem) !important;
   line-height: 1.0 !important;
   word-spacing: -0.1em !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 /* === aG�� (Card System) === */
@@ -784,6 +788,27 @@ body {
   color: var(--warning) !important;
 }
 
+/* === 数字颜色系统 (Number Color System) === */
+.number-success {
+  color: var(--accent-green) !important;
+}
+
+.number-warning {
+  color: var(--accent-yellow) !important;
+}
+
+.number-fire {
+  color: var(--fire-primary) !important;
+}
+
+.number-ice {
+  color: var(--ice-primary) !important;
+}
+
+.number-info {
+  color: var(--accent-blue) !important;
+}
+
 /* === Sprint�7 (Sprint Title Styling) === */
 .sprint-title {
   font-size: 1.5rem !important;
@@ -802,6 +827,33 @@ body {
   padding: var(--spacing-xl) !important;
   margin-top: var(--spacing-2xl) !important;
   text-align: center !important;
+}
+
+.error-display {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 2px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--spacing-sm) !important;
+  color: #f87171 !important;
+  margin-bottom: var(--spacing-md) !important;
+  font-size: 0.875rem !important;
+}
+
+.emoji-grid {
+  display: flex !important;
+  justify-content: center !important;
+  gap: var(--spacing-xl) !important;
+  margin-bottom: var(--spacing-lg) !important;
+  flex-wrap: wrap !important;
+}
+
+.emoji-feedback.selected {
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+}
+
+.emoji-feedback.pressed {
+  animation: pulse 1s infinite !important;
 }
 
 /* === ؇WH� (Gradient Text Effects) === */
@@ -1754,18 +1806,44 @@ html.dark,
 }
 
 /* === 辅助样式类 (Utility Style Classes) === */
+.gap-comparison {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  margin: 0.75rem 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
 .ice-fire-page .gap-comparison {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 1rem !important;
-  margin: 1rem 0 !important;
+  gap: 0.5rem !important;
+  margin: 0.75rem 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.gap-arrow {
+  font-size: 1.2rem !important;
+  color: var(--accent-orange) !important;
+  font-weight: bold !important;
+  flex-shrink: 0 !important;
 }
 
 .ice-fire-page .gap-arrow {
-  font-size: 1.5rem !important;
+  font-size: 1.2rem !important;
   color: var(--accent-orange) !important;
   font-weight: bold !important;
+  flex-shrink: 0 !important;
+}
+
+.year-label {
+  font-size: 0.8rem !important;
+  color: var(--text-secondary) !important;
+  margin-top: 0.25rem !important;
 }
 
 .ice-fire-page .year-label {
@@ -1882,6 +1960,215 @@ html.dark,
 }
 
 /* ============================================================================ */
+/* HomePage专用样式系统 (HomePage Dedicated Styling System) */
+/* 基于参考设计dutch_salary_homepage_1.html的完整样式 */
+/* ============================================================================ */
+
+/* === HomePage卡片核心样式 (HomePage Card Core Styles) === */
+.story-card-hover {
+  transition: all 0.3s ease !important;
+  min-height: 280px !important;           /* 固定最小高度 */
+  aspect-ratio: 5/4 !important;          /* 近正方形比例 */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  padding: 1.75rem 1.25rem !important;   /* 精确内边距 */
+  max-width: 100% !important;
+  border-radius: 1rem !important;        /* rounded-2xl */
+}
+
+.story-card-hover:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4) !important;
+  border-color: oklch(0.6863 0.2118 45.24) !important; /* --primary color */
+}
+
+.story-card-hover:hover .big-number-responsive {
+  animation: numberPulse 1.5s ease-in-out infinite !important;
+}
+
+/* === HomePage渐变背景 (HomePage Gradient Background) === */
+.dutch-gradient-card {
+  background: linear-gradient(135deg, 
+    oklch(0.0941 0.0176 285.82) 0%, 
+    oklch(0.1176 0.0216 285.82) 100%) !important;
+}
+
+/* === HomePage全局渐变背景 (HomePage Global Gradient) === */
+.gradient-bg {
+  background: linear-gradient(135deg, 
+    oklch(0.0627 0.0216 285.82) 0%, 
+    oklch(0.0941 0.0176 285.82) 50%,
+    oklch(0.0627 0.0216 285.82) 100%) !important;
+}
+
+/* === HomePage标题渐变 (HomePage Title Gradient) === */
+.gradient-title-fix {
+  background: linear-gradient(45deg, #fb923c, #60a5fa) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* === HomePage Sprint标签 (HomePage Sprint Label) === */
+.sprint-label {
+  background: #fb923c !important; /* --primary color */
+  color: #000000 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+}
+
+/* === HomePage节标题 (HomePage Section Title) === */
+.superdesign-section-title {
+  color: #fb923c !important; /* --primary color */
+}
+
+/* === HomePage动画系统 (HomePage Animation System) === */
+@keyframes countUp {
+  from { 
+    opacity: 0 !important;
+    transform: translateY(20px) scale(0.8) !important;
+  }
+  to { 
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+  }
+}
+
+@keyframes numberPulse {
+  0%, 100% { 
+    transform: scale(1) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  50% { 
+    transform: scale(1.05) !important;
+    text-shadow: 0 4px 8px rgba(251, 146, 60, 0.4) !important;
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0 !important;
+    transform: translateY(40px) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
+/* === HomePage动画类 (HomePage Animation Classes) === */
+.number-animate {
+  animation: countUp 1.2s ease-out forwards !important;
+  animation-delay: var(--delay, 0s) !important;
+}
+
+.number-pulse {
+  animation: numberPulse 2s ease-in-out infinite !important;
+}
+
+.card-slide-in {
+  animation: cardSlideIn 0.6s ease-out forwards !important;
+  animation-delay: var(--delay, 0s) !important;
+}
+
+/* === HomePage数字系统 (HomePage Number System) === */
+/* 重写大数字样式以匹配参考设计 */
+.big-number-responsive {
+  font-size: clamp(1.8rem, 5vw, 2.6rem) !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
+  margin: 0.4rem 0 !important;
+  text-align: center !important;
+}
+
+.medium-number-responsive {
+  font-size: clamp(1.2rem, 3.5vw, 1.7rem) !important;
+  line-height: 1.2 !important;
+  font-weight: 700 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  letter-spacing: -0.01em !important;
+  margin: 0.2rem 0 !important;
+  text-align: center !important;
+}
+
+.small-annotation {
+  font-size: clamp(0.7rem, 2vw, 0.9rem) !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important;
+  opacity: 0.8 !important;
+  margin: 0.125rem 0 !important;
+}
+
+/* === HomePage长文本数字优化 (HomePage Long Text Numbers) === */
+.big-number-responsive.long-text {
+  font-size: clamp(1.5rem, 4vw, 2.2rem) !important;
+  line-height: 1.0 !important;
+  word-spacing: -0.1em !important;
+}
+
+/* === HomePage响应式优化 (HomePage Responsive) === */
+@media (max-width: 768px) {
+  .story-card-hover {
+    padding: var(--spacing-lg) !important;
+    min-height: 240px !important;
+  }
+  
+  .big-number-responsive {
+    font-size: clamp(1.5rem, 4vw, 2.2rem) !important;
+  }
+  
+  .gradient-title-fix {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+}
+
+/* === HomePage与SuperDesign兼容性 (HomePage SuperDesign Compatibility) === */
+/* 确保HomePage容器正常工作 */
+.superdesign-container {
+  /* 继承SuperDesign容器样式 */
+}
+
+/* === HomePage Emoji反馈系统 (HomePage Emoji Feedback System) === */
+/* 基于参考设计的完整emoji交互样式 */
+.emoji-feedback-container {
+  transition: all 0.2s ease !important;
+}
+
+.emoji-feedback {
+  font-size: 2.5rem !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease !important;
+  display: inline-block !important;
+  user-select: none !important;
+}
+
+.emoji-feedback:hover {
+  transform: scale(1.2) rotate(5deg) !important;
+}
+
+.emoji-feedback:active {
+  transform: scale(1.4) rotate(-5deg) !important;
+}
+
+.emoji-count {
+  font-weight: 600 !important;
+  min-height: 20px !important;
+}
+
+.emoji-feedback-container:hover .emoji-count {
+  color: var(--accent-orange, #fb923c) !important;
+}
+
+/* ============================================================================ */
 /* End of SuperDesign CSS Implementation */
-/* Total: 1800+ lines of complete styling system */
+/* Total: 1900+ lines of complete styling system */
 /* ============================================================================ */

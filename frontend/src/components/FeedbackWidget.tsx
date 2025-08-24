@@ -91,7 +91,7 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
     return (
       <div className="emoji-feedback-container text-center">
         <span 
-          className={`emoji-feedback ${isSelected ? 'opacity-100' : ''} ${isPressed ? 'animate-pulse' : ''}`}
+          className={`emoji-feedback ${isSelected ? 'selected' : ''} ${isPressed ? 'pressed' : ''}`}
           onClick={() => handleEmojiClick(rating)}
           onMouseDown={() => handleMouseDown(rating)}
           onMouseUp={handleMouseUp}
@@ -116,15 +116,15 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
   // 加载状态 - Loading State
   if (feedbackLoading || statsLoading) {
     return (
-      <div className={`dutch-gradient-card rounded-3xl p-8 border-2 border-orange-500/30 text-center ${className}`}>
-        <div className="text-gray-300 text-base">Loading emoji feedback...</div>
+      <div className={`feedback-section ${className}`}>
+        <div className="small-annotation">Loading emoji feedback...</div>
       </div>
     );
   }
 
   return (
     <div className={`dutch-gradient-card rounded-3xl p-8 border-2 border-orange-500/30 text-center ${className}`}>
-      {/* 反馈系统标题 - Feedback Header */}
+      {/* 反馈系统标题 - 匹配参考设计 */}
       <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center justify-center">
         <span className="mr-3">💬</span>
         Your Feedback
@@ -133,19 +133,19 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
 
       {/* 错误显示 - Error Display */}
       {(feedbackError || statsError) && (
-        <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-3 text-red-300 mb-4">
+        <div className="error-display">
           {feedbackError || statsError}
         </div>
       )}
 
-      {/* Emoji选择器 - 完全按照SuperDesign样式 */}
+      {/* Emoji选择器 - 匹配参考设计 */}
       <div className="flex justify-center gap-8 mb-6">
         {[1, 2, 3, 4, 5].map((rating) => (
           <EmojiButton key={rating} rating={rating as EmojiRating} />
         ))}
       </div>
       
-      {/* 底部说明 - 完全按照SuperDesign */}
+      {/* 底部说明 - 匹配参考设计 */}
       <p className="text-gray-500 text-sm mt-4">Tap an emoji to share your feedback</p>
     </div>
   );
