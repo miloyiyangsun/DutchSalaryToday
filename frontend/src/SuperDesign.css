@@ -149,6 +149,7 @@
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 0.25rem);
   --radius-xl: calc(var(--radius) + 0.5rem);
+  --radius-2xl: 1.5rem;                                /* 参考设计标准2xl圆角 */
   
   /* === 4q�� (Shadow System) === */
   --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -187,6 +188,45 @@
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;  /* 64px - 标题区域的关键分离间距 */
+  --spacing-4xl: 5rem;  /* 80px - 主要段落间的重要分离间距 */
+
+  /* === 🔥❄️ 冰火主题专用变量系统 (Ice & Fire Theme Variables) === */
+  
+  /* 🔥 FIRE 暖色系统 (Fire Warm Colors) */
+  --fire-primary: #ff6b35;                 /* 主火色 - 热橙红 */
+  --fire-secondary: #f7931e;               /* 次火色 - 暖橙 */
+  --fire-tertiary: #ffd23f;                /* 第三火色 - 金黄 */
+  --fire-quaternary: #ff8e53;              /* 第四火色 - 暖橙 */
+  --fire-quinary: #ffa726;                 /* 第五火色 - 亮橙 */
+  
+  /* Fire渐变背景 (Fire Gradients) */
+  --fire-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffa726 100%);
+  --fire-card-gradient: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(247, 147, 30, 0.15) 100%);
+  --fire-border-gradient: linear-gradient(135deg, #ff6b35 0%, #ffa726 100%);
+  
+  /* ❄️ ICE 冷色系统 (Ice Cool Colors) */
+  --ice-primary: #4fc3f7;                  /* 主冰色 - 天蓝 */
+  --ice-secondary: #26c6da;                /* 次冰色 - 青蓝 */
+  --ice-tertiary: #66bb6a;                 /* 第三冰色 - 薄荷绿 */
+  --ice-quaternary: #42a5f5;               /* 第四冰色 - 深蓝 */
+  --ice-quinary: #7e57c2;                  /* 第五冰色 - 紫色 */
+  
+  /* Ice渐变背景 (Ice Gradients) */
+  --ice-gradient: linear-gradient(135deg, #4fc3f7 0%, #26c6da 50%, #7e57c2 100%);
+  --ice-card-gradient: linear-gradient(135deg, rgba(79, 195, 247, 0.15) 0%, rgba(38, 198, 218, 0.15) 100%);
+  --ice-border-gradient: linear-gradient(135deg, #4fc3f7 0%, #7e57c2 100%);
+  
+  /* Fire & Ice 特殊光晕效果 (Special Glow Effects) */
+  --fire-glow: 0 0 20px rgba(255, 107, 53, 0.3), 0 0 40px rgba(247, 147, 30, 0.2);
+  --ice-glow: 0 0 20px rgba(79, 195, 247, 0.3), 0 0 40px rgba(38, 198, 218, 0.2);
+  
+  /* 冰火主题背景 (Ice Fire Theme Backgrounds) */
+  
+  /* 响应式数字大小专用变量 (Responsive Number Sizes) */
+  --big-number-size-ice-fire: clamp(1.8rem, 5vw, 2.6rem);
+  --medium-number-size-ice-fire: clamp(1.2rem, 3.5vw, 1.7rem);
+  --small-annotation-size-ice-fire: clamp(0.7rem, 2vw, 0.9rem);
 }
 
 /* === h@�@7 (Global Base Styles) === */
@@ -979,6 +1019,869 @@ html.dark,
 }
 
 /* ============================================================================ */
+/*                    🔥❄️ ICE AND FIRE PAGE SPECIFIC STYLES                      */
+/* ============================================================================ */
+
+/* === 页面作用域容器 (Page Scoped Container) === */
+.ice-fire-page {
+  background: linear-gradient(135deg, #0f1419 0%, #1e293b 50%, #0f1419 100%) !important;
+  min-height: 100vh !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.ice-fire-page .ice-fire-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: var(--spacing-xl) var(--spacing-lg) !important;
+}
+
+.ice-fire-page .section-spacing {
+  margin-bottom: var(--spacing-4xl) !important;
+}
+
+/* === 页面标题区域 (Page Header Styles) === */
+.ice-fire-page .page-header {
+  text-align: center !important;
+  margin-bottom: var(--spacing-3xl) !important;
+}
+
+.ice-fire-page .breadcrumb {
+  margin-bottom: var(--spacing-xl) !important;
+}
+
+.ice-fire-page .breadcrumb a {
+  color: var(--accent-orange) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: color var(--duration-normal) ease !important;
+  font-size: 1.125rem !important;
+}
+
+.ice-fire-page .breadcrumb a:hover {
+  color: var(--fire-primary) !important;
+  text-decoration: underline !important;
+}
+
+.ice-fire-page .main-title {
+  font-size: clamp(2.25rem, 6vw, 3.75rem) !important;
+  font-weight: 800 !important;
+  margin-bottom: var(--spacing-md) !important;
+  background: linear-gradient(135deg, var(--fire-primary) 0%, var(--accent-orange) 50%, var(--ice-primary) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-align: center !important;
+  line-height: 1.1 !important;
+}
+
+.ice-fire-page .subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+}
+
+/* === 洞察卡片网格系统 (Insight Card Grid System) === */
+.ice-fire-page .insight-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: var(--spacing-xl) !important;
+  margin-bottom: var(--spacing-3xl) !important;
+}
+
+.ice-fire-page .insight-card {
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: var(--radius-2xl) !important;
+  padding: var(--spacing-xl) !important;
+  text-align: center !important;
+  min-height: 280px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  transition: all var(--duration-normal) ease !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* 洞察卡片hover效果 (Insight Card Hover Effects) */
+.ice-fire-page .insight-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--accent-orange) !important;
+}
+
+/* Champion卡片特殊样式 */
+.ice-fire-page .insight-card.champion:hover {
+  border-color: var(--fire-primary) !important;
+  box-shadow: var(--fire-glow), 0 8px 25px -8px rgba(255, 107, 53, 0.4) !important;
+}
+
+/* Slowest卡片特殊样式 */
+.ice-fire-page .insight-card.slowest:hover {
+  border-color: var(--warning) !important;
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.3), 0 8px 25px -8px rgba(234, 179, 8, 0.4) !important;
+}
+
+/* Gap卡片特殊样式 */
+.ice-fire-page .insight-card.gap:hover {
+  border-color: var(--ice-primary) !important;
+  box-shadow: var(--ice-glow), 0 8px 25px -8px rgba(79, 195, 247, 0.4) !important;
+}
+
+.ice-fire-page .insight-card-icon {
+  font-size: 3rem !important;
+  margin-bottom: var(--spacing-md) !important;
+  display: block !important;
+}
+
+.ice-fire-page .insight-card-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-md) !important;
+  color: var(--text-primary) !important;
+}
+
+.ice-fire-page .insight-card-description {
+  color: var(--text-secondary) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}
+
+/* === 火冰双区域样式系统 (Fire Ice Dual Zone System) === */
+.ice-fire-page .fire-ice-section {
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-2xl) !important;
+  margin-bottom: var(--spacing-3xl) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+.ice-fire-page .fire-ice-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: var(--spacing-xl) !important;
+  margin-top: var(--spacing-xl) !important;
+}
+
+/* 🔥 Fire区域样式 */
+.ice-fire-page .fire-zone {
+  background: var(--fire-card-gradient) !important;
+  border: 2px solid var(--fire-primary) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-lg) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.ice-fire-page .fire-zone::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: var(--fire-gradient) !important;
+}
+
+.ice-fire-page .fire-zone-title {
+  color: var(--fire-primary) !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-md) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--spacing-sm) !important;
+  font-size: 1.125rem !important;
+}
+
+/* ❄️ Ice区域样式 */
+.ice-fire-page .ice-zone {
+  background: var(--ice-card-gradient) !important;
+  border: 2px solid var(--ice-primary) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-lg) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.ice-fire-page .ice-zone::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: var(--ice-gradient) !important;
+}
+
+.ice-fire-page .ice-zone-title {
+  color: var(--ice-primary) !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-md) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--spacing-sm) !important;
+  font-size: 1.125rem !important;
+}
+
+/* === 行业卡片完整样式系统 (Industry Card Complete System) === */
+.ice-fire-page .industry-list {
+  display: flex !important;
+  gap: var(--spacing-sm) !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border-color) transparent !important;
+  padding-bottom: var(--spacing-sm) !important;
+}
+
+.ice-fire-page .industry-list::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.ice-fire-page .industry-list::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.ice-fire-page .industry-list::-webkit-scrollbar-thumb {
+  background-color: var(--border-color) !important;
+  border-radius: 3px !important;
+}
+
+.ice-fire-page .industry-card {
+  min-width: 180px !important;
+  max-width: 180px !important;
+  height: 120px !important;
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 1rem !important;
+  padding: 0.75rem !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.ice-fire-page .industry-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--accent-orange) !important;
+}
+
+/* Fire Zone行业卡片特殊样式 */
+.ice-fire-page .fire-zone .industry-card.selected-fire {
+  border-color: var(--fire-primary) !important;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(26, 35, 50, 0.9) 100%) !important;
+}
+
+.ice-fire-page .fire-zone .industry-card:hover {
+  box-shadow: 0 8px 25px -8px rgba(255, 107, 53, 0.4) !important;
+}
+
+/* Ice Zone行业卡片特殊样式 */
+.ice-fire-page .ice-zone .industry-card.selected-ice {
+  border-color: var(--ice-primary) !important;
+  background: linear-gradient(135deg, rgba(79, 195, 247, 0.15) 0%, rgba(26, 35, 50, 0.9) 100%) !important;
+}
+
+.ice-fire-page .ice-zone .industry-card:hover {
+  box-shadow: 0 8px 25px -8px rgba(79, 195, 247, 0.4) !important;
+}
+
+.ice-fire-page .industry-rank {
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  align-self: flex-start !important;
+  background: var(--accent-orange) !important;
+  color: #000 !important;
+  padding: 0.125rem 0.375rem !important;
+  border-radius: 0.375rem !important;
+  min-width: fit-content !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.ice-fire-page .industry-name {
+  font-size: 0.65rem !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important;
+  margin: 0.25rem 0 !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  text-overflow: ellipsis !important;
+  opacity: 0.9 !important;
+  color: var(--text-primary) !important;
+}
+
+.ice-fire-page .industry-rate {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  font-family: var(--font-mono) !important;
+  margin: 0.2rem 0 !important;
+}
+
+.ice-fire-page .industry-details {
+  font-size: 0.6rem !important;
+  opacity: 0.7 !important;
+  margin-top: auto !important;
+  text-align: center !important;
+  color: var(--text-secondary) !important;
+}
+
+/* === 数字样式系统 (Number Styling System) === */
+.ice-fire-page .big-number-responsive {
+  font-size: var(--big-number-size-ice-fire) !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  font-family: var(--font-mono) !important;
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
+  margin: 0.4rem 0 !important;
+  text-align: center !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+.ice-fire-page .medium-number-responsive {
+  font-size: var(--medium-number-size-ice-fire) !important;
+  line-height: 1.2 !important;
+  font-weight: 700 !important;
+  font-family: var(--font-mono) !important;
+  letter-spacing: -0.01em !important;
+  margin: 0.2rem 0 !important;
+  text-align: center !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+.ice-fire-page .small-annotation {
+  font-size: var(--small-annotation-size-ice-fire) !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important;
+  opacity: 0.8 !important;
+  margin: 0.125rem 0 !important;
+  color: var(--text-secondary) !important;
+}
+
+/* 数字颜色样式 (Number Color Classes) */
+.ice-fire-page .number-fire {
+  color: var(--fire-primary) !important;
+}
+
+.ice-fire-page .number-ice {
+  color: var(--ice-primary) !important;
+}
+
+.ice-fire-page .number-info {
+  color: var(--accent-blue) !important;
+}
+
+.ice-fire-page .number-warning {
+  color: var(--warning) !important;
+}
+
+/* === 图表和统计面板样式 (Chart and Stats Panel Styles) === */
+.ice-fire-page .chart-wrapper, 
+.ice-fire-page .chart-container {
+  position: relative !important;
+  height: 400px !important;
+  width: 100% !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-lg) !important;
+  min-height: 400px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid var(--border-color) !important;
+  margin-bottom: var(--spacing-xl) !important;
+}
+
+.ice-fire-page .chart-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-lg) !important;
+  text-align: center !important;
+  color: var(--text-primary) !important;
+}
+
+.ice-fire-page .trend-analysis-grid {
+  display: grid !important;
+  grid-template-columns: 2fr 1fr !important;
+  gap: var(--spacing-xl) !important;
+  align-items: start !important;
+  width: 100% !important;
+}
+
+.ice-fire-page .stats-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--spacing-lg) !important;
+  min-width: 300px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.ice-fire-page .stats-panel-title {
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--spacing-md) !important;
+  text-align: center !important;
+  color: var(--text-primary) !important;
+}
+
+.ice-fire-page .stat-item {
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.9) 0%, rgba(45, 55, 72, 0.8) 100%) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 0.75rem !important;
+  padding: 1rem !important;
+  margin-bottom: 0.75rem !important;
+  transition: all 0.3s ease !important;
+  text-align: center !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.ice-fire-page .stat-item:hover {
+  border-color: var(--accent-orange) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 15px -4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ice-fire-page .stat-item.highest {
+  border-color: var(--success) !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(26, 35, 50, 0.9) 100%) !important;
+}
+
+.ice-fire-page .stat-item.lowest {
+  border-color: var(--warning) !important;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(26, 35, 50, 0.9) 100%) !important;
+}
+
+/* === 控制按钮样式 (Control Button Styles) === */
+.ice-fire-page .control-buttons {
+  display: flex !important;
+  justify-content: center !important;
+  gap: var(--spacing-md) !important;
+  margin-bottom: var(--spacing-xl) !important;
+  flex-wrap: wrap !important;
+}
+
+.ice-fire-page .control-button {
+  background: var(--accent-orange) !important;
+  color: #000 !important;
+  border: none !important;
+  padding: var(--spacing-sm) var(--spacing-lg) !important;
+  border-radius: var(--radius-lg) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  cursor: pointer !important;
+  transition: all var(--duration-normal) ease !important;
+}
+
+.ice-fire-page .control-button:hover {
+  background: var(--fire-primary) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px -2px rgba(255, 107, 53, 0.3) !important;
+}
+
+.ice-fire-page .control-button.secondary {
+  background: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.ice-fire-page .control-button.secondary:hover {
+  background: var(--muted) !important;
+}
+
+/* === 动画效果系统 (Animation Effects System) === */
+@keyframes ice-fire-countUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ice-fire-numberPulse {
+  0%, 100% { 
+    transform: scale(1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  50% { 
+    transform: scale(1.05);
+    text-shadow: 0 4px 8px rgba(251, 146, 60, 0.4);
+  }
+}
+
+@keyframes ice-fire-cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ice-fire-fireGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(255, 107, 53, 0.6);
+  }
+}
+
+@keyframes ice-fire-iceGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(79, 195, 247, 0.6);
+  }
+}
+
+/* 动画应用类 (Animation Application Classes) */
+.ice-fire-page .number-animate {
+  animation: ice-fire-countUp 1.2s ease-out forwards !important;
+  animation-delay: var(--delay, 0s) !important;
+}
+
+.ice-fire-page .number-pulse {
+  animation: ice-fire-numberPulse 2s ease-in-out infinite !important;
+}
+
+.ice-fire-page .card-slide-in {
+  animation: ice-fire-cardSlideIn 0.6s ease-out forwards !important;
+  animation-delay: var(--delay, 0s) !important;
+}
+
+.ice-fire-page .fire-pulse {
+  animation: ice-fire-fireGlow 2s ease-in-out infinite !important;
+}
+
+.ice-fire-page .ice-pulse {
+  animation: ice-fire-iceGlow 2s ease-in-out infinite !important;
+}
+
+/* === 响应式断点适配 (Responsive Breakpoint Adaptations) === */
+@media (max-width: 1024px) {
+  .ice-fire-page .ice-fire-container {
+    padding: var(--spacing-lg) var(--spacing-md) !important;
+  }
+  
+  .ice-fire-page .fire-ice-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-lg) !important;
+  }
+  
+  .ice-fire-page .trend-analysis-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .ice-fire-page .stats-panel {
+    min-width: auto !important;
+    order: -1 !important;
+    margin-bottom: var(--spacing-lg) !important;
+  }
+  
+  .ice-fire-page .section-spacing {
+    margin-bottom: var(--spacing-2xl) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ice-fire-page .insight-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-lg) !important;
+  }
+  
+  .ice-fire-page .control-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .ice-fire-page .control-button {
+    width: 200px !important;
+  }
+  
+  .ice-fire-page .main-title {
+    font-size: clamp(1.875rem, 8vw, 2.25rem) !important;
+  }
+  
+  .ice-fire-page .insight-card {
+    min-height: 240px !important;
+    padding: var(--spacing-lg) !important;
+  }
+  
+  .ice-fire-page .chart-wrapper, 
+  .ice-fire-page .chart-container {
+    height: 300px !important;
+    min-height: 300px !important;
+    padding: var(--spacing-md) !important;
+  }
+  
+  .ice-fire-page .industry-card {
+    min-width: 150px !important;
+    max-width: 150px !important;
+    height: 100px !important;
+    padding: 0.5rem !important;
+  }
+  
+  .ice-fire-page .industry-rank {
+    font-size: 0.65rem !important;
+    padding: 0.125rem 0.25rem !important;
+  }
+  
+  .ice-fire-page .industry-name {
+    font-size: 0.6rem !important;
+    margin: 0.125rem 0 !important;
+  }
+  
+  .ice-fire-page .industry-rate {
+    font-size: 0.85rem !important;
+  }
+  
+  .ice-fire-page .industry-details {
+    font-size: 0.55rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ice-fire-page .ice-fire-container {
+    padding: var(--spacing-md) var(--spacing-sm) !important;
+  }
+  
+  .ice-fire-page .insight-card {
+    min-height: 220px !important;
+    padding: var(--spacing-md) !important;
+  }
+  
+  .ice-fire-page .big-number-responsive {
+    font-size: clamp(1.5rem, 8vw, 2.2rem) !important;
+  }
+  
+  .ice-fire-page .main-title {
+    font-size: clamp(1.5rem, 8vw, 2rem) !important;
+  }
+  
+  .ice-fire-page .insight-card-icon {
+    font-size: 2rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .ice-fire-page .insight-card-title {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .ice-fire-page .insight-card-description {
+    font-size: 0.75rem !important;
+  }
+  
+  .ice-fire-page .industry-card {
+    min-width: 140px !important;
+    max-width: 140px !important;
+    height: 95px !important;
+    padding: 0.5rem !important;
+  }
+  
+  .ice-fire-page .industry-rank {
+    font-size: 0.6rem !important;
+  }
+  
+  .ice-fire-page .industry-name {
+    font-size: 0.55rem !important;
+    -webkit-line-clamp: 2 !important;
+  }
+  
+  .ice-fire-page .industry-rate {
+    font-size: 0.8rem !important;
+  }
+  
+  .ice-fire-page .industry-details {
+    font-size: 0.5rem !important;
+  }
+  
+  .ice-fire-page .chart-wrapper, 
+  .ice-fire-page .chart-container {
+    height: 250px !important;
+    min-height: 250px !important;
+  }
+}
+
+/* === 页脚样式 (Footer Styles) === */
+.ice-fire-page .page-footer {
+  text-align: center !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.875rem !important;
+  margin-top: var(--spacing-4xl) !important;
+  padding-top: var(--spacing-xl) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+.ice-fire-page .footer-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+.ice-fire-page .footer-separator {
+  opacity: 0.6 !important;
+}
+
+/* === 辅助样式类 (Utility Style Classes) === */
+.ice-fire-page .gap-comparison {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin: 1rem 0 !important;
+}
+
+.ice-fire-page .gap-arrow {
+  font-size: 1.5rem !important;
+  color: var(--accent-orange) !important;
+  font-weight: bold !important;
+}
+
+.ice-fire-page .year-label {
+  font-size: 0.8rem !important;
+  color: var(--text-secondary) !important;
+  margin-top: 0.25rem !important;
+}
+
+.ice-fire-page .year-header {
+  text-align: center !important;
+  margin-bottom: var(--spacing-md) !important;
+}
+
+.ice-fire-page .year-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: var(--ice-primary) !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.ice-fire-page .year-subtitle {
+  font-size: 0.875rem !important;
+  opacity: 0.7 !important;
+  color: var(--text-secondary) !important;
+}
+
+.ice-fire-page .stats-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--spacing-sm) !important;
+}
+
+.ice-fire-page .stat-label {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 0.5rem !important;
+  justify-content: center !important;
+}
+
+.ice-fire-page .label-highest {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: var(--success) !important;
+}
+
+.ice-fire-page .label-lowest {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: var(--warning) !important;
+}
+
+.ice-fire-page .salary-value {
+  font-weight: 700 !important;
+  margin-top: 0.25rem !important;
+}
+
+.ice-fire-page .salary-value.highest {
+  color: var(--success) !important;
+}
+
+.ice-fire-page .salary-value.lowest {
+  color: var(--warning) !important;
+}
+
+.ice-fire-page .gap-ratio-info {
+  text-align: center !important;
+  padding: var(--spacing-sm) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.ice-fire-page .gap-ratio-text {
+  font-size: 0.875rem !important;
+  opacity: 0.8 !important;
+  color: var(--text-secondary) !important;
+}
+
+.ice-fire-page .gap-ratio-value {
+  font-weight: 700 !important;
+  color: var(--ice-primary) !important;
+}
+
+.ice-fire-page .stats-placeholder {
+  text-align: center !important;
+  padding: var(--spacing-xl) !important;
+  color: var(--text-secondary) !important;
+}
+
+.ice-fire-page .placeholder-icon {
+  font-size: 4rem !important;
+  margin-bottom: var(--spacing-md) !important;
+}
+
+.ice-fire-page .placeholder-text {
+  font-size: 0.875rem !important;
+  opacity: 0.7 !important;
+  line-height: 1.4 !important;
+}
+
+/* === 性能优化 (Performance Optimizations) === */
+@media (prefers-reduced-motion: reduce) {
+  .ice-fire-page .number-animate,
+  .ice-fire-page .number-pulse,
+  .ice-fire-page .card-slide-in,
+  .ice-fire-page .fire-pulse,
+  .ice-fire-page .ice-pulse,
+  .ice-fire-page .insight-card,
+  .ice-fire-page .industry-card,
+  .ice-fire-page .control-button {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================================ */
 /* End of SuperDesign CSS Implementation */
-/* Total: 1200+ lines of complete styling system */
+/* Total: 1800+ lines of complete styling system */
 /* ============================================================================ */

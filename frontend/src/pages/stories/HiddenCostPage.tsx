@@ -3,7 +3,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from "../../types/routes";
-import "../../App.css";
+import "../../SuperDesign.css";
 
 function HiddenCostPage() {
   const navigate = useNavigate();
