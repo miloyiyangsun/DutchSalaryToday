@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -135,18 +136,18 @@ public class PlatformFeedbackController {
     
     // 私有辅助方法 (复用SalaryController模式)
     private Map<String, Object> createSuccessResponse(Object data) {
-        return Map.of(
-            "success", true,
-            "data", data,
-            "timestamp", System.currentTimeMillis()
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", data);  // HashMap允许null值
+        response.put("timestamp", System.currentTimeMillis());
+        return response;
     }
     
     private Map<String, Object> createErrorResponse(String message) {
-        return Map.of(
-            "success", false,
-            "error", message,
-            "timestamp", System.currentTimeMillis()
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("error", message);
+        response.put("timestamp", System.currentTimeMillis());
+        return response;
     }
 }
