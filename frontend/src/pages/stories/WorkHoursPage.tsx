@@ -125,6 +125,11 @@ function WorkHoursPage() {
   const navigate = useNavigate();
   const { data, loading, error } = useWorkHoursData();
 
+  // 页面加载滚动恢复 (Page Load Scroll Restoration)
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, []);
+
   // 数据处理逻辑 (Data Processing Logic)
   const getInsightCardsData = () => {
     if (!data) {
@@ -161,16 +166,14 @@ function WorkHoursPage() {
       <div className={styles.WorkHoursPage_container}>
         {/* 面包屑导航 (Breadcrumb Navigation) */}
         <nav className={styles.WorkHoursPage_breadcrumb}>
-          <a 
-            href="#" 
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(ROUTES.HOME);
-            }}
+          <button
+            type="button" 
+            onClick={() => navigate(ROUTES.HOME)}
             className={styles.WorkHoursPage_breadcrumbLink}
+            aria-label="返回首页仪表板"
           >
             ← Back to Dashboard
-          </a>
+          </button>
         </nav>
 
         {/* 页面标题 (Page Header) */}

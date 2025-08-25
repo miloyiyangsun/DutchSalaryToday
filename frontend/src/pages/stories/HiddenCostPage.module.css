@@ -1,53 +1,53 @@
 /* ============================================================================ */
-/* WorkHoursPage 专属CSS模块 - 完全样式隔离 (WorkHoursPage Dedicated CSS Module - Complete Style Isolation) */
-/* 基于参考设计: work_hours_story2_preview.html */
-/* 创建日期: 2025-01-25 | 修复日期: 2025-01-25 */
-/* 版本: v2.0 - 完全复制参考HTML样式 */
+/* HiddenCostPage 专属CSS模块 - 完全样式隔离 (HiddenCostPage Dedicated CSS Module - Complete Style Isolation) */
+/* 基于参考设计: WorkHoursPage.module.css */
+/* 创建日期: 2025-01-25 | 故事: Hidden Labor Costs Analysis */
+/* 版本: v1.0 - 完全复制参考架构 + HiddenCost专属适配 */
 /* ============================================================================ */
 
 /* === Google Fonts Import - 确保 JetBrains Mono 正确加载 === */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap");
 
 /* === 根容器变量系统 - 完全本地作用域 (Root Container Variables - Completely Local Scope) === */
-.WorkHoursPage_workHoursContainer {
-  /* 🎨 WorkHours专属色彩系统 (WorkHours Dedicated Color System) */
-  --wh-bg-primary: #0f1419;
-  --wh-bg-card: #1a2332;
-  --wh-text-primary: #ffffff;
-  --wh-text-secondary: #94a3b8;
-  --wh-accent-orange: #fb923c;
-  --wh-accent-blue: #3b82f6;
-  --wh-accent-yellow: #eab308;
-  --wh-accent-green: #22c55e;
-  --wh-border-color: #374151;
+.HiddenCostPage_hiddenCostContainer {
+  /* 🎨 HiddenCost专属色彩系统 (HiddenCost Dedicated Color System) */
+  --hc-bg-primary: #0f1419;
+  --hc-bg-card: #1a2332;
+  --hc-text-primary: #ffffff;
+  --hc-text-secondary: #94a3b8;
+  --hc-accent-orange: #fb923c;
+  --hc-accent-purple: #a855f7;    /* 新增：行业差距紫色主题 */
+  --hc-accent-teal: #14b8a6;      /* 新增：成本增长青色主题 */
+  --hc-accent-blue: #3b82f6;      /* 保留：通用蓝色 */
+  --hc-border-color: #374151;
 
-  /* 📐 WorkHours专属尺寸系统 (WorkHours Dedicated Size System) */
-  --wh-container-max-width: 1200px;
-  --wh-card-min-height: 220px;
-  --wh-card-padding: 1rem;
-  --wh-card-gap: 1rem;
-  --wh-border-radius: 1rem;
+  /* 📐 HiddenCost专属尺寸系统 (HiddenCost Dedicated Size System) */
+  --hc-container-max-width: 1200px;
+  --hc-card-min-height: 220px;
+  --hc-card-padding: 1rem;
+  --hc-card-gap: 1rem;
+  --hc-border-radius: 1rem;
 
-  /* 🔤 WorkHours专属字体系统 (WorkHours Dedicated Font System) */
-  --wh-font-sans:
+  /* 🔤 HiddenCost专属字体系统 (HiddenCost Dedicated Font System) */
+  --hc-font-sans:
     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --wh-font-mono: "JetBrains Mono", monospace;
-  --wh-big-number-size: clamp(1.8rem, 5vw, 3rem);
-  --wh-big-number-weight: 800;
+  --hc-font-mono: "JetBrains Mono", monospace;
+  --hc-big-number-size: clamp(1.8rem, 5vw, 3rem);
+  --hc-big-number-weight: 800;
 
-  /* 🎭 WorkHours专属阴影系统 (WorkHours Dedicated Shadow System) */
-  --wh-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --wh-shadow-card-hover: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+  /* 🎭 HiddenCost专属阴影系统 (HiddenCost Dedicated Shadow System) */
+  --hc-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --hc-shadow-card-hover: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
 
   /* 🏗️ 页面基础样式 (Page Base Styles) */
-  font-family: var(--wh-font-sans);
+  font-family: var(--hc-font-sans);
   background: linear-gradient(
     135deg,
-    var(--wh-bg-primary) 0%,
+    var(--hc-bg-primary) 0%,
     #1e293b 50%,
-    var(--wh-bg-primary) 100%
+    var(--hc-bg-primary) 100%
   );
-  color: var(--wh-text-primary);
+  color: var(--hc-text-primary);
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -55,12 +55,12 @@
 }
 
 /* === 页面内容容器 (Page Content Container) === */
-.WorkHoursPage_container {
+.HiddenCostPage_container {
   /* 🎯 核心布局属性 - 精确匹配参考HTML (Core Layout - Exact Match) */
   max-width: 1200px !important; /* 参考HTML容器最大宽度 */
   margin: 0 auto !important; /* 参考HTML居中布局 */
   padding: 2rem 1rem !important; /* 参考HTML容器内边距 */
-
+  
   /* 🎨 视觉样式属性 (Visual Styles) */
   background: linear-gradient(
     135deg,
@@ -69,70 +69,58 @@
     #0f1419 100%
   ) !important;
   min-height: 100vh !important;
-  color: var(--text-primary) !important;
-  font-family: var(--font-sans) !important;
+  color: var(--hc-text-primary) !important;
+  font-family: var(--hc-font-sans) !important;
 }
 
 /* === 面包屑导航 (Breadcrumb Navigation) === */
-.WorkHoursPage_breadcrumb {
+.HiddenCostPage_breadcrumb {
   margin-bottom: 2rem;
 }
 
-.WorkHoursPage_breadcrumbLink {
-  /* 按钮重置样式 (Button Reset Styles) */
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  
-  /* 原有链接样式 (Original Link Styles) */
+.HiddenCostPage_breadcrumbLink {
   color: #94a3b8 !important; /* 直接使用参考HTML的text-secondary颜色 */
+  text-decoration: none;
   font-size: 1.1rem;
   transition: color 0.3s ease;
-  cursor: pointer;
-  
-  /* 字体继承确保一致性 (Font Inheritance for Consistency) */
-  font-family: inherit;
-  font-weight: inherit;
-  line-height: inherit;
 }
 
-.WorkHoursPage_breadcrumbLink:hover {
+.HiddenCostPage_breadcrumbLink:hover {
   color: #fb923c !important; /* 直接使用参考HTML的accent-orange颜色 */
 }
 
 /* === 页面标题区域 (Page Header Section) === */
-.WorkHoursPage_pageHeader {
+.HiddenCostPage_pageHeader {
   text-align: center;
   margin-bottom: 3rem !important; /* 对应参考HTML的mb-12 (48px) */
 }
 
-.WorkHoursPage_mainTitle {
+.HiddenCostPage_mainTitle {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
   margin-bottom: 1rem;
   line-height: 1.1;
 }
 
-.WorkHoursPage_subtitle {
+.HiddenCostPage_subtitle {
   font-size: 1.25rem;
   color: #94a3b8 !important; /* 直接使用参考HTML的颜色值 */
   font-weight: 500;
 }
 
 /* === 核心洞察卡片网格 (Core Insight Cards Grid) - 精确复制参考HTML === */
-.WorkHoursPage_insightCardsSection {
+.HiddenCostPage_insightCardsSection {
   margin-bottom: 4rem !important; /* 对应参考HTML的mb-16 (64px) */
 }
 
-.WorkHoursPage_insightCardsGrid {
+.HiddenCostPage_insightCardsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr; /* 参考HTML原始写法 */
   gap: 1rem; /* 硬编码确保精确 */
 }
 
 /* === 洞察卡片样式 - 完全复制参考HTML (Insight Card Styles - Exact Copy) === */
-.WorkHoursPage_insightCard {
+.HiddenCostPage_insightCard {
   background: linear-gradient(
     135deg,
     #1a2332 0%,
@@ -151,20 +139,20 @@
   /* 没有阴影，保持简洁，hover时才出现阴影 */
 }
 
-.WorkHoursPage_insightCard:hover {
+.HiddenCostPage_insightCard:hover {
   transform: translateY(-4px); /* 参考HTML精确变换值 */
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4); /* 参考HTML精确阴影 */
   border-color: #fb923c; /* 参考HTML橙色 */
 }
 
 /* === 卡片内容元素 (Card Content Elements) === */
-.WorkHoursPage_cardIcon {
+.HiddenCostPage_cardIcon {
   font-size: 2.5rem;
   margin-bottom: 0.8rem;
   display: block;
 }
 
-.WorkHoursPage_bigNumber {
+.HiddenCostPage_bigNumber {
   font-size: clamp(1.8rem, 5vw, 3rem); /* 参考HTML精确值 */
   font-weight: 800; /* 参考HTML精确字重 */
   font-family: "JetBrains Mono", monospace; /* 参考HTML精确字体 */
@@ -173,38 +161,38 @@
   /* 移除多余效果，保持简洁 */
 }
 
-.WorkHoursPage_cardTitle {
+.HiddenCostPage_cardTitle {
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.4rem;
   color: #ffffff !important; /* 直接使用参考HTML的text-primary颜色 */
 }
 
-.WorkHoursPage_cardDescription {
+.HiddenCostPage_cardDescription {
   color: #94a3b8 !important; /* 直接使用参考HTML的text-secondary颜色 */
   font-size: 0.9rem;
   line-height: 1.4;
 }
 
-.WorkHoursPage_cardHighlight {
+.HiddenCostPage_cardHighlight {
   font-weight: 500;
 }
 
-/* === 数字颜色变体 - 直接使用参考HTML颜色 (Number Color Variants - Direct HTML Colors) === */
-.WorkHoursPage_numberBlue {
-  color: #3b82f6; /* 参考HTML: var(--accent-blue) 的实际值 */
+/* === 数字颜色变体 - HiddenCost专属配色方案 (Number Color Variants - HiddenCost Color Scheme) === */
+.HiddenCostPage_numberOrange {
+  color: #fb923c; /* 福利负担水平 - 橙色主题 (Benefit Burden - Orange) */
 }
 
-.WorkHoursPage_numberYellow {
-  color: #eab308; /* 参考HTML: var(--accent-yellow) 的实际值 */
+.HiddenCostPage_numberPurple {
+  color: #a855f7; /* 行业差距倍数 - 紫色主题 (Industry Gap - Purple) */
 }
 
-.WorkHoursPage_numberGreen {
-  color: #22c55e; /* 参考HTML: 直接硬编码的绿色值 */
+.HiddenCostPage_numberTeal {
+  color: #14b8a6; /* 绝对成本增长 - 青色主题 (Cost Growth - Teal) */
 }
 
 /* === 开发中通知区域 - 精确复制参考HTML + 强化优先级 (Development Notice Section - Exact Copy + Priority) === */
-.WorkHoursPage_developmentNotice {
+.HiddenCostPage_developmentNotice {
   background: linear-gradient(
     135deg,
     rgba(251, 146, 60, 0.1) 0%,
@@ -218,7 +206,7 @@
   box-sizing: border-box !important; /* 统一盒模型 */
 }
 
-.WorkHoursPage_noticeTitle {
+.HiddenCostPage_noticeTitle {
   font-size: 1.75rem !important;
   font-weight: 700 !important;
   margin-bottom: 1rem !important;
@@ -227,7 +215,7 @@
   box-sizing: border-box !important;
 }
 
-.WorkHoursPage_noticeDescription {
+.HiddenCostPage_noticeDescription {
   font-size: 1.1rem !important;
   margin-bottom: 1.5rem !important;
   color: #94a3b8 !important; /* 直接使用参考HTML的text-secondary颜色 + 强制优先级 */
@@ -236,7 +224,7 @@
   box-sizing: border-box !important;
 }
 
-.WorkHoursPage_noticeAdditional {
+.HiddenCostPage_noticeAdditional {
   margin-bottom: 2rem !important;
   color: #94a3b8 !important; /* 直接使用参考HTML的text-secondary颜色 + 强制优先级 */
   text-align: center !important;
@@ -244,7 +232,7 @@
 }
 
 /* === 导航按钮样式 - 强化优先级 (Navigation Button Styles - Priority Enhanced) === */
-.WorkHoursPage_buttonGroup {
+.HiddenCostPage_buttonGroup {
   display: flex !important;
   gap: 1rem !important;
   justify-content: center !important;
@@ -252,7 +240,7 @@
   box-sizing: border-box !important;
 }
 
-.WorkHoursPage_btnPrimary {
+.HiddenCostPage_btnPrimary {
   background: #fb923c !important; /* 参考HTML直接颜色 + 强制优先级 */
   color: #000 !important; /* 参考HTML黑色文字 + 强制优先级 */
   padding: 0.75rem 1.5rem !important; /* 参考HTML精确内边距 + 强制优先级 */
@@ -265,21 +253,15 @@
   display: inline-block !important;
   margin: 0.5rem !important; /* 参考HTML精确外边距 + 强制优先级 */
   box-sizing: border-box !important;
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
-.WorkHoursPage_btnPrimary:hover {
+.HiddenCostPage_btnPrimary:hover {
   background: #e67e22 !important; /* 参考HTML hover颜色 + 强制优先级 */
   transform: translateY(-2px) !important; /* 参考HTML hover效果 + 强制优先级 */
 }
 
-.WorkHoursPage_btnSecondary {
+.HiddenCostPage_btnSecondary {
   background: #3b82f6 !important; /* 参考HTML直接蓝色 + 强制优先级 */
   color: white !important; /* 参考HTML白色文字 + 强制优先级 */
   padding: 0.75rem 1.5rem !important; /* 参考HTML精确内边距 + 强制优先级 */
@@ -292,22 +274,16 @@
   display: inline-block !important;
   margin: 0.5rem !important; /* 参考HTML精确外边距 + 强制优先级 */
   box-sizing: border-box !important;
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
-.WorkHoursPage_btnSecondary:hover {
+.HiddenCostPage_btnSecondary:hover {
   background: #2563eb !important; /* 参考HTML hover蓝色 + 强制优先级 */
   transform: translateY(-2px) !important; /* 参考HTML hover效果 + 强制优先级 */
 }
 
 /* === 页脚样式 (Footer Styles) === */
-.WorkHoursPage_pageFooter {
+.HiddenCostPage_pageFooter {
   text-align: center;
   margin-top: 3rem;
   padding-top: 2rem;
@@ -315,8 +291,8 @@
   color: #94a3b8 !important; /* 直接使用参考HTML的text-secondary颜色 */
 }
 
-/* === 数字计数动画 - 参考HTML样式 (Number Counting Animation - Reference HTML Style) === */
-@keyframes WorkHoursPage_whCountUp {
+/* === 数字计数动画 - HiddenCost版本 (Number Counting Animation - HiddenCost Version) === */
+@keyframes HiddenCostPage_hcCountUp {
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.8);
@@ -327,16 +303,16 @@
   }
 }
 
-.WorkHoursPage_numberAnimate {
-  animation: WorkHoursPage_whCountUp 0.8s ease-out forwards;
+.HiddenCostPage_numberAnimate {
+  animation: HiddenCostPage_hcCountUp 0.8s ease-out forwards;
 }
 
-.WorkHoursPage_numberCounter {
+.HiddenCostPage_numberCounter {
   display: inline-block; /* 参考HTML精确匹配 */
 }
 
 /* === hover时的数字脉冲动画 (Number Pulse Animation on Hover) === */
-@keyframes WorkHoursPage_whNumberPulse {
+@keyframes HiddenCostPage_hcNumberPulse {
   0%,
   100% {
     transform: scale(1);
@@ -348,74 +324,74 @@
   }
 }
 
-.WorkHoursPage_insightCard:hover .WorkHoursPage_bigNumber {
-  animation: WorkHoursPage_whNumberPulse 1.5s ease-in-out infinite;
+.HiddenCostPage_insightCard:hover .HiddenCostPage_bigNumber {
+  animation: HiddenCostPage_hcNumberPulse 1.5s ease-in-out infinite;
 }
 
 /* === 响应式设计 (Responsive Design) === */
 
 /* 平板端适配 (Tablet Adaptation) */
 @media (max-width: 768px) {
-  .WorkHoursPage_container {
+  .HiddenCostPage_container {
     padding: 1rem;
   }
 
-  .WorkHoursPage_insightCardsGrid {
+  .HiddenCostPage_insightCardsGrid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 
-  .WorkHoursPage_insightCard {
+  .HiddenCostPage_insightCard {
     min-height: 200px;
     padding: 0.8rem;
   }
 
-  .WorkHoursPage_mainTitle {
+  .HiddenCostPage_mainTitle {
     font-size: clamp(1.8rem, 6vw, 2.5rem);
   }
 
-  .WorkHoursPage_bigNumber {
+  .HiddenCostPage_bigNumber {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
   }
 }
 
 /* 移动端适配 (Mobile Adaptation) */
 @media (max-width: 480px) {
-  .WorkHoursPage_container {
+  .HiddenCostPage_container {
     padding: 0.8rem;
   }
 
-  .WorkHoursPage_insightCard {
+  .HiddenCostPage_insightCard {
     min-height: 180px;
     padding: 0.6rem;
   }
 
-  .WorkHoursPage_cardIcon {
+  .HiddenCostPage_cardIcon {
     font-size: 2rem;
     margin-bottom: 0.6rem;
   }
 
-  .WorkHoursPage_bigNumber {
+  .HiddenCostPage_bigNumber {
     font-size: clamp(1.3rem, 5vw, 2rem);
     margin: 0.6rem 0;
   }
 
-  .WorkHoursPage_cardTitle {
+  .HiddenCostPage_cardTitle {
     font-size: 1rem;
     margin-bottom: 0.3rem;
   }
 
-  .WorkHoursPage_cardDescription {
+  .HiddenCostPage_cardDescription {
     font-size: 0.8rem;
   }
 
-  .WorkHoursPage_buttonGroup {
+  .HiddenCostPage_buttonGroup {
     flex-direction: column;
     align-items: center;
   }
 
-  .WorkHoursPage_btnPrimary,
-  .WorkHoursPage_btnSecondary {
+  .HiddenCostPage_btnPrimary,
+  .HiddenCostPage_btnSecondary {
     width: 280px;
     margin: 0.25rem;
   }
@@ -423,24 +399,24 @@
 
 /* === 动画性能优化 (Animation Performance Optimization) === */
 @media (prefers-reduced-motion: reduce) {
-  .WorkHoursPage_insightCard,
-  .WorkHoursPage_numberAnimate,
-  .WorkHoursPage_btnPrimary,
-  .WorkHoursPage_btnSecondary {
+  .HiddenCostPage_insightCard,
+  .HiddenCostPage_numberAnimate,
+  .HiddenCostPage_btnPrimary,
+  .HiddenCostPage_btnSecondary {
     animation: none;
     transition: none;
   }
 }
 
 /* === 错误状态样式 (Error State Styles) === */
-.WorkHoursPage_errorState {
+.HiddenCostPage_errorState {
   background: linear-gradient(
     135deg,
     rgba(239, 68, 68, 0.1) 0%,
     rgba(239, 68, 68, 0.05) 100%
   );
   border: 2px solid rgba(239, 68, 68, 0.3);
-  border-radius: var(--wh-border-radius);
+  border-radius: var(--hc-border-radius);
   padding: 1rem;
   text-align: center;
   color: #f87171;
@@ -448,29 +424,29 @@
 }
 
 /* === 加载状态样式 (Loading State Styles) === */
-.WorkHoursPage_loadingState {
+.HiddenCostPage_loadingState {
   text-align: center;
   padding: 2rem;
-  color: var(--wh-text-secondary);
+  color: var(--hc-text-secondary);
 }
 
-.WorkHoursPage_spinner {
+.HiddenCostPage_spinner {
   display: inline-block;
   width: 2rem;
   height: 2rem;
-  border: 3px solid var(--wh-border-color);
+  border: 3px solid var(--hc-border-color);
   border-radius: 50%;
-  border-top-color: var(--wh-accent-orange);
-  animation: WorkHoursPage_whSpin 1s ease-in-out infinite;
+  border-top-color: var(--hc-accent-orange);
+  animation: HiddenCostPage_hcSpin 1s ease-in-out infinite;
 }
 
-@keyframes WorkHoursPage_whSpin {
+@keyframes HiddenCostPage_hcSpin {
   to {
     transform: rotate(360deg);
   }
 }
 
 /* ============================================================================ */
-/* WorkHoursPage CSS模块完成 - 548行专属样式，零全局污染 */
-/* WorkHoursPage CSS Module Complete - 548 lines of dedicated styles, zero global pollution */
+/* HiddenCostPage CSS模块完成 - 445行专属样式，零全局污染 */
+/* HiddenCostPage CSS Module Complete - 445 lines of dedicated styles, zero global pollution */
 /* ============================================================================ */

@@ -1,0 +1,446 @@
+/* ============================================================================ */
+/* GenderPowerPage 专属CSS模块 - 完全样式隔离 (GenderPowerPage Dedicated CSS Module - Complete Style Isolation) */
+/* 基于参考设计: WorkHoursPage.module.css 架构，性别力量主题定制 */
+/* 创建日期: 2025-01-25 | 故事3: 性别力量详情页 */
+/* 版本: v1.0 - 性别主题CSS模块系统 */
+/* ============================================================================ */
+
+/* === Google Fonts Import - 确保 JetBrains Mono 和 Inter 正确加载 === */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap");
+
+/* === 根容器变量系统 - 完全本地作用域 (Root Container Variables - Completely Local Scope) === */
+.GenderPowerPage_genderPowerContainer {
+  /* 🎨 GenderPower专属色彩系统 (GenderPower Dedicated Color System) */
+  --gp-bg-primary: #0f1419;
+  --gp-bg-secondary: #1e293b;
+  --gp-bg-card: #1a2332;
+  --gp-text-primary: #ffffff;
+  --gp-text-secondary: #94a3b8;
+  --gp-accent-pink: #e91e63;        /* 主要粉色 - 历史突破 */
+  --gp-accent-purple: #9c27b0;      /* 紫色 - 新岗位贡献 */
+  --gp-accent-rose: #ff4081;        /* 玫瑰色 - 行业主导 */
+  --gp-border-color: #374151;
+  --gp-gradient-primary: linear-gradient(135deg, #e91e63 0%, #9c27b0 50%, #ff4081 100%);
+
+  /* 📐 GenderPower专属尺寸系统 (GenderPower Dedicated Size System) */
+  --gp-container-max-width: 1200px;
+  --gp-card-min-height: 220px;
+  --gp-card-padding: 1rem;
+  --gp-card-gap: 1rem;
+  --gp-border-radius: 1rem;
+
+  /* 🔤 GenderPower专属字体系统 (GenderPower Dedicated Font System) */
+  --gp-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --gp-font-mono: "JetBrains Mono", monospace;
+  --gp-big-number-size: clamp(1.8rem, 5vw, 3rem);
+  --gp-big-number-weight: 800;
+
+  /* 🎭 GenderPower专属阴影系统 (GenderPower Dedicated Shadow System) */
+  --gp-shadow-card: 0 4px 16px rgba(233, 30, 99, 0.1);
+  --gp-shadow-card-hover: 0 20px 40px -12px rgba(233, 30, 99, 0.2);
+
+  /* 🏗️ 页面基础样式 (Page Base Styles) */
+  font-family: var(--gp-font-sans);
+  background: linear-gradient(
+    135deg,
+    var(--gp-bg-primary) 0%,
+    var(--gp-bg-secondary) 50%,
+    var(--gp-bg-primary) 100%
+  );
+  color: var(--gp-text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === 页面内容容器 (Page Content Container) === */
+.GenderPowerPage_container {
+  /* 🎯 核心布局属性 - 精确匹配参考HTML (Core Layout - Exact Match) */
+  max-width: var(--gp-container-max-width) !important;
+  margin: 0 auto !important;
+  padding: 2rem 1rem !important;
+  
+  /* 🎨 视觉样式属性 (Visual Styles) */
+  background: linear-gradient(
+    135deg,
+    var(--gp-bg-primary) 0%,
+    var(--gp-bg-secondary) 50%,
+    var(--gp-bg-primary) 100%
+  ) !important;
+  min-height: 100vh !important;
+  color: var(--gp-text-primary) !important;
+  font-family: var(--gp-font-sans) !important;
+}
+
+/* === 面包屑导航 (Breadcrumb Navigation) === */
+.GenderPowerPage_breadcrumb {
+  margin-bottom: 2rem !important;
+}
+
+.GenderPowerPage_breadcrumbLink {
+  color: var(--gp-text-secondary) !important;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.GenderPowerPage_breadcrumbLink:hover {
+  color: var(--gp-accent-pink) !important;
+}
+
+/* === 页面标题区域 (Page Header Section) === */
+.GenderPowerPage_pageHeader {
+  text-align: center;
+  margin-bottom: 3rem !important;
+}
+
+.GenderPowerPage_mainTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem) !important;
+  font-weight: 800 !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.1 !important;
+  background: var(--gp-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.GenderPowerPage_subtitle {
+  font-size: 1.25rem !important;
+  color: var(--gp-text-secondary) !important;
+  font-weight: 500 !important;
+}
+
+/* === 核心洞察卡片网格 (Core Insight Cards Grid) === */
+.GenderPowerPage_insightCardsSection {
+  margin-bottom: 4rem !important;
+}
+
+.GenderPowerPage_insightCardsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: var(--gp-card-gap) !important;
+}
+
+/* === 洞察卡片样式 - 性别主题定制 (Insight Card Styles - Gender Theme Customized) === */
+.GenderPowerPage_insightCard {
+  background: linear-gradient(
+    135deg,
+    var(--gp-bg-card) 0%,
+    #2d3748 100%
+  ) !important;
+  border: 2px solid var(--gp-border-color) !important;
+  border-radius: var(--gp-border-radius) !important;
+  padding: var(--gp-card-padding) !important;
+  text-align: center !important;
+  min-height: var(--gp-card-min-height) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  box-shadow: var(--gp-shadow-card) !important;
+}
+
+.GenderPowerPage_insightCard:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--gp-shadow-card-hover) !important;
+  border-color: var(--gp-accent-pink) !important;
+}
+
+/* === 卡片内容元素 (Card Content Elements) === */
+.GenderPowerPage_cardIcon {
+  font-size: 2.5rem !important;
+  margin-bottom: 0.8rem !important;
+  display: block !important;
+}
+
+.GenderPowerPage_bigNumber {
+  font-size: var(--gp-big-number-size) !important;
+  font-weight: var(--gp-big-number-weight) !important;
+  font-family: var(--gp-font-mono) !important;
+  margin: 0.8rem 0 !important;
+  line-height: 1.1 !important;
+}
+
+.GenderPowerPage_cardTitle {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.4rem !important;
+  color: var(--gp-text-primary) !important;
+}
+
+.GenderPowerPage_cardDescription {
+  color: var(--gp-text-secondary) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+
+.GenderPowerPage_cardHighlight {
+  font-weight: 500 !important;
+  color: var(--gp-accent-pink) !important;
+}
+
+/* === 数字颜色变体 - 性别主题色彩 (Number Color Variants - Gender Theme Colors) === */
+.GenderPowerPage_numberPink {
+  color: var(--gp-accent-pink) !important; /* 历史突破 - 粉色 */
+}
+
+.GenderPowerPage_numberPurple {
+  color: var(--gp-accent-purple) !important; /* 新岗位贡献 - 紫色 */
+}
+
+.GenderPowerPage_numberRose {
+  color: var(--gp-accent-rose) !important; /* 行业主导 - 玫瑰色 */
+}
+
+/* === 开发中通知区域 - 性别主题定制 (Development Notice Section - Gender Theme) === */
+.GenderPowerPage_developmentNotice {
+  background: linear-gradient(
+    135deg,
+    rgba(233, 30, 99, 0.1) 0%,
+    rgba(156, 39, 176, 0.05) 100%
+  ) !important;
+  border: 2px solid rgba(233, 30, 99, 0.3) !important;
+  border-radius: var(--gp-border-radius) !important;
+  padding: 2rem !important;
+  text-align: center !important;
+  margin: 2rem 0 !important;
+}
+
+.GenderPowerPage_noticeTitle {
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem !important;
+  color: var(--gp-accent-pink) !important;
+}
+
+.GenderPowerPage_noticeDescription {
+  font-size: 1.1rem !important;
+  margin-bottom: 1.5rem !important;
+  color: var(--gp-text-secondary) !important;
+  line-height: 1.6 !important;
+}
+
+.GenderPowerPage_noticeAdditional {
+  margin-bottom: 2rem !important;
+  color: var(--gp-text-secondary) !important;
+}
+
+/* === 导航按钮样式 - 性别主题按钮 (Navigation Button Styles - Gender Theme Buttons) === */
+.GenderPowerPage_buttonGroup {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+}
+
+.GenderPowerPage_btnPrimary {
+  background: var(--gp-accent-pink) !important;
+  color: #000 !important;
+  padding: 0.75rem 1.5rem !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  margin: 0.5rem !important;
+  font-family: var(--gp-font-sans) !important;
+}
+
+.GenderPowerPage_btnPrimary:hover {
+  background: #c2185b !important;
+  transform: translateY(-2px) !important;
+}
+
+.GenderPowerPage_btnSecondary {
+  background: var(--gp-accent-purple) !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  margin: 0.5rem !important;
+  font-family: var(--gp-font-sans) !important;
+}
+
+.GenderPowerPage_btnSecondary:hover {
+  background: #7b1fa2 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* === 页脚样式 (Footer Styles) === */
+.GenderPowerPage_pageFooter {
+  text-align: center !important;
+  margin-top: 3rem !important;
+  padding-top: 2rem !important;
+  border-top: 1px solid var(--gp-border-color) !important;
+  color: var(--gp-text-secondary) !important;
+}
+
+/* === 数字计数动画 - 性别主题定制 (Number Counting Animation - Gender Theme) === */
+@keyframes GenderPowerPage_gpCountUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.GenderPowerPage_numberAnimate {
+  animation: GenderPowerPage_gpCountUp 0.8s ease-out forwards;
+}
+
+.GenderPowerPage_numberCounter {
+  display: inline-block !important;
+}
+
+/* === hover时的数字脉冲动画 - 性别主题 (Number Pulse Animation on Hover - Gender Theme) === */
+@keyframes GenderPowerPage_gpNumberPulse {
+  0%, 100% {
+    transform: scale(1);
+    text-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow: 0 4px 8px rgba(233, 30, 99, 0.6);
+  }
+}
+
+.GenderPowerPage_insightCard:hover .GenderPowerPage_bigNumber {
+  animation: GenderPowerPage_gpNumberPulse 1.5s ease-in-out infinite;
+}
+
+/* === 错误状态样式 - 性别主题 (Error State Styles - Gender Theme) === */
+.GenderPowerPage_errorState {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.1) 0%,
+    rgba(239, 68, 68, 0.05) 100%
+  ) !important;
+  border: 2px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: var(--gp-border-radius) !important;
+  padding: 1rem !important;
+  text-align: center !important;
+  color: #f87171 !important;
+  margin: 1rem 0 !important;
+}
+
+/* === 加载状态样式 - 性别主题 (Loading State Styles - Gender Theme) === */
+.GenderPowerPage_loadingState {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: var(--gp-text-secondary) !important;
+}
+
+.GenderPowerPage_spinner {
+  display: inline-block !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  border: 3px solid var(--gp-border-color) !important;
+  border-radius: 50% !important;
+  border-top-color: var(--gp-accent-pink) !important;
+  animation: GenderPowerPage_gpSpin 1s ease-in-out infinite !important;
+}
+
+@keyframes GenderPowerPage_gpSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === 响应式设计 (Responsive Design) === */
+
+/* 平板端适配 (Tablet Adaptation) */
+@media (max-width: 768px) {
+  .GenderPowerPage_container {
+    padding: 1rem !important;
+  }
+
+  .GenderPowerPage_insightCardsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .GenderPowerPage_insightCard {
+    min-height: 200px !important;
+    padding: 0.8rem !important;
+  }
+
+  .GenderPowerPage_mainTitle {
+    font-size: clamp(1.8rem, 6vw, 2.5rem) !important;
+  }
+
+  .GenderPowerPage_bigNumber {
+    font-size: clamp(1.5rem, 6vw, 2.5rem) !important;
+  }
+}
+
+/* 移动端适配 (Mobile Adaptation) */
+@media (max-width: 480px) {
+  .GenderPowerPage_container {
+    padding: 0.8rem !important;
+  }
+
+  .GenderPowerPage_insightCard {
+    min-height: 180px !important;
+    padding: 0.6rem !important;
+  }
+
+  .GenderPowerPage_cardIcon {
+    font-size: 2rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+
+  .GenderPowerPage_bigNumber {
+    font-size: clamp(1.3rem, 5vw, 2rem) !important;
+    margin: 0.6rem 0 !important;
+  }
+
+  .GenderPowerPage_cardTitle {
+    font-size: 1rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .GenderPowerPage_cardDescription {
+    font-size: 0.8rem !important;
+  }
+
+  .GenderPowerPage_buttonGroup {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .GenderPowerPage_btnPrimary,
+  .GenderPowerPage_btnSecondary {
+    width: 280px !important;
+    margin: 0.25rem !important;
+  }
+}
+
+/* === 动画性能优化 (Animation Performance Optimization) === */
+@media (prefers-reduced-motion: reduce) {
+  .GenderPowerPage_insightCard,
+  .GenderPowerPage_numberAnimate,
+  .GenderPowerPage_btnPrimary,
+  .GenderPowerPage_btnSecondary {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================================ */
+/* GenderPowerPage CSS模块完成 - 性别力量主题，完全样式隔离 */
+/* GenderPowerPage CSS Module Complete - Gender Power Theme, Complete Style Isolation */
+/* 类总数: 40+ 个专属类，前缀覆盖率: 100% */
+/* ============================================================================ */
