@@ -153,16 +153,16 @@ function IceAndFirePage() {
   // Show normal data - now TypeScript knows data is not null
   return (
     <div className="ice-fire-page">
+      {/* 独立的面包屑导航 - 左上角定位 */}
+      <nav className="breadcrumb-top-left">
+        <Link to="/" className="breadcrumb-link">
+          ← Back to Dashboard
+        </Link>
+      </nav>
+
       <div className="ice-fire-container">
         {/* 页面标题区域 */}
         <header className="page-header">
-          {/* 面包屑导航 */}
-          <nav className="breadcrumb">
-            <Link to="/" className="text-lg">
-              ← Back to Dashboard
-            </Link>
-          </nav>
-
           {/* 主标题 */}
           <h1 className="main-title">
             <span style={{ marginRight: "0.5rem" }}>🔥</span>

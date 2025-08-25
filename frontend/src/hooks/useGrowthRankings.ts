@@ -36,10 +36,11 @@ export function useGrowthRankings(): GrowthRankingsHookResult {
         setGrowthRankings(result.data);
         setError(null);
 
-        // ✅ 基于API数据动态设置默认选中行业（选择全部10个）- 数据驱动
-        setSelectedIndustries(
-          result.data.rankings.map((ranking) => ranking.industry),
-        );
+        // ✅ 基于API数据动态设置默认选中行业（只选择第1名和第10名）- 冰火对比
+        setSelectedIndustries([
+          result.data.rankings[0]?.industry, // 🔥 Growth Champion (第1名)
+          result.data.rankings[9]?.industry  // ❄️ Slowest Growth (第10名)
+        ].filter(Boolean)); // 过滤undefined保证安全性
       }
     } catch (err) {
       setError("Unexpected error occurred while fetching growth rankings data");
