@@ -50,7 +50,7 @@ export function useOptimisticFeedback(): OptimisticFeedbackResult {
   
   // 长按检测状态 - Long Press Detection States
   const [pressedEmoji, setPressedEmoji] = useState<EmojiRating | null>(null);
-  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 初始化时同步数据 - Initialize optimistic stats with real data
   if (!optimisticStats && statistics) {
