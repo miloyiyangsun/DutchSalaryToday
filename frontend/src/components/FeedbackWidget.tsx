@@ -1,8 +1,8 @@
 // FeedbackWidget.tsx - Emoji反馈系统主组件
 // Main emoji feedback system component - simplified interaction
 
-import React, { useState, useRef } from 'react';
-import { useFeedback, useFeedbackStatistics } from '../hooks';
+import React from 'react';
+import { useOptimisticFeedback } from '../hooks';
 import { EMOJI_RATINGS, type EmojiRating } from '../types/feedback';
 
 interface FeedbackWidgetProps {
@@ -10,88 +10,39 @@ interface FeedbackWidgetProps {
 }
 
 const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
-  // 状态管理 - State Management
-  const { feedback, loading: feedbackLoading, error: feedbackError, submitFeedback, updateFeedback, deleteFeedback } = useFeedback();
-  const { statistics, loading: statsLoading, error: statsError, refetch: refetchStatistics } = useFeedbackStatistics();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // 长按检测 - Long Press Detection
-  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const [pressedEmoji, setPressedEmoji] = useState<EmojiRating | null>(null);
+  // 乐观更新状态管理 - Optimistic Update State Management
+  const {
+    optimisticStats,
+    currentUserRating,
+    isInitialLoading,
+    isUpdating,
+    error,
+    handleOptimisticClick,
+    pressedEmoji,
+    handleMouseDown,
+    handleMouseUp,
+  } = useOptimisticFeedback();
 
-  // Emoji点击处理 - Emoji Click Handler
+  // Emoji点击处理 - 使用乐观更新
+  // Emoji Click Handler - Using optimistic updates
   const handleEmojiClick = async (rating: EmojiRating) => {
-    if (isSubmitting) return;
-
-    try {
-      setIsSubmitting(true);
-      
-      const feedbackRequest = {
-        userId: '', // UUID将在useFeedback hook中自动填充
-        overallRating: rating
-      };
-
-      if (feedback?.id) {
-        // UPDATE - 更新现有反馈
-        await updateFeedback(feedback.id, feedbackRequest);
-      } else {
-        // CREATE - 创建新反馈
-        await submitFeedback(feedbackRequest);
-      }
-      
-      // 反馈提交成功后，立即刷新统计数据
-      await refetchStatistics();
-    } catch (err) {
-      console.error('Emoji feedback submission error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleOptimisticClick(rating);
   };
 
-  // 长按开始 - Long Press Start
-  const handleMouseDown = (rating: EmojiRating) => {
-    if (!feedback || feedback.overallRating !== rating) return;
-    
-    setPressedEmoji(rating);
-    pressTimerRef.current = setTimeout(async () => {
-      // 长按1秒后撤销反馈
-      if (feedback?.id) {
-        try {
-          setIsSubmitting(true);
-          await deleteFeedback(feedback.id);
-          
-          // 反馈删除成功后，立即刷新统计数据
-          await refetchStatistics();
-        } catch (err) {
-          console.error('Emoji feedback deletion error:', err);
-        } finally {
-          setIsSubmitting(false);
-          setPressedEmoji(null);
-        }
-      }
-    }, 1000); // 1秒长按
-  };
+  // 长按处理已经在useOptimisticFeedback hook中实现
+  // Long press handling is already implemented in useOptimisticFeedback hook
 
-  // 长按结束 - Long Press End
-  const handleMouseUp = () => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    setPressedEmoji(null);
-  };
-
-  // Emoji按钮组件 - 完全按照SuperDesign样式
+  // Emoji按钮组件 - 使用乐观状态数据
   const EmojiButton: React.FC<{ rating: EmojiRating }> = ({ rating }) => {
     const emoji = EMOJI_RATINGS[rating];
-    const count = statistics?.emojiDistribution[rating] || 0;
-    const isSelected = feedback?.overallRating === rating;
+    const count = optimisticStats?.emojiDistribution[rating] || 0;
+    const isSelected = currentUserRating === rating;
     const isPressed = pressedEmoji === rating;
     
     return (
       <div className="emoji-feedback-container text-center">
         <span 
-          className={`emoji-feedback ${isSelected ? 'selected' : ''} ${isPressed ? 'pressed' : ''}`}
+          className={`emoji-feedback ${isSelected ? 'selected' : ''} ${isPressed ? 'pressed' : ''} ${isUpdating ? 'updating' : ''}`}
           onClick={() => handleEmojiClick(rating)}
           onMouseDown={() => handleMouseDown(rating)}
           onMouseUp={handleMouseUp}
@@ -99,8 +50,8 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
           onTouchStart={() => handleMouseDown(rating)}
           onTouchEnd={handleMouseUp}
           style={{ 
-            pointerEvents: isSubmitting ? 'none' : 'auto',
-            opacity: isSubmitting ? 0.5 : undefined 
+            pointerEvents: isInitialLoading ? 'none' : 'auto',
+            opacity: isInitialLoading ? 0.5 : undefined 
           }}
           title={rating === 1 ? 'Poor' : rating === 2 ? 'Okay' : rating === 3 ? 'Good' : rating === 4 ? 'Great' : 'Love it!'}
         >
@@ -113,8 +64,9 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
     );
   };
 
-  // 加载状态 - Loading State
-  if (feedbackLoading || statsLoading) {
+  // 初始加载状态 - 只有在初始加载时显示loading UI
+  // Initial Loading State - Only show loading UI during initial load
+  if (isInitialLoading) {
     return (
       <div className={`feedback-section ${className}`}>
         <div className="small-annotation">Loading emoji feedback...</div>
@@ -132,9 +84,9 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
       <p className="text-gray-300 text-lg mb-8">How useful were these salary insights?</p>
 
       {/* 错误显示 - Error Display */}
-      {(feedbackError || statsError) && (
-        <div className="error-display">
-          {feedbackError || statsError}
+      {error && (
+        <div className="error-display mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+          {error}
         </div>
       )}
 
@@ -146,7 +98,9 @@ const FeedbackWidget: React.FC<FeedbackWidgetProps> = ({ className = '' }) => {
       </div>
       
       {/* 底部说明 - 匹配参考设计 */}
-      <p className="text-gray-500 text-sm mt-4">Tap an emoji to share your feedback</p>
+      <p className="text-gray-500 text-sm mt-4">
+        Tap an emoji to share your feedback
+      </p>
     </div>
   );
 };

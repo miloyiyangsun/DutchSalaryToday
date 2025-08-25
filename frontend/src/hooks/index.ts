@@ -10,6 +10,7 @@ export { useWorkIntensificationData } from './useWorkIntensificationData';
 export { useHiddenCostData } from './useHiddenCostData';
 export { useFeedback } from './useFeedback';
 export { useFeedbackStatistics } from './useFeedbackStatistics';
+export { useOptimisticFeedback } from './useOptimisticFeedback';
 
 // Hook类型导出
 export type { StoryDataHookResult } from './useStoryData';

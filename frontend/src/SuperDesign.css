@@ -424,7 +424,7 @@ body {
   border-color: var(--accent) !important;
 }
 
-.story-card-hover:hover .big-number-responsive {
+.story-card-hover:hover .big-number-responsive span {
   animation: numberPulse 1.5s ease-in-out infinite !important;
 }
 
@@ -894,6 +894,14 @@ body {
 .emoji-feedback.pressed {
   animation: pulse 1s infinite !important;
 }
+
+/* 乐观更新状态样式 - Optimistic Update State Styles */
+.emoji-feedback.updating {
+  position: relative !important;
+  opacity: 0.9 !important;
+  transition: opacity 0.3s ease !important;
+}
+
 
 /* === ؇WH� (Gradient Text Effects) === */
 .gradient-title-fix {
@@ -2152,7 +2160,7 @@ html.dark,
   border-color: oklch(0.6863 0.2118 45.24) !important; /* --primary color */
 }
 
-.story-card-hover:hover .big-number-responsive {
+.story-card-hover:hover .big-number-responsive span[class*="numberCounter"] {
   animation: numberPulse 1.5s ease-in-out infinite !important;
 }
 
