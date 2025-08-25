@@ -1,0 +1,157 @@
+/* ============================================================================ */
+/* NumberCounter通用CSS模块 - 数字动画计数器样式 (NumberCounter Universal CSS Module - Number Animation Styles) */
+/* 基于WorkHoursPage.module.css提取并通用化 */
+/* 创建日期: 2025-01-25 */
+/* 版本: v1.0 - 通用数字计数动画组件 */
+/* ============================================================================ */
+
+/* === 数字计数器基础样式 (Number Counter Base Styles) === */
+.numberCounter {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace; /* 等宽字体确保数字对齐 */
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+/* === 数字计数动画 - 从WorkHours提取并通用化 (Number Count Animation - Extracted and Generalized) === */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.numberAnimate {
+  animation: countUp 0.8s ease-out forwards;
+}
+
+/* === 悬停时的数字脉冲动画 (Number Pulse Animation on Hover) === */
+@keyframes numberPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow: 0 4px 8px rgba(251, 146, 60, 0.4); /* 使用荷兰橙色 */
+  }
+}
+
+/* === 响应式动画优化 (Responsive Animation Optimization) === */
+
+/* 平板端优化 (Tablet Optimization) */
+@media (max-width: 768px) {
+  .numberCounter {
+    font-size: inherit; /* 继承父元素的响应式字体大小 */
+  }
+  
+  .numberAnimate {
+    animation-duration: 0.6s; /* 移动端动画稍快 */
+  }
+}
+
+/* 移动端优化 (Mobile Optimization) */
+@media (max-width: 480px) {
+  .numberCounter {
+    font-weight: 600; /* 移动端稍微减轻字重 */
+  }
+  
+  .numberAnimate {
+    animation-duration: 0.5s; /* 移动端更快的动画 */
+    transform-origin: center; /* 确保缩放居中 */
+  }
+}
+
+/* === 无障碍访问支持 (Accessibility Support) === */
+
+/* 减少动画偏好设置 (Reduced Motion Preference) */
+@media (prefers-reduced-motion: reduce) {
+  .numberAnimate {
+    animation: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .numberCounter {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 高对比度模式支持 (High Contrast Mode Support) */
+@media (prefers-contrast: high) {
+  .numberCounter {
+    text-shadow: none;
+    font-weight: 800; /* 高对比度模式下加重字体 */
+  }
+}
+
+/* === 主题颜色支持 (Theme Color Support) === */
+
+/* 成功颜色 (Success Color) */
+.numberCounter.success {
+  color: #22c55e;
+}
+
+/* 警告颜色 (Warning Color) */
+.numberCounter.warning {
+  color: #eab308;
+}
+
+/* 错误颜色 (Error Color) */  
+.numberCounter.error {
+  color: #ef4444;
+}
+
+/* 信息颜色 (Info Color) */
+.numberCounter.info {
+  color: #3b82f6;
+}
+
+/* 荷兰主题橙色 (Dutch Theme Orange) */
+.numberCounter.dutch {
+  color: #fb923c;
+}
+
+/* === 字体大小变体支持 (Font Size Variant Support) === */
+
+/* 小号数字 (Small Number) */
+.numberCounter.small {
+  font-size: 0.875rem; /* 14px */
+}
+
+/* 中等数字 (Medium Number) */
+.numberCounter.medium {
+  font-size: 1.125rem; /* 18px */
+}
+
+/* 大号数字 (Large Number) */
+.numberCounter.large {
+  font-size: 1.5rem; /* 24px */
+}
+
+/* 超大号数字 (Extra Large Number) */
+.numberCounter.xlarge {
+  font-size: 2rem; /* 32px */
+}
+
+/* === 特效增强 (Effect Enhancement) === */
+
+/* 发光效果 (Glow Effect) */
+.numberCounter.glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* 粗体强调 (Bold Emphasis) */
+.numberCounter.bold {
+  font-weight: 900;
+}
+
+/* 细体样式 (Light Style) */
+.numberCounter.light {
+  font-weight: 300;
+}

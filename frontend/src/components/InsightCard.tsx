@@ -1,6 +1,7 @@
 // InsightCard.tsx
-// 可点击的洞察卡片组件 - 支持3种类型的数据展示
+// 可点击的洞察卡片组件 - 支持3种类型的数据展示  
 import React from 'react';
+import NumberCounter from './NumberCounter';
 
 // 3种卡片类型的数据结构
 interface ChampionData {
@@ -138,6 +139,21 @@ interface InsightCardProps {
   variant?: 'home' | 'detail'; // 控制文案版本
 }
 
+// ============================================================================
+// NumberCounter集成辅助函数 (NumberCounter Integration Helper Functions)
+// ============================================================================
+
+// 智能数字提取函数 (Smart Number Extraction Function)
+const extractNumber = (value: string | number): number => {
+  if (typeof value === 'number') return value;               // 32.4 → 32.4
+  if (typeof value === 'string') {                           // "45.2%" → 45.2  
+    const cleanValue = value.replace(/[^\d.-]/g, '');
+    const parsed = parseFloat(cleanValue);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+};
+
 const InsightCard: React.FC<InsightCardProps> = ({
   type,
   championData,
@@ -167,7 +183,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🚀</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success number-animate' : 'text-green-400 mb-2 number-animate'}`}>{championData.rate}</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success' : 'text-green-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={extractNumber(championData.rate)}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Growth Champion</h3>
             <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm leading-relaxed'}>
               {championData.industry}<br/>
@@ -181,7 +204,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🐌</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{slowestData.rate}</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning' : 'text-yellow-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={extractNumber(slowestData.rate)}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Slowest Growth</h3>
             <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm leading-relaxed'}>
               {slowestData.industry}<br/>
@@ -199,9 +229,23 @@ const InsightCard: React.FC<InsightCardProps> = ({
               // IceAndFirePage样式
               <>
                 <div className="gap-comparison">
-                  <div className="medium-number-responsive number-info number-animate">{gapData.from}</div>
+                  <div className="medium-number-responsive number-info">
+                    <NumberCounter 
+                      targetValue={extractNumber(gapData.from)}
+                      suffix="x"
+                      decimals={1}
+                      className="number-animate"
+                    />
+                  </div>
                   <div className="gap-arrow">→</div>
-                  <div className="big-number-responsive long-text number-ice number-animate">{gapData.to}</div>
+                  <div className="big-number-responsive long-text number-ice">
+                    <NumberCounter 
+                      targetValue={extractNumber(gapData.to)}
+                      suffix="x"
+                      decimals={1}
+                      className="number-animate"
+                    />
+                  </div>
                 </div>
                 <div className="gap-comparison">
                   <div className="year-label">2010</div>
@@ -217,12 +261,22 @@ const InsightCard: React.FC<InsightCardProps> = ({
               // HomePage参考设计样式
               <>
                 <div className="flex justify-center items-center gap-2 mb-1">
-                  <div className="medium-number-responsive text-blue-400 number-animate">
-                    {gapData.from}
+                  <div className="medium-number-responsive text-blue-400">
+                    <NumberCounter 
+                      targetValue={extractNumber(gapData.from)}
+                      suffix="x"
+                      decimals={1}
+                      className="number-animate"
+                    />
                   </div>
                   <div className="text-2xl text-orange-400 mx-1">→</div>
-                  <div className="big-number-responsive long-text text-pink-400 number-animate">
-                    {gapData.to}
+                  <div className="big-number-responsive long-text text-pink-400">
+                    <NumberCounter 
+                      targetValue={extractNumber(gapData.to)}
+                      suffix="x"
+                      decimals={1}
+                      className="number-animate"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-4 mb-4">
@@ -245,7 +299,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🕒</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-blue-400 mb-1 number-animate'}`}>{averageHoursData.weeklyHours}</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info' : 'text-blue-400 mb-1'}`}>
+              <NumberCounter 
+                targetValue={averageHoursData.weeklyHours}
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <div className={variant === 'detail' ? 'small-annotation' : 'small-annotation text-gray-400 mb-3'}>hours/week</div>
             <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Average Work Hours</h3>
             <p className={variant === 'detail' ? 'insight-card-description' : 'text-gray-300 text-sm'}>{variant === 'detail' ? averageHoursData.description : 'Netherlands 2024 Average'}</p>
@@ -257,7 +317,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>⚠️</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-1 number-animate'}`}>{hoursRankingData.highest.weeklyHours}</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning' : 'text-yellow-400 mb-1'}`}>
+              <NumberCounter 
+                targetValue={hoursRankingData.highest.weeklyHours}
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <div className={variant === 'detail' ? 'small-annotation' : 'small-annotation text-gray-400 mb-3'}>hours/week</div>
             <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Longest Hours</h3>
             <p className="insight-card-description">
@@ -272,7 +338,15 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💰</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success number-animate' : 'text-green-400 mb-2 number-animate'}`}>€{wageRankingData.highest.hourlyWage}/h</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-success' : 'text-green-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={wageRankingData.highest.hourlyWage}
+                prefix="€"
+                suffix="/h"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className={variant === 'detail' ? 'insight-card-title' : 'text-xl font-bold text-white mb-2'}>Wage Champion</h3>
             <p className="insight-card-description">
               {wageRankingData.highest.industry}<br/>
@@ -287,7 +361,15 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🚺</div>
-            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice number-animate' : 'text-pink-400 mb-2 number-animate'}`}>+{historicalBreakthroughData.changePoints.toFixed(1)} points</div>
+            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice' : 'text-pink-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={historicalBreakthroughData.changePoints}
+                prefix="+"
+                suffix=" points"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Female Breakthrough</h3>
             <p className="insight-card-description">
               Historical Growth<br/>
@@ -301,7 +383,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💼</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-blue-400 mb-2 number-animate'}`}>{jobsContributionData.contributionRate.toFixed(1)}%</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info' : 'text-blue-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={jobsContributionData.contributionRate}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">New Jobs Power</h3>
             <p className="insight-card-description">
               Female contribution rate
@@ -317,7 +406,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>👑</div>
-            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice number-animate' : 'text-purple-400 mb-2 number-animate'}`}>{industryDominanceData.dominantIndustryCount} industries</div>
+            <div className={`big-number-responsive long-text ${variant === 'detail' ? 'number-ice' : 'text-purple-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={industryDominanceData.dominantIndustryCount}
+                suffix=" industries"
+                decimals={0}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Industry Dominance</h3>
             <p className="insight-card-description">
               Female majority (&gt;50%)<br/>
@@ -332,7 +428,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>⚖️</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info number-animate' : 'text-indigo-400 mb-2 number-animate'}`}>{workloadDistributionData.parttimeRatio.toFixed(1)}%</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-info' : 'text-indigo-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={workloadDistributionData.parttimeRatio}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Work Distribution</h3>
             <p className="insight-card-description">
               Non-standard arrangements<br/>
@@ -347,8 +450,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>{isIncreasing ? '📈' : '📉'}</div>
-            <div className={`big-number-responsive number-animate ${variant === 'detail' ? (isIncreasing ? 'number-warning' : 'number-info') : (isIncreasing ? 'text-cyan-400 mb-2' : 'text-cyan-400 mb-2')}`}>
-              {intensificationIndexData.intensificationIndex.toFixed(1)}%
+            <div className={`big-number-responsive ${variant === 'detail' ? (isIncreasing ? 'number-warning' : 'number-info') : (isIncreasing ? 'text-cyan-400 mb-2' : 'text-cyan-400 mb-2')}`}>
+              <NumberCounter 
+                targetValue={intensificationIndexData.intensificationIndex}
+                prefix="+"
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
             </div>
             <h3 className="insight-card-title">Work Trend</h3>
             <p className="insight-card-description">
@@ -364,7 +473,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🏭</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{industryWorkloadRankingData.heaviestWorkload.parttimeRatio.toFixed(1)}%</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning' : 'text-yellow-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={industryWorkloadRankingData.heaviestWorkload.parttimeRatio}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Heaviest Workload</h3>
             <p className="insight-card-description">
               Non-standard work extreme<br/>
@@ -379,7 +495,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>🧾</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning number-animate' : 'text-yellow-400 mb-2 number-animate'}`}>{benefitBurdenLevelData.benefitRatio.toFixed(1)}%</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-warning' : 'text-yellow-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={benefitBurdenLevelData.benefitRatio}
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Benefit Burden</h3>
             <p className="insight-card-description">
               Social contribution level<br/>
@@ -393,7 +516,14 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>💸</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire number-animate' : 'text-red-400 mb-2 number-animate'}`}>{industryGapMultipleData.gapMultiple.toFixed(1)}x</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire' : 'text-red-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={industryGapMultipleData.gapMultiple}
+                suffix="x"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Industry Gap</h3>
             <p className="insight-card-description">
               Benefit burden disparity<br/>
@@ -407,7 +537,15 @@ const InsightCard: React.FC<InsightCardProps> = ({
         return (
           <>
             <div className={variant === 'detail' ? 'insight-card-icon' : 'text-4xl mb-3'}>📈</div>
-            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire number-animate' : 'text-orange-400 mb-2 number-animate'}`}>+{absoluteCostGrowthData.growthRate.toFixed(1)}%</div>
+            <div className={`big-number-responsive ${variant === 'detail' ? 'number-fire' : 'text-orange-400 mb-2'}`}>
+              <NumberCounter 
+                targetValue={absoluteCostGrowthData.growthRate}
+                prefix="+"
+                suffix="%"
+                decimals={1}
+                className="number-animate"
+              />
+            </div>
             <h3 className="insight-card-title">Cost Growth</h3>
             <p className="insight-card-description">
               Absolute increase<br/>
