@@ -1,0 +1,99 @@
+name: Keep App Alive
+
+on:
+  # 手动触发 (用于测试)
+  workflow_dispatch:
+  # 定时执行 - 避开整点时间防止GitHub高负载
+  # 每5分钟执行一次，错开整点以提高稳定性
+  schedule:
+    - cron: '1,6,11,16,21,26,31,36,41,46,51,56 * * * *'
+
+jobs:
+  keep-alive:
+    name: Ping Azure Services
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: 📍 Log Start Time
+        run: |
+          echo "🚀 Keep-alive started at $(date -u)"
+          echo "⏰ Next execution in ~5 minutes"
+          
+      - name: 🌐 Ping Frontend App (with retry)
+        run: |
+          echo "📱 Pinging Frontend at $(date -u)"
+          url="https://frontend-webapp-16283450340.azurewebsites.net/"
+          for attempt in {1..3}; do
+            echo "🔄 Attempt $attempt/3 for Frontend"
+            if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
+              echo "✅ Frontend Success on attempt $attempt: $response"
+              break
+            else
+              echo "⚠️ Frontend failed attempt $attempt"
+              if [ $attempt -lt 3 ]; then
+                echo "⏳ Waiting 10 seconds before retry..."
+                sleep 10
+              fi
+            fi
+          done
+          
+      - name: ❤️ Ping Backend Health Check (with retry)
+        run: |
+          echo "🏥 Pinging Backend Health at $(date -u)"
+          url="https://backend-webapp-16283450340.azurewebsites.net/actuator/health"
+          for attempt in {1..3}; do
+            echo "🔄 Attempt $attempt/3 for Backend Health"
+            if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
+              echo "✅ Backend Health Success on attempt $attempt: $response"
+              break
+            else
+              echo "⚠️ Backend Health failed attempt $attempt"
+              if [ $attempt -lt 3 ]; then
+                echo "⏳ Waiting 10 seconds before retry..."
+                sleep 10
+              fi
+            fi
+          done
+          
+      - name: 🎯 Ping Custom Ping Endpoint (with retry)
+        run: |
+          echo "🏓 Pinging Custom Ping at $(date -u)"
+          url="https://backend-webapp-16283450340.azurewebsites.net/api/v1/ping"
+          for attempt in {1..3}; do
+            echo "🔄 Attempt $attempt/3 for Custom Ping"
+            if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
+              echo "✅ Custom Ping Success on attempt $attempt: $response"
+              break
+            else
+              echo "⚠️ Custom Ping failed attempt $attempt"
+              if [ $attempt -lt 3 ]; then
+                echo "⏳ Waiting 10 seconds before retry..."
+                sleep 10
+              fi
+            fi
+          done
+          
+      - name: 🚀 Ping Backend API Endpoint (with retry)
+        run: |
+          echo "📊 Pinging Backend API at $(date -u)"
+          url="https://backend-webapp-16283450340.azurewebsites.net/api/v1/core-insights"
+          for attempt in {1..3}; do
+            echo "🔄 Attempt $attempt/3 for Backend API"
+            if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
+              echo "✅ Backend API Success on attempt $attempt: $response"
+              break
+            else
+              echo "⚠️ Backend API failed attempt $attempt"
+              if [ $attempt -lt 3 ]; then
+                echo "⏳ Waiting 10 seconds before retry..."
+                sleep 10
+              fi
+            fi
+          done
+          
+      - name: ✅ Log Completion
+        run: |
+          echo "🎉 Keep-alive completed successfully at $(date -u)"
+          echo "📈 All services pinged and warmed up"
+          echo "⏳ Waiting for next scheduled execution..."

@@ -242,6 +242,18 @@ public class SalaryController {
     }
     
     /**
+     * 轻量级Keep-Alive检查端点
+     * 
+     * 端点: GET /api/v1/ping
+     * 返回: 简单的pong响应，专用于GitHub Actions keep-alive
+     * 特点: 最小响应体，支持HEAD请求，无数据库访问
+     */
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("pong-" + System.currentTimeMillis());
+    }
+    
+    /**
      * 创建成功响应格式
      * 统一API响应结构，便于前端处理
      */
