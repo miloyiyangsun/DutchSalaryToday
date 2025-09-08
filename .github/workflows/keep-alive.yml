@@ -3,10 +3,13 @@ name: Keep App Alive
 on:
   # 手动触发 (用于测试)
   workflow_dispatch:
-  # 定时执行 - 避开整点时间防止GitHub高负载
-  # 每5分钟执行一次，错开整点以提高稳定性
+  # 定时执行 - 组合调度策略提高可靠性
+  # 方案1: 主要调度 - 每15分钟执行 (更容易被系统接受)
+  # 方案2: 备用调度 - 错峰时间补充 (避免主调度被跳过)
   schedule:
-    - cron: '1,6,11,16,21,26,31,36,41,46,51,56 * * * *'
+    - cron: '*/15 * * * *'      # 主要：每15分钟 (0,15,30,45分执行)
+    - cron: '5,25,45 * * * *'   # 备用：错峰时间 (5,25,45分执行)
+    - cron: '8,38 * * * *'      # 额外：填补空隙 (8,38分执行)
 
 jobs:
   keep-alive:
@@ -18,7 +21,8 @@ jobs:
       - name: 📍 Log Start Time
         run: |
           echo "🚀 Keep-alive started at $(date -u)"
-          echo "⏰ Next execution in ~5 minutes"
+          echo "⏰ Optimized schedule: Multiple time slots for reliability"
+          echo "📅 Main: Every 15 mins (0,15,30,45) | Backup: (5,25,45) | Extra: (8,38)"
           
       - name: 🌐 Ping Frontend App (with retry)
         run: |
@@ -96,4 +100,4 @@ jobs:
         run: |
           echo "🎉 Keep-alive completed successfully at $(date -u)"
           echo "📈 All services pinged and warmed up"
-          echo "⏳ Waiting for next scheduled execution..."
+          echo "⏳ Next execution: Within 5-15 minutes (multi-schedule strategy)"
