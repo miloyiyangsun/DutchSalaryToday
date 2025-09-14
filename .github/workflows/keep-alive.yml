@@ -1,23 +1,60 @@
 name: Keep App Alive
 
+permissions:
+  contents: read
+  actions: read
+
 on:
   # 手动触发 (用于测试)
   workflow_dispatch:
   # 定时执行 - 组合调度策略提高可靠性
-  # 方案1: 主要调度 - 每15分钟执行 (更容易被系统接受)
-  # 方案2: 备用调度 - 错峰时间补充 (避免主调度被跳过)
+  # 目标：平均每5分钟至少一次保活，同时提供多重备份，但避免同一时刻的“扎堆”与重复执行。
   schedule:
-    - cron: '*/15 * * * *'      # 主要：每15分钟 (0,15,30,45分执行)
-    - cron: '5,25,45 * * * *'   # 备用：错峰时间 (5,25,45分执行)
-    - cron: '8,38 * * * *'      # 额外：填补空隙 (8,38分执行)
+    # 主通道：严格每5分钟
+    - cron: '*/5 * * * *'
+    # 备通道A：在主通道基础上+2分钟偏移（覆盖主通道被跳过的情况）
+    - cron: '2-59/5 * * * *'
+    # 备通道B：再+4分钟偏移（进一步提升容错）
+    - cron: '4-59/5 * * * *'
+
+concurrency:
+  # 同一时间只允许一个 keep-alive 运行，避免并发叠加导致互相取消。
+  # 采用排队（cancel-in-progress: false），后到的 run 会等待，然后再做窗口守卫自我退出。
+  group: keep-alive-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   keep-alive:
     name: Ping Azure Services
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     
     steps:
+      - name: 🧭 Preflight: Window Guard & Jitter
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "🔐 Concurrency queue acquired at $(date -u)"
+          # 读取最近一次成功的 keep-alive 运行时间（仅需1条）
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/keep-alive.yml/runs?per_page=1&status=success"
+          last=$(curl -sSL -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" "$api" | jq -r '.workflow_runs[0].created_at // empty')
+          if [ -n "$last" ]; then
+            last_ts=$(date -u -d "$last" +%s)
+            now_ts=$(date -u +%s)
+            diff=$((now_ts - last_ts))
+            echo "⏱️ Last success ${diff}s ago (@ $last)"
+            # 若 4 分钟内已有成功运行，则直接快速退出，避免多重触发重复保活
+            if [ "$diff" -lt 240 ]; then
+              echo "✅ Recent run within 4 minutes; early-exit to avoid duplicate."
+              exit 0
+            fi
+          fi
+          # 加入 5-40s 的随机抖动，避免同一秒撞车；上限不超过一分钟窗口
+          jitter=$(( (RANDOM % 36) + 5 ))
+          echo "🎲 Jitter sleep: ${jitter}s"
+          sleep "$jitter"
       - name: 📍 Log Start Time
         run: |
           echo "🚀 Keep-alive started at $(date -u)"
@@ -28,6 +65,8 @@ jobs:
         run: |
           echo "📱 Pinging Frontend at $(date -u)"
           url="https://frontend-webapp-16283450340.azurewebsites.net/"
+          # 端点间再加轻微随机等待，减少服务端瞬时并发
+          sleep $((RANDOM % 5))
           for attempt in {1..3}; do
             echo "🔄 Attempt $attempt/3 for Frontend"
             if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
@@ -46,6 +85,7 @@ jobs:
         run: |
           echo "🏥 Pinging Backend Health at $(date -u)"
           url="https://backend-webapp-16283450340.azurewebsites.net/actuator/health"
+          sleep $((RANDOM % 5))
           for attempt in {1..3}; do
             echo "🔄 Attempt $attempt/3 for Backend Health"
             if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
@@ -64,6 +104,7 @@ jobs:
         run: |
           echo "🏓 Pinging Custom Ping at $(date -u)"
           url="https://backend-webapp-16283450340.azurewebsites.net/api/v1/ping"
+          sleep $((RANDOM % 5))
           for attempt in {1..3}; do
             echo "🔄 Attempt $attempt/3 for Custom Ping"
             if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
@@ -82,6 +123,7 @@ jobs:
         run: |
           echo "📊 Pinging Backend API at $(date -u)"
           url="https://backend-webapp-16283450340.azurewebsites.net/api/v1/core-insights"
+          sleep $((RANDOM % 5))
           for attempt in {1..3}; do
             echo "🔄 Attempt $attempt/3 for Backend API"
             if response=$(curl -s -o /dev/null -w "%{http_code}:%{time_total}" --max-time 20 --connect-timeout 10 --head "$url"); then
