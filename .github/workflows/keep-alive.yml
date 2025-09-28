@@ -1,4 +1,4 @@
-name: Ultimate Keep App Alive - 5-Layer Defense Grid
+name: Keep App Alive
 
 permissions:
   contents: read
@@ -14,25 +14,19 @@ on:
         default: 'false'
         type: boolean
         
-  # 🎯 LAYER 1: 完美5分钟覆盖矩阵 - 四重调度确保100%时间覆盖
+  # 🎯 LAYER 1: 经典可靠调度 + 智能五层增强
   schedule:
-    # Alpha通道：错峰优质时段 (避开GitHub高负载时间)
-    - cron: '8,23,38,53 * * * *'
-    # Beta通道：传统稳定时段 (相对可靠的节点)
-    - cron: '15,30,45,0 * * * *'
-    # Gamma通道：填补缺口-上半段 (覆盖遗漏的5分钟节点)
-    - cron: '5,10,20,25 * * * *'
-    # Delta通道：填补缺口-下半段 (确保完整覆盖)
-    - cron: '35,40,50,55 * * * *'
+    # 恢复经典每5分钟调度（已验证可工作）+ 保留所有智能功能
+    - cron: '*/5 * * * *'
 
 concurrency:
   # 高级并发控制：排队机制避免资源冲突
-  group: keep-alive-ultimate-${{ github.ref }}
+  group: keep-alive-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  ultimate-keep-alive:
-    name: 🚀 Ultimate Azure Keep-Alive System
+  keep-alive:
+    name: 🚀 Enhanced Azure Keep-Alive System
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
